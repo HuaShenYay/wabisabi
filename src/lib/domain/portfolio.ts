@@ -1,72 +1,45 @@
 /**
- * Domain Entities: ClientCluster, Award, SpeakingEngagement
+ * Domain Entities: FocusArea, EducationEntry, DesignPhilosophy
  *
- * Represents the portfolio's professional work history.
+ * Represents the portfolio owner's research interests, education, and
+ * the design philosophy behind this site.
  */
 
-export interface ClientCluster {
+export interface FocusItem {
 	readonly label: string;
-	readonly items: readonly string[];
+	readonly desc: string;
 }
 
-export interface Award {
-	readonly name: string;
-	readonly count: number;
+export const focusAreas: readonly FocusItem[] = [
+	{ label: '数字人文', desc: '计算机技术与文学、影视研究的结合' },
+	{ label: 'AIGC 与创作', desc: '生成式图像、三维交互与美育影像' },
+	{ label: '诗歌分析系统', desc: '古典诗歌情感智能分析与推荐' },
+	{ label: '影视与视觉', desc: '镜头语言、节奏与实验影像表达' },
+	{ label: '精神分析', desc: '弗洛伊德、拉康作为人文研究视角' }
+] as const;
+
+export interface EducationEntry {
+	readonly school: string;
+	readonly major: string;
+	readonly note: string;
 }
 
-export interface SpeakingEngagement {
-	readonly event: string;
-	readonly year: string;
-	readonly location: string;
-}
-
-export const clientClusters: readonly ClientCluster[] = [
+export const education: readonly EducationEntry[] = [
 	{
-		label: 'Art & Exhibition',
-		items: [
-			'数字艺术平台',
-			'当代艺术空间',
-			'独立策展人',
-			'虚拟展览项目',
-			'文化基金会',
-			'科技艺术实验室'
-		]
-	},
-	{
-		label: 'Games & Interactive',
-		items: [
-			'独立游戏工作室',
-			'游戏发行商',
-			'XR 体验团队',
-			'独立开发者'
-		]
-	},
-	{
-		label: 'Brand & Education',
-		items: [
-			'品牌创意合作',
-			'设计咨询公司',
-			'线上文化媒体',
-			'高校数字艺术课程',
-			'音乐节视觉艺术',
-			'AI 研究社区'
-		]
+		school: '上海杉达学院',
+		major: '软件工程（本科）',
+		note: '专升本，原信息安全专业'
 	}
 ] as const;
 
-export const awards: readonly Award[] = [
-	{ name: 'AI Art Competition', count: 2 },
-	{ name: '独立游戏节视觉奖', count: 1 },
-	{ name: '数字人文奖学金', count: 1 },
-	{ name: '生成艺术展览入选', count: 3 },
-	{ name: '游戏摄影大赛', count: 1 },
-	{ name: '新媒体艺术提名', count: 2 },
-	{ name: '线上创作马拉松', count: 1 }
-] as const;
+export interface PhilosophyItem {
+	readonly label: string;
+	readonly desc: string;
+}
 
-export const speakingEngagements: readonly SpeakingEngagement[] = [
-	{ event: 'AI 与艺术工作坊', year: '2024', location: '上海' },
-	{ event: '独立游戏文化沙龙', year: '2023', location: '线上' },
-	{ event: '数字人文讲座', year: '2024', location: '杭州' },
-	{ event: '生成艺术分享会', year: '2025', location: '北京' }
+export const designPhilosophy: readonly PhilosophyItem[] = [
+	{ label: '侘寂 · Wabi-Sabi', desc: '残缺、质朴、不完美之美' },
+	{ label: '幽玄 · Yugen', desc: '深邃幽暗的神秘意境' },
+	{ label: '素简 · Kanso', desc: '去除冗余的纯净表达' },
+	{ label: '静寂 · Seijaku', desc: '安宁内敛的视觉气质' }
 ] as const;

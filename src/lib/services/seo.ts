@@ -72,11 +72,14 @@ export function generatePersonJsonLd() {
 			addressCountry: 'CN'
 		},
 		knowsAbout: [
-			'AI Art',
-			'Generative Art',
-			'Digital Art',
-			'Game Culture',
-			'Visual Storytelling',
+			'Digital Humanities',
+			'AIGC',
+			'Literary Research',
+			'Poetry Analysis',
+			'Film & Visual Studies',
+			'Generative AI',
+			'Psychoanalysis',
+			'Three.js',
 			'Creative Coding'
 		],
 		sameAs,

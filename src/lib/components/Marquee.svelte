@@ -5,6 +5,9 @@
 	let mobileMarquee;
 
 	onMount(() => {
+		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (reduce) return;
+
 		function updateMarquee() {
 			const scrollY = window.scrollY;
 			const baseOffset = window.innerWidth * 0.06;

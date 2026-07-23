@@ -11,6 +11,9 @@
 	let animationId;
 
 	onMount(() => {
+		// Touch devices: CSS already hides the cursor; skip global listeners.
+		if (window.matchMedia('(hover: none)').matches) return {};
+
 		function handleMouseMove(e) {
 			mouseX = e.clientX;
 			mouseY = e.clientY;
