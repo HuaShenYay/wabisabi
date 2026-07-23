@@ -1,0 +1,18 @@
+{
+	"name": "宋子杰 - AI 人文艺术创作者",
+	"short_name": "宋子杰",
+	"description": "宋子杰是一位AI人文艺术创作者，关注人工智能、当代艺术与游戏文化的交叉地带。",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#e8e5de",
+	"theme_color": "#e8e5de",
+	"lang": "zh",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

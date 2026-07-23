@@ -1,0 +1,9 @@
+# Neo Wabi-Sabi Portfolio - Robots
+# Allow crawling of public content
+
+User-agent: *
+Allow: /
+Disallow: /copyright
+
+# Sitemap location
+Sitemap: https://songzijie.art/sitemap.xml
