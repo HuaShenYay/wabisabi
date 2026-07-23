@@ -13,12 +13,12 @@
 		renderer.setPixelRatio(Math.min(devicePixelRatio, 1.65));
 		renderer.outputColorSpace = THREE.SRGBColorSpace;
 		renderer.toneMapping = THREE.ACESFilmicToneMapping;
-		renderer.toneMappingExposure = 0.76;
+		renderer.toneMappingExposure = 0.95;
 		container.appendChild(renderer.domElement);
 
 		const scene = new THREE.Scene();
 		scene.background = new THREE.Color('#899486');
-		scene.fog = new THREE.FogExp2('#899486', 0.053);
+		scene.fog = new THREE.FogExp2('#899486', 0.024);
 
 		const camera = new THREE.PerspectiveCamera(22, 1, 0.1, 120);
 		const cameraHome = new THREE.Vector3(0.18, 2.36, 19.4);
@@ -100,16 +100,16 @@
 					gl_Position=projectionMatrix*viewMatrix*vec4(p,1.);
 				}`,
 				fragmentShader: `uniform float time; uniform float sunX; varying vec3 p; varying float ripple; void main(){
-					float distanceFade=smoothstep(-10.,20.,p.z);
-					float mirrored=exp(-(p.x-sunX)*(p.x-sunX)*.22);
-					float broken=.45+.55*sin(p.z*7.4+sin(p.x*2.1)*2.5+time*.8);
-					float small=.35+.65*sin(p.z*16.0+p.x*.9-time*.55);
-					float reflection=mirrored*broken*small*smoothstep(-7.,9.,p.z);
-					vec3 base=mix(vec3(.18,.25,.22),vec3(.42,.46,.35),distanceFade);
-					base+=vec3(1.0,.42,.16)*reflection*.31;
-					base+=vec3(.05,.07,.05)*ripple;
-					gl_FragColor=vec4(base,.94);
-				}`
+				float distanceFade=smoothstep(-10.,20.,p.z);
+				float mirrored=exp(-(p.x-sunX)*(p.x-sunX)*.10);
+				float broken=.45+.55*sin(p.z*7.4+sin(p.x*2.1)*2.5+time*.8);
+				float small=.35+.65*sin(p.z*16.0+p.x*.9-time*.55);
+				float reflection=mirrored*broken*small*smoothstep(-7.,9.,p.z);
+				vec3 base=mix(vec3(.18,.25,.22),vec3(.42,.46,.35),distanceFade);
+				base+=vec3(1.0,.42,.16)*reflection*.80;
+				base+=vec3(.05,.07,.05)*ripple;
+				gl_FragColor=vec4(base,.94);
+			}`
 			})
 		);
 		water.rotation.x = -Math.PI / 2;
