@@ -32,5 +32,8 @@
 	.hero-3d-wrapper {
 		position: relative;
 		width: 100%;
+		/* Keep the navigation legible without turning it into a competing UI layer. */
+		color: rgba(255, 237, 202, 0.86);
+		text-shadow: 0 1px 12px rgba(29, 27, 20, 0.42);
 	}
 </style>
