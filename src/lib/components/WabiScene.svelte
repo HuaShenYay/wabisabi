@@ -6,6 +6,7 @@
 
 	let container;
 	let dispose = () => {};
+	let scrollStarted = $state(false);
 
 	onMount(() => {
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -26,14 +27,17 @@
 		camera.position.copy(cameraHome);
 
 		const clock = new THREE.Clock();
-		let animation;
-		let mouseX = 0;
-		let mouseY = 0;
-		let targetMouseX = 0;
-		let targetMouseY = 0;
-		let seed = 1776;
-		const materials = [];
-		const textures = [];
+	let animation;
+	let mouseX = 0;
+	let mouseY = 0;
+	let targetMouseX = 0;
+	let targetMouseY = 0;
+	let scrollProgress = 0;
+	let smoothScroll = 0;
+	let seed = 1776;
+	const materials = [];
+	const textures = [];
+	const birds = [];
 
 		function rand() {
 			seed = (seed * 1664525 + 1013904223) >>> 0;
@@ -77,13 +81,13 @@
 			depthWrite: false,
 			fog: false
 		}));
-		sun.position.set(5.35, 3.28, -18);
-		sun.scale.set(1.2, 1.2, 1);
+		sun.position.set(-3.55, 3.6, -2.2);
+		sun.scale.set(2.4, 2.4, 1);
 		scene.add(sun);
 
 		const waterUniforms = {
 			time: { value: 0 },
-			sunX: { value: 4.85 }
+			sunX: { value: -3.55 }
 		};
 		const water = new THREE.Mesh(
 			new THREE.PlaneGeometry(110, 110, 150, 150),
@@ -101,12 +105,14 @@
 				}`,
 				fragmentShader: `uniform float time; uniform float sunX; varying vec3 p; varying float ripple; void main(){
 				float distanceFade=smoothstep(-10.,20.,p.z);
-				float mirrored=exp(-(p.x-sunX)*(p.x-sunX)*.10);
+				float mirrored=exp(-(p.x-sunX)*(p.x-sunX)*.08);
 				float broken=.45+.55*sin(p.z*7.4+sin(p.x*2.1)*2.5+time*.8);
 				float small=.35+.65*sin(p.z*16.0+p.x*.9-time*.55);
 				float reflection=mirrored*broken*small*smoothstep(-7.,9.,p.z);
+				float shimmer=mirrored*(.5+.5*sin(p.z*22.+p.x*1.5-time*1.2))*smoothstep(-7.,12.,p.z);
 				vec3 base=mix(vec3(.18,.25,.22),vec3(.42,.46,.35),distanceFade);
-				base+=vec3(1.0,.42,.16)*reflection*.80;
+				base+=vec3(1.0,.55,.18)*reflection*1.1;
+				base+=vec3(1.0,.65,.25)*shimmer*.4;
 				base+=vec3(.05,.07,.05)*ripple;
 				gl_FragColor=vec4(base,.94);
 			}`
@@ -189,14 +195,16 @@
 		});
 
 		addReedBeds();
-		addBirds();
 		addPerchedSilhouette();
 
-		scene.add(new THREE.HemisphereLight('#b6b18d', '#151c15', 1.55));
-		const sunset = new THREE.DirectionalLight('#ff9a5d', 3.65);
-		sunset.position.set(6, 3.5, -13);
+		scene.add(new THREE.HemisphereLight('#b6b18d', '#151c15', 1.8));
+		const sunset = new THREE.DirectionalLight('#ffa463', 5.2);
+		sunset.position.set(-3.0, 4.5, 1.0);
 		scene.add(sunset);
-		const fill = new THREE.DirectionalLight('#7fa28e', 1.0);
+		const rimLight = new THREE.DirectionalLight('#ffcc88', 2.0);
+		rimLight.position.set(-3.5, 5.0, -8);
+		scene.add(rimLight);
+		const fill = new THREE.DirectionalLight('#7fa28e', 0.8);
 		fill.position.set(-5.5, 7, 6);
 		scene.add(fill);
 
@@ -239,22 +247,6 @@
 		}
 
 		function addToriiDetails() {
-			const vineMat = new THREE.LineBasicMaterial({ color: '#27271b', transparent: true, opacity: .9 });
-			materials.push(vineMat);
-			for (let i = 0; i < 58; i += 1) {
-				const x = -6.05 + rand() * 5.35;
-				const top = 4.66 + rand() * .34;
-				const length = .22 + Math.pow(rand(), 1.55) * 1.35;
-				const z = -1.37 + (rand() - .5) * .24;
-				const curve = new THREE.CatmullRomCurve3([
-					new THREE.Vector3(x, top, z),
-					new THREE.Vector3(x + (rand() - .5) * .09, top - length * .44, z + (rand() - .5) * .04),
-					new THREE.Vector3(x + (rand() - .5) * .14, top - length, z)
-				]);
-				const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(5));
-				scene.add(new THREE.Line(geometry, vineMat));
-			}
-
 			const rope = new THREE.Mesh(
 				new THREE.TorusGeometry(1.32, .025, 8, 80, Math.PI),
 				mat({ color: '#4a321f', roughness: 1 })
@@ -334,10 +326,20 @@
 					color: '#181811'
 				}));
 				materials.push(sprite.material);
-				sprite.position.set(2.2 + rand() * 5.6, 4.0 + rand() * 2.25, -9.5 - rand() * 2.5);
+				const bx = 2.2 + rand() * 5.6;
+				const by = 4.0 + rand() * 2.25;
+				const bz = -9.5 - rand() * 2.5;
+				sprite.userData.baseX = bx;
+				sprite.userData.baseY = by;
+				sprite.userData.baseZ = bz;
+				sprite.userData.speed = .4 + rand() * .6;
+				sprite.userData.phase = rand() * Math.PI * 2;
+				sprite.userData.flapPhase = rand() * Math.PI * 2;
+				sprite.position.set(bx, by, bz);
 				const size = .12 + rand() * .18;
 				sprite.scale.set(size * (1.4 + rand()), size, 1);
 				scene.add(sprite);
+				birds.push(sprite);
 			}
 		}
 
@@ -480,26 +482,83 @@
 			targetMouseY = (event.clientY - bounds.top) / bounds.height - .5;
 		}
 
-		function render() {
-			animation = requestAnimationFrame(render);
-			const time = clock.getElapsedTime();
-			waterUniforms.time.value = time;
-			mouseX += (targetMouseX - mouseX) * .035;
-			mouseY += (targetMouseY - mouseY) * .035;
-			if (!reduced) camera.position.set(cameraHome.x + mouseX * .22, cameraHome.y - mouseY * .1, cameraHome.z);
-			camera.lookAt(target);
-			renderer.render(scene, camera);
+		function onScroll() {
+		const wrapper = container.parentElement;
+		if (!wrapper) return;
+		const rect = wrapper.getBoundingClientRect();
+		const scrollable = wrapper.offsetHeight - window.innerHeight;
+		if (scrollable <= 0) { scrollProgress = 0; return; }
+		scrollProgress = Math.max(0, Math.min(1, -rect.top / scrollable));
+		if (scrollProgress > 0.02) scrollStarted = true;
+		else scrollStarted = false;
+		const guide = container.querySelector('.scroll-guide');
+		if (guide) guide.classList.toggle('scroll-guide-hidden', scrollStarted);
+	}
+
+	function render() {
+		animation = requestAnimationFrame(render);
+		const time = clock.getElapsedTime();
+		waterUniforms.time.value = time;
+		mouseX += (targetMouseX - mouseX) * .035;
+		mouseY += (targetMouseY - mouseY) * .035;
+		smoothScroll += (scrollProgress - smoothScroll) * .08;
+
+		const p = smoothScroll;
+		// Cinematic ease: slow crawl in, accelerate through gate, slow drift out
+		const eased = p < .5
+			? 2 * p * p * (3 - 2 * p) * .42
+			: .42 + (p - .5) * 2 * (1.58 - (p - .5) * 2 * .58);
+		const invT = 1 - eased;
+
+		// Bezier path: start → torii gate → beyond
+		let camX = invT * invT * 0.18 + 2 * invT * eased * (-3.55) + eased * eased * (-5.5);
+		// Camera dips low approaching the gate, rises after passing through
+		const gateDip = Math.sin(eased * Math.PI);
+		let camY = invT * invT * 2.36 + 2 * invT * eased * 2.32 + eased * eased * 3.4 - gateDip * .35;
+		const camZ = invT * invT * 19.4 + 2 * invT * eased * (-1.9) + eased * eased * (-9.0);
+		if (!reduced) {
+			camX += mouseX * .22 * (1 - eased);
+			camY -= mouseY * .1 * (1 - eased);
 		}
+		camera.position.set(camX, camY, camZ);
+
+		// LookAt leads the camera — looks ahead toward where it's going
+		const lead = Math.min(eased + .18, 1);
+		const lookX = -2.7 + (-5.5 - (-2.7)) * lead;
+		const lookY = 2.85 + (3.8 - 2.85) * lead - Math.sin(lead * Math.PI) * .2;
+		const lookZ = -1.7 + (-18.0 - (-1.7)) * lead;
+		camera.lookAt(lookX, lookY, lookZ);
+
+		// Subtle cinematic roll: tilts slightly as passing through, levels out after
+		camera.rotation.z = Math.sin(eased * Math.PI) * .025;
+
+		// Animate birds: fast circular flight around sun area
+		for (const bird of birds) {
+			const d = bird.userData;
+			const t = time * d.speed + d.phase;
+			bird.position.x = d.baseX + Math.sin(t) * 2.0;
+			bird.position.y = d.baseY + Math.cos(t * 1.3) * .8 + Math.sin(time * 1.5 + d.flapPhase) * .1;
+			bird.position.z = d.baseZ + Math.cos(t * .7) * 1.5;
+			const flap = .12 + Math.abs(Math.sin(time * 3 + d.flapPhase)) * .06;
+			bird.scale.y = flap * 3;
+		}
+
+		// Keep scene fully visible; sticky scroll-away reveals content naturally
+		renderer.render(scene, camera);
+	}
 
 		const observer = new ResizeObserver(resize);
 		observer.observe(container);
 		container.addEventListener('pointermove', move, { passive: true });
+		window.addEventListener('scroll', onScroll, { passive: true });
 		resize();
+		onScroll();
 		render();
 		dispose = () => {
 			cancelAnimationFrame(animation);
 			observer.disconnect();
 			container.removeEventListener('pointermove', move);
+			window.removeEventListener('scroll', onScroll);
 			scene.traverse((object) => object.geometry?.dispose?.());
 			materials.forEach((item) => item.dispose());
 			textures.forEach((item) => item.dispose());
@@ -510,10 +569,18 @@
 	onDestroy(() => dispose());
 </script>
 
-<div class="wabi-scene" bind:this={container} aria-label="Three dimensional torii at sunset"></div>
+<div class="wabi-scene" bind:this={container} aria-label="Three dimensional torii at sunset">
+	<div class="scroll-guide" class:scroll-guide-hidden={scrollStarted} aria-hidden="true">
+		<div class="scroll-guide-inner">
+			<span class="scroll-guide-glyph">&#x2193;</span>
+			<span class="scroll-guide-track"><span class="scroll-guide-bead"></span></span>
+			<span class="scroll-guide-text">往下走</span>
+		</div>
+	</div>
+</div>
 
 <style>
-	.wabi-scene { position: absolute; inset: 0; overflow: hidden; background: #899486; }
+	.wabi-scene { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; background: #899486; }
 	.wabi-scene :global(canvas) { display: block; width: 100% !important; height: 100% !important; }
 	.wabi-scene::after {
 		content: '';
@@ -524,5 +591,83 @@
 			linear-gradient(180deg, rgba(255, 172, 104, .13), transparent 34%),
 			radial-gradient(ellipse 74% 66% at 50% 48%, transparent 55%, rgba(15, 19, 15, .34));
 		mix-blend-mode: multiply;
+	}
+
+	.scroll-guide {
+		position: absolute;
+		bottom: 3rem;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 4;
+		pointer-events: none;
+		opacity: 1;
+		transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1);
+		animation: guide-emerge 1300ms cubic-bezier(0.16, 1, 0.3, 1) 800ms both;
+	}
+	.scroll-guide-hidden { opacity: 0; }
+
+	.scroll-guide-inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.scroll-guide-glyph {
+		font-size: 0.7rem;
+		line-height: 1;
+		color: var(--clay, #9e6b55);
+		opacity: 0.6;
+		text-shadow: 0 1px 4px rgba(38, 35, 32, 0.5);
+	}
+
+	.scroll-guide-track {
+		width: 1px;
+		height: 2.5rem;
+		background: linear-gradient(180deg, var(--clay, #9e6b55) 0%, transparent 100%);
+		opacity: 0.35;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.scroll-guide-bead {
+		position: absolute;
+		top: 0;
+		left: -1.5px;
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: var(--paper, #e8e5de);
+		box-shadow: 0 0 3px rgba(158, 107, 85, 0.6);
+		animation: bead-fall 2400ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+	}
+
+	.scroll-guide-text {
+		font-family: var(--font-family--body, sans-serif);
+		font-size: 0.55rem;
+		letter-spacing: 0.4em;
+		text-transform: uppercase;
+		color: var(--clay, #9e6b55);
+		opacity: 0.5;
+		text-shadow: 0 1px 4px rgba(38, 35, 32, 0.4);
+		writing-mode: vertical-rl;
+		margin-top: 0.3rem;
+	}
+
+	@keyframes guide-emerge {
+		from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+		to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+	}
+
+	@keyframes bead-fall {
+		0%   { transform: translateY(0); opacity: 0; }
+		20%  { opacity: 0.9; }
+		80%  { opacity: 0.4; }
+		100% { transform: translateY(40px); opacity: 0; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.scroll-guide { animation: none; opacity: 0.6; }
+		.scroll-guide-bead { animation: none; opacity: 0.5; }
 	}
 </style>

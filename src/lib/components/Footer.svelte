@@ -43,7 +43,7 @@
 		color: var(--stone);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		transition: color 0.4s ease;
+		transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	@media (hover: hover) {

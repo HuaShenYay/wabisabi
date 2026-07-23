@@ -141,6 +141,7 @@ body {
 	background-color: var(--paper);
 	color: var(--ink);
 	cursor: url("data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%228%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3C%2Fsvg%3E") 4 4, auto;
+	overflow-x: clip;
 }
 
 body::before {
@@ -180,7 +181,6 @@ body::after {
 	flex-direction: column;
 	justify-content: start;
 	min-height: 100%;
-	overflow: hidden;
 }
 
 .page-background {
@@ -255,7 +255,7 @@ body::after {
 .site-header .nav-link {
 	display: flex;
 	position: relative;
-	transition: opacity 0.4s ease;
+	transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-header .nav-link:hover {
@@ -276,9 +276,7 @@ body::after {
 .hero-3d-wrapper {
 	position: relative;
 	width: 100%;
-	height: var(--viewport-height, 100vh);
-	min-height: 100dvh;
-	overflow: hidden;
+	height: 220vh;
 }
 
 /* ===== Body Text & Lists ===== */
@@ -298,6 +296,11 @@ body::after {
 	line-height: 1.5;
 	letter-spacing: 0.08em;
 	color: var(--stone);
+}
+
+/* Digital deboss: letterpress indent into paper (Yūgen) */
+.deboss-text {
+	text-shadow: 0 1px 0.5px rgba(232, 229, 222, 0.6), 0 -0.5px 0.5px rgba(38, 35, 32, 0.15);
 }
 
 .section-list li {
@@ -337,7 +340,7 @@ body::after {
 	text-decoration-thickness: 1px;
 	text-underline-position: under;
 	text-decoration-color: var(--sand);
-	transition: text-decoration-color 0.45s ease, opacity 0.45s ease;
+	transition: text-decoration-color 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (hover: hover) {
@@ -362,28 +365,14 @@ a {
 	color: var(--ink);
 }
 
-/* ===== Content Sections (Clients / Awards / Speaking / Links) ===== */
-.section-label.clients,
-.section-label.awards,
-.section-label.speaking,
+/* ===== Content Sections (Links) ===== */
 .section-label.links {
 	grid-column: 1 / 3;
 }
 
-.section-list.clients,
-.section-list.awards,
-.section-list.speaking,
 .section-list.links {
 	grid-column: 3 / -1;
 	margin-bottom: calc(0.5 * var(--spacer-height));
-}
-
-.section-list.speaking {
-	max-width: 18em;
-}
-
-.section-list.speaking > li + li {
-	margin-top: 1em;
 }
 
 .section-list.links li {
@@ -449,23 +438,10 @@ a {
 		grid-column: 3 / -2;
 	}
 
-	.section-label.clients {
-		grid-column: 1 / 2;
-	}
-
-	.section-list.clients {
-		grid-column: 3 / 5;
-		grid-row: span 2;
-	}
-
-	.section-label.awards,
-	.section-label.speaking,
 	.section-label.links {
 		grid-column: 6 / 8;
 	}
 
-	.section-list.awards,
-	.section-list.speaking,
 	.section-list.links {
 		grid-column: 8 / -1;
 	}
@@ -537,7 +513,7 @@ a {
 	pointer-events: none;
 	z-index: 9999;
 	opacity: 0;
-	transition: opacity 0.4s ease, width 0.4s ease, height 0.4s ease;
+	transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	animation: cursor-breathe 4s ease-in-out infinite;
 }
 
@@ -557,7 +533,7 @@ a {
 	pointer-events: none;
 	z-index: 9999;
 	opacity: 0;
-	transition: opacity 0.4s ease;
+	transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cursor-dot.active {
@@ -581,11 +557,6 @@ a {
 	}
 }
 
-/* ===== Awards list item spans ===== */
-.section-list.awards li span:last-child {
-	opacity: 0.45;
-}
-
 /* ===== Organic imperfection: subtle section markers ===== */
 .grid-section::before {
 	content: "";
@@ -601,22 +572,22 @@ a {
 
 /* ===== Yugen: scroll reveal states (driven by IntersectionObserver action) ===== */
 .reveal-hidden {
-	opacity: var(--yugen-dim, 0.12);
-	transform: translateY(var(--yugen-lift, 18px));
-	filter: blur(var(--yugen-blur, 3px));
-	transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-	            transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-	            filter 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
+		opacity: var(--yugen-dim, 0.12);
+		transform: translateY(var(--yugen-lift, 18px));
+		filter: blur(var(--yugen-blur, 3px));
+		transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+		            transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+		            filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+	}
 
-.reveal-visible {
-	opacity: 1;
-	transform: translateY(0);
-	filter: blur(0);
-	transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-	            transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-	            filter 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
+	.reveal-visible {
+		opacity: 1;
+		transform: translateY(0);
+		filter: blur(0);
+		transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+		            transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+		            filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+	}
 
 /* ===== Fukinsei: organic rotation offsets on sections ===== */
 .grid-section:nth-of-type(1) { transform: rotate(var(--tilt-1)); }
@@ -641,6 +612,14 @@ a {
 	background: none;
 	margin: calc(0.4 * var(--spacer-height)) 0;
 	position: relative;
+}
+
+/* ===== Fukinsei: session-seeded horizontal drift per block ===== */
+/* Uses `translate` (independent of `transform: rotate`) so tilt is preserved. */
+.section-label,
+.section-list,
+.section-paragraph {
+	translate: var(--offset-x, 0) 0;
 }
 
 .ink-divider::before {
