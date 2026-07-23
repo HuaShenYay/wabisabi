@@ -51,22 +51,4 @@
 			color: var(--clay);
 		}
 	}
-
-	@media (min-width: 600px) {
-		.footer-content {
-			grid-column: 2 / -1;
-		}
-	}
-
-	@media (min-width: 900px) {
-		.footer-content {
-			grid-column: 3 / -2;
-		}
-	}
-
-	@media (min-width: 1200px) {
-		.footer-content {
-			grid-column: 4 / -2;
-		}
-	}
 </style>

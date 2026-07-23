@@ -1,7 +1,6 @@
 <header class="site-header">
-	<a href="/" class="nav-link">宋子杰</a>
 	<nav>
-		<a href="/#about" class="nav-link" aria-current="page">
+		<a href="/" class="nav-link" aria-current="page">
 			<span class="nav-current">About</span>
 		</a>
 		<span class="nav-separator" aria-hidden="true">
@@ -9,6 +8,6 @@
 				<circle cx="1" cy="1" r="1" fill="currentColor" />
 			</svg>
 		</span>
-		<a href="/#links" class="nav-link">Links</a>
+		<a href="/#links" class="nav-link">Project</a>
 	</nav>
 </header>

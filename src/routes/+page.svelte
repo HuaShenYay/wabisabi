@@ -1,6 +1,5 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
-	import Hero from '$lib/components/Hero.svelte';
 	import WabiScene from '$lib/components/WabiScene.svelte';
 	import AboutSection from '$lib/components/AboutSection.svelte';
 	import Marquee from '$lib/components/Marquee.svelte';
@@ -8,11 +7,9 @@
 	import Footer from '$lib/components/Footer.svelte';
 </script>
 
-<Header />
-
 <div class="hero-3d-wrapper">
 	<WabiScene />
-	<Hero />
+	<Header />
 </div>
 
 <div class="spacer" style="--size: 1"></div>
