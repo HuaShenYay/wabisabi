@@ -1,59 +1,54 @@
 <script>
-	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
-	import WabiScene from '$lib/components/WabiScene.svelte';
+	import HeroIntro from '$lib/components/HeroIntro.svelte';
 	import AboutSection from '$lib/components/AboutSection.svelte';
 	import Marquee from '$lib/components/Marquee.svelte';
 	import LinksSection from '$lib/components/LinksSection.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
-	// Fukinsei: each content block drifts to a random horizontal position per session.
-	// Label + paired list share the same offset so a block stays internally coherent.
-	// Range is bounded to keep content within the viewport edges.
-	onMount(() => {
-		const drift = () => `${(Math.random() * 16 - 8).toFixed(2)}vw`;
-		document.querySelectorAll('section.grid-section').forEach((section) => {
-			const intro = section.querySelector('.section-paragraph.intro');
-			if (intro) intro.style.setProperty('--offset-x', drift());
-
-			const labels = section.querySelectorAll('.section-label:not(.intro)');
-			const lists = section.querySelectorAll('.section-list');
-			labels.forEach((label, i) => {
-				const v = drift();
-				label.style.setProperty('--offset-x', v);
-				if (lists[i]) lists[i].style.setProperty('--offset-x', v);
-			});
-		});
-	});
+	let { data } = $props();
 </script>
 
 <div class="hero-3d-wrapper">
-	<WabiScene />
+	<div class="hero-editorial">
+		<HeroIntro profile={data?.profile} />
+	</div>
 	<Header />
 </div>
 
-<div class="spacer" style="--size: 1"></div>
-
-<AboutSection />
-
-<div class="spacer" style="--size: 0.5"></div>
-
-<Marquee />
-
-<div class="spacer" style="--size: 1"></div>
-
-<LinksSection />
-
-<div class="spacer" style="--size: 0.5"></div>
-
-<Footer />
+<div class="about-manuscript">
+	<AboutSection {data} />
+	<Marquee />
+	<LinksSection {data} />
+	<div class="spacer" style="--size: 1"></div>
+	<Footer />
+</div>
 
 <style>
 	.hero-3d-wrapper {
 		position: relative;
 		width: 100%;
 		/* Keep the navigation legible without turning it into a competing UI layer. */
-		color: rgba(255, 237, 202, 0.86);
-		text-shadow: 0 1px 12px rgba(29, 27, 20, 0.42);
+		color: var(--color-bg);
+		height: var(--hero-height);
+	}
+	.hero-editorial { position: sticky; top: 0; height: 100svh; }
+	.about-manuscript {
+		position: relative;
+		margin-top: calc(-1 * var(--hero-handoff));
+		padding-top: var(--hero-handoff);
+		/* A translucent paper edge borrows the live water beneath it. */
+		background: linear-gradient(180deg,
+			transparent 0,
+			color-mix(in srgb, var(--color-bg) 8%, transparent) calc(var(--hero-handoff) * .18),
+			color-mix(in srgb, var(--color-bg) 56%, transparent) calc(var(--hero-handoff) * .5),
+			color-mix(in srgb, var(--color-bg) 94%, transparent) calc(var(--hero-handoff) * .82),
+			var(--color-bg) var(--hero-handoff));
+	}
+	:global(.page-root:has(.scene-unavailable)) .hero-3d-wrapper { height: 100svh; }
+	:global(.page-root:has(.scene-unavailable)) .about-manuscript { margin-top: 0; padding-top: 0; background: var(--color-bg); }
+	@media (prefers-reduced-motion: reduce) {
+		.hero-3d-wrapper { height: 100svh; }
+		.about-manuscript { margin-top: 0; padding-top: 0; background: var(--color-bg); }
 	}
 </style>

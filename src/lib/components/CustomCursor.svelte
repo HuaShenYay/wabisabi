@@ -1,52 +1,49 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
-
-	let ring;
-	let dot;
-	let mouseX = 0;
-	let mouseY = 0;
-	let ringX = 0;
-	let ringY = 0;
-	let cursorActive = false;
-	let animationId;
+	let ring: HTMLDivElement;
+	let dot: HTMLDivElement;
 
 	onMount(() => {
-		// Touch devices: CSS already hides the cursor; skip global listeners.
-		if (window.matchMedia('(hover: none)').matches) return {};
-
-		function handleMouseMove(e) {
-			mouseX = e.clientX;
-			mouseY = e.clientY;
-
-			if (dot) {
-				dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-			}
-
-			if (!cursorActive) {
-				cursorActive = true;
-				ring?.classList.add('active');
-				dot?.classList.add('active');
-			}
+		const preference = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+		let frame = 0;
+		let active = false;
+		let x = 0, y = 0, ringX = 0, ringY = 0;
+		function hide() {
+			active = false;
+			cancelAnimationFrame(frame);
+			frame = 0;
+			ring.classList.remove('active');
+			dot.classList.remove('active');
+			document.documentElement.classList.remove('has-custom-cursor');
 		}
-
-		function animateRing() {
-			ringX += (mouseX - ringX) * 0.12;
-			ringY += (mouseY - ringY) * 0.12;
-
-			if (ring) {
-				ring.style.setProperty('--ring-x', `${ringX}px`);
-				ring.style.setProperty('--ring-y', `${ringY}px`);
-			}
-
-			animationId = requestAnimationFrame(animateRing);
+		function animate() {
+			ringX += (x - ringX) * .12;
+			ringY += (y - ringY) * .12;
+			ring.style.setProperty('--ring-x', `${ringX}px`);
+			ring.style.setProperty('--ring-y', `${ringY}px`);
+			frame = Math.abs(x - ringX) + Math.abs(y - ringY) > .1 ? requestAnimationFrame(animate) : 0;
 		}
-
-		document.addEventListener('mousemove', handleMouseMove);
-		animationId = requestAnimationFrame(animateRing);
-
+		function move(event: PointerEvent) {
+			if (!preference.matches || event.pointerType !== 'mouse') { hide(); return; }
+			x = event.clientX; y = event.clientY;
+			if (!active) {
+				ringX = x; ringY = y; active = true;
+				ring.classList.add('active'); dot.classList.add('active');
+				document.documentElement.classList.add('has-custom-cursor');
+			}
+			dot.style.transform = `translate(${x}px, ${y}px)`;
+			if (!frame) animate();
+		}
+		document.addEventListener('pointermove', move);
+		document.documentElement.addEventListener('pointerleave', hide);
+		window.addEventListener('blur', hide);
+		preference.addEventListener('change', hide);
 		return () => {
-			document.removeEventListener('mousemove', handleMouseMove);
-			cancelAnimationFrame(animationId);
+			hide();
+			document.removeEventListener('pointermove', move);
+			document.documentElement.removeEventListener('pointerleave', hide);
+			window.removeEventListener('blur', hide);
+			preference.removeEventListener('change', hide);
 		};
 	});
 </script>

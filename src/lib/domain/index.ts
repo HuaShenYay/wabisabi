@@ -15,3 +15,10 @@ export {
 	type EducationEntry,
 	type PhilosophyItem
 } from './portfolio.js';
+export {
+	projects,
+	categoryOrder,
+	groupByCategory,
+	type Project,
+	type ProjectCategory
+} from './projects.js';

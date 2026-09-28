@@ -1,0 +1,13 @@
+{
+	"name": "wabisabi-studio",
+	"private": true,
+	"type": "module",
+	"version": "1.0.0",
+	"dependencies": {
+		"sanity": "^6.6.0",
+		"@sanity/vision": "^6.6.0",
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8",
+		"styled-components": "^6.1.15"
+	}
+}

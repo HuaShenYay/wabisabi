@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字人文发展历程 — 考研复习可视化</title>
+<style>
+  :root {
+    --bg: #fafaf8;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent1: #2d6a4f;
+    --accent2: #40916c;
+    --accent3: #52b788;
+    --accent4: #95d5b2;
+    --accent5: #d8f3dc;
+    --card: #ffffff;
+    --border: #e0e0e0;
+    --timeline: #b0b0b0;
+    --phase1: #1b4332;
+    --phase2: #2d6a4f;
+    --phase3: #40916c;
+    --phase4: #52b788;
+    --phase5: #74c69d;
+    --phase6: #b7e4c7;
+    --tag-bg: #f0f7f2;
+    --tag-border: #b7e4c7;
+    --highlight: #fff3cd;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 3px solid var(--accent1);
+    margin-bottom: 40px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--phase1);
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+
+  header .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Framework summary box */
+  .framework-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--phase1);
+    padding: 20px 28px;
+    margin-bottom: 40px;
+    border-radius: 4px;
+    font-size: 0.92rem;
+    line-height: 1.8;
+  }
+
+  .framework-box h2 {
+    font-size: 1.05rem;
+    color: var(--phase1);
+    margin-bottom: 10px;
+  }
+
+  .framework-box pre {
+    background: #f7faf8;
+    padding: 14px 18px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    white-space: pre;
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: #2d3a2d;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--phase1), var(--phase6));
+    border-radius: 2px;
+  }
+
+  /* Phase */
+  .phase {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .phase-marker {
+    position: absolute;
+    left: -33px;
+    top: 6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    background: var(--bg);
+    z-index: 1;
+  }
+
+  .phase-header {
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .phase-header:hover { background: #f5faf6; }
+
+  .phase-header .phase-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    color: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .phase-header .phase-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .phase-header .phase-period {
+    margin-left: auto;
+    font-size: 0.82rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .phase-header .arrow {
+    margin-left: 8px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .phase.open .phase-header .arrow { transform: rotate(180deg); }
+
+  .phase-body {
+    display: none;
+    padding: 20px 20px 12px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+  }
+
+  .phase.open .phase-body { display: block; }
+
+  /* Phase colors */
+  .phase:nth-child(1) { --pcolor: var(--phase1); }
+  .phase:nth-child(2) { --pcolor: var(--phase2); }
+  .phase:nth-child(3) { --pcolor: var(--phase3); }
+  .phase:nth-child(4) { --pcolor: var(--phase4); }
+  .phase:nth-child(5) { --pcolor: var(--phase5); }
+  .phase:nth-child(6) { --pcolor: var(--phase6); color: #3a5a40; }
+
+  .phase:nth-child(1) .phase-marker { color: var(--phase1); }
+  .phase:nth-child(2) .phase-marker { color: var(--phase2); }
+  .phase:nth-child(3) .phase-marker { color: var(--phase3); }
+  .phase:nth-child(4) .phase-marker { color: var(--phase4); }
+  .phase:nth-child(5) .phase-marker { color: var(--phase5); }
+  .phase:nth-child(6) .phase-marker { color: var(--phase6); }
+
+  .phase:nth-child(1) .phase-num { background: var(--phase1); }
+  .phase:nth-child(2) .phase-num { background: var(--phase2); }
+  .phase:nth-child(3) .phase-num { background: var(--phase3); }
+  .phase:nth-child(4) .phase-num { background: var(--phase4); }
+  .phase:nth-child(5) .phase-num { background: var(--phase5); }
+  .phase:nth-child(6) .phase-num { background: var(--phase6); color: #3a5a40; }
+
+  .phase:nth-child(1) .phase-header { border-left: 4px solid var(--phase1); }
+  .phase:nth-child(2) .phase-header { border-left: 4px solid var(--phase2); }
+  .phase:nth-child(3) .phase-header { border-left: 4px solid var(--phase3); }
+  .phase:nth-child(4) .phase-header { border-left: 4px solid var(--phase4); }
+  .phase:nth-child(5) .phase-header { border-left: 4px solid var(--phase5); }
+  .phase:nth-child(6) .phase-header { border-left: 4px solid var(--phase6); }
+
+  /* Sections inside phase */
+  .section { margin-bottom: 16px; }
+  .section:last-child { margin-bottom: 0; }
+
+  .section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--pcolor, var(--accent1));
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 10px 0 4px;
+    color: #333;
+  }
+
+  .section p, .section li { font-size: 0.88rem; }
+
+  .section ul, .section ol { padding-left: 20px; margin: 4px 0; }
+  .section li { margin: 3px 0; }
+
+  .blockquote {
+    border-left: 3px solid var(--accent3);
+    padding: 4px 12px;
+    margin: 8px 0;
+    background: var(--tag-bg);
+    border-radius: 0 3px 3px 0;
+    font-size: 0.88rem;
+    color: #444;
+  }
+
+  .highlight {
+    background: var(--highlight);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 1px 8px;
+    border-radius: 3px;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    color: var(--phase1);
+    margin: 2px 2px;
+    font-weight: 500;
+  }
+
+  .tag.blue  { background: #e8f0fe; border-color: #a8c8f8; color: #1a56b0; }
+  .tag.red   { background: #fde8e8; border-color: #f5b8b8; color: #b01a1a; }
+  .tag.purple { background: #f0e8fc; border-color: #c8a8f0; color: #6b2fa0; }
+
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 10px 0;
+  }
+
+  .comparison .col {
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .comparison .col.left  { background: #f0f7f2; border: 1px solid #b7e4c7; }
+  .comparison .col.right { background: #fef9f0; border: 1px solid #f5d8a8; }
+
+  .comparison .col h4 { margin-top: 0; font-size: 0.88rem; }
+
+  .person-card {
+    display: inline-block;
+    vertical-align: top;
+    width: 48%;
+    padding: 10px 12px;
+    margin: 4px 1%;
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .person-card strong { color: var(--phase1); }
+
+  .key-question {
+    background: #fef3e2;
+    border: 1px solid #f5c882;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin: 6px 0;
+  }
+
+  .key-question::before { content: '❓ '; }
+
+  /* Two-column */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .comparison { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .person-card { width: 100%; }
+    header h1 { font-size: 1.5rem; }
+    .phase-header .phase-period { font-size: 0.75rem; }
+  }
+
+  /* Print */
+  @media print {
+    body { font-size: 12px; }
+    .phase-body { display: block !important; }
+    .phase-header { cursor: default; }
+    .phase-header .arrow { display: none; }
+    .phase { break-inside: avoid; }
+    .container { max-width: 100%; }
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 20px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>数字人文发展历程</h1>
+  <p class="subtitle">从人文计算到 AI 时代 — 考研复习可视化</p>
+</header>
+
+<!-- Framework Summary -->
+<div class="framework-box">
+  <h2>📌 一句话总结框架</h2>
+<pre>数字人文经历了从"计算机辅助人文学"(Humanities Computing)，
+到"数字资源建设"(Digitalization)，再到"计算方法改变人文学研究"(Computational Humanities)，
+最终进入"AI 与批判反思并存"的发展阶段。</pre>
+</div>
+
+<div class="timeline">
+
+<!-- ============ PHASE 1 ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">第一阶段</span>
+    <span class="phase-title">人文计算 Humanities Computing</span>
+    <span class="period">1949 — 1990s</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+
+    <div class="section">
+      <h3>核心概念</h3>
+      <p>Humanities Computing（人文计算）。数字人文的前身，这一阶段还没有广泛使用"Digital Humanities"这一名称。</p>
+    </div>
+
+    <div class="section">
+      <h3>产生背景</h3>
+      <p>20 世纪中期以后，计算机技术出现。人文学者开始思考：<span class="highlight">计算机是否能够帮助人文学研究处理大量资料？</span></p>
+      <p>形成了<strong>计算机技术 + 人文学研究</strong>的结合。</p>
+    </div>
+
+    <div class="section">
+      <h3>代表人物：Roberto Busa（"数字人文之父"）</h3>
+      <div class="person-card">
+        <strong>项目：Index Thomisticus</strong><br>
+        1949 年开始<br>
+        利用 IBM 穿孔卡技术<br>
+        对 Thomas Aquinas（托马斯·阿奎那）的拉丁文著作进行词语整理
+      </div>
+      <div class="person-card">
+        <strong>核心方法：Concordance（词语索引）</strong><br>
+        输入关键词 → 机器自动定位<br>
+        出现次数、位置、上下文<br>
+        从"人工翻阅"变为"机器检索"
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>这一时期的特点</h3>
+      <div class="two-col">
+        <div class="col left">
+          <h4>① 计算机是工具</h4>
+          <p>人文学者提出问题 ↓ 计算机帮助处理数据</p>
+        </div>
+        <div class="col left">
+          <h4>② 研究对象主要是文本</h4>
+          <p>文学作品、宗教文本、历史文献</p>
+        </div>
+        <div class="col right" style="grid-column: span 2;">
+          <h4>③ 目标是提高效率</h4>
+          <p>解决"如何更快处理人文学资料"</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>⚠️ 局限</h3>
+      <div class="key-question">计算机只是辅助工具，没有改变人文学研究的问题意识。</div>
+      <p>换句话说：<strong>以前怎么研究，现在只是更快。</strong></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PHASE 2 ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">第二阶段</span>
+    <span class="phase-title">转型时期：从人文计算到数字人文</span>
+    <span class="period">1990s末 — 2000s</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+
+    <div class="section">
+      <h3>为什么发生转变？（三个原因）</h3>
+    </div>
+
+    <div class="section">
+      <h4>① 计算机环境改变</h4>
+      <p>20 世纪 90年代：个人电脑普及，互联网出现。<br>
+      计算机不再只是大型机构拥有的工具，<strong>普通研究者也可以使用</strong>。</p>
+    </div>
+
+    <div class="section">
+      <h4>② 数字资源爆炸</h4>
+      <div class="comparison">
+        <div class="col left">
+          <h4>过去</h4>
+          <p>研究对象：纸质文本</p>
+          <p>问题：<strong>如何查资料？</strong></p>
+        </div>
+        <div class="col right">
+          <h4>后来</h4>
+          <p>电子文本、数字档案、图片、视频、音频、数据库</p>
+          <p>问题：<strong>如何管理和分析海量数字资料？</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>③ 网络改变知识生产方式</h4>
+      <p>互联网带来：开放共享、在线协作、数字出版、数据库建设。</p>
+      <p>人文学研究从 <strong>个人书房 → 网络空间</strong>。</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PHASE 3 ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">第三阶段</span>
+    <span class="phase-title">"Digital Humanities" 名称的出现</span>
+    <span class="period">1990s末 — 2004</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+
+    <div class="section">
+      <h3>关键时间线</h3>
+      <ul>
+        <li><strong>1990 年代末</strong> — "Digital Humanities" 术语开始出现</li>
+        <li><strong>2004 年</strong> — 出版《A Companion to Digital Humanities》，编者：Susan Schreibman、Ray Siemens、John Unsworth</li>
+        <li><strong>意义：</strong>推动 Digital Humanities 成为正式学术领域名称</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>为什么不用 Humanities Computing？</h3>
+      <div class="comparison">
+        <div class="col left">
+          <h4>Humanities Computing</h4>
+          <p>强调：计算</p>
+          <p>关键词：工具</p>
+          <p>例如：计算词频、统计作者用词</p>
+        </div>
+        <div class="col right">
+          <h4>Digital Humanities</h4>
+          <p>强调：数字环境下重新思考人文学</p>
+          <p>关键词：方法、理论、知识生产</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>核心区别（记忆口诀）</h3>
+      <div class="blockquote">
+        <strong>人文计算：</strong>用计算机帮助人文学<br>
+        <strong>数字人文：</strong>数字技术改变人文学
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PHASE 4 ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">第四阶段</span>
+    <span class="phase-title">数字人文的发展阶段</span>
+    <span class="period"></span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+
+    <!-- 4a -->
+    <div class="section">
+      <h4>子阶段一：数字化与网络化</h4>
+      <p><strong>时间：</strong>1990s — 2000s 中期<br>
+      <strong>核心：</strong>把人文学资料转移到数字空间</p>
+      <p><span class="tag">Digital Archive</span> <span class="tag">Digital Library</span> <span class="tag">Digital Museum</span></p>
+    </div>
+
+    <div class="section">
+      <h4>代表项目</h4>
+      <ul>
+        <li><strong>TEI</strong>（Text Encoding Initiative）— 文本编码计划，建立统一数字化标准</li>
+        <li><strong>Google Books</strong> — 大量书籍扫描，形成大型数字文本资源</li>
+        <li><strong>NINES</strong> — 19 世纪文学数字研究平台</li>
+      </ul>
+      <p>特点：重点在保存、整理、共享。但问题：仍然主要是"把资料搬到网上"。</p>
+    </div>
+
+    <!-- 4b -->
+    <div class="section">
+      <h4>子阶段二：计算批评与远读</h4>
+      <p><strong>时间：</strong>2000s 中期 — 2010s<br>
+      <strong>核心变化：</strong>从数字化 → 计算化</p>
+      <div class="blockquote">
+        过去：把 10000 本小说放入电脑<br>
+        现在：利用算法分析 10000 本小说
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>代表人物</h4>
+      <div class="person-card">
+        <strong>Franco Moretti</strong><br>
+        核心理论：<strong>Distant Reading（远读）</strong><br>
+        对比传统：Close Reading（细读）→ 只研究一本小说<br>
+        主张：利用数据研究几千甚至几万文本<br>
+        代表作：《Graphs, Maps, Trees》
+      </div>
+      <div class="person-card">
+        <strong>Matthew Jockers</strong><br>
+        核心理论：<strong>Macroanalysis（宏观分析）</strong><br>
+        利用主题模型、文本分析研究文学趋势
+      </div>
+      <div style="height:8px"></div>
+      <div class="person-card">
+        <strong>Lev Manovich</strong><br>
+        核心理论：<strong>Cultural Analytics（文化分析）</strong><br>
+        研究对象扩大：从文学文本 → 图像、电影、社交媒体
+      </div>
+      <div class="person-card">
+        <strong>Stephen Ramsay</strong><br>
+        核心理论：<strong>Algorithmic Criticism（算法批评）</strong><br>
+        强调：算法不仅是工具，也是一种阅读方式
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>主要方法</h4>
+      <p>
+        <span class="tag">Text Mining</span>
+        <span class="tag">Topic Modeling</span>
+        <span class="tag">Network Analysis</span>
+        <span class="tag blue">GIS（空间分析）</span>
+        <span class="tag">Visualization</span>
+      </p>
+    </div>
+
+    <div class="section">
+      <h4>影响</h4>
+      <div class="key-question">人文学者开始利用计算方法提出新的问题</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PHASE 5 ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">第五阶段</span>
+    <span class="phase-title">批判数字人文与 AI 时代</span>
+    <span class="period">2015 — 至今</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+
+    <div class="section">
+      <h3>方向一：AI 数字人文</h3>
+      <div class="two-col">
+        <div>
+          <p><strong>2018</strong> — BERT 出现<br><span class="tag">机器语言理解能力提升</span></p>
+          <p><strong>2020</strong> — GPT-3 出现<br><span class="tag">生成式语言模型进入研究领域</span></p>
+          <p><strong>2022</strong> — ChatGPT 出现<br><span class="tag">普通研究者可直接利用大模型</span></p>
+          <p><strong>2024+</strong> — 多模态模型发展<br><span class="tag blue">文本、图片、视频、声音统一分析</span></p>
+        </div>
+        <div>
+          <h4>AI 时代数字人文问题</h4>
+          <ul>
+            <li>AI 能否进行文学解释？</li>
+            <li>AI 生成文本是否具有作者性？</li>
+            <li>大模型是否存在文化偏见？</li>
+            <li>人文学者如何与 AI 协作？</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>方向二：批判数字人文 Critical Digital Humanities</h3>
+      <p>核心观点：<strong>数字技术不是中立的。</strong>数据和算法背后存在权力、资本、文化选择。</p>
+
+      <div class="person-card">
+        <strong>David Berry</strong><br>
+        关注：数字技术背后的社会结构
+      </div>
+      <div class="person-card">
+        <strong>Roopika Risam</strong><br>
+        关注：数字殖民<br>
+        问题：西方数据是否占据主导？
+      </div>
+      <div class="person-card">
+        <strong>Amy Earhart</strong><br>
+        关注：数字档案的选择性<br>
+        问题：谁被保存？谁被遗忘？
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PHASE 6 ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">第六阶段</span>
+    <span class="phase-title">中国数字人文的发展</span>
+    <span class="period"></span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+
+    <div class="section">
+      <h3>特点</h3>
+      <ul>
+        <li><strong>数字化起步较晚：</strong>直接进入互联网时代</li>
+        <li><strong>传统文献学具有数字人文基础：</strong>目录学、版本学、校勘学本身具有分类、整理、知识组织的天然优势</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>中国主要方向</h3>
+      <div class="two-col">
+        <div>
+          <h4>① 古籍数字化</h4>
+          <p>古籍数据库建设</p>
+        </div>
+        <div>
+          <h4>② 数字文献学</h4>
+          <p>不是简单扫描古籍</p>
+          <p>利用数字方法研究：版本关系、作者判断、文本传播</p>
+          <p>例如：利用 NLP 分析某篇文章是否为某作者作品</p>
+        </div>
+        <div style="grid-column: span 2;">
+          <h4>③ AI 数字人文（当前热点）</h4>
+          <p><span class="tag">大语言模型</span><span class="tag">古籍 OCR</span><span class="tag">知识图谱</span><span class="tag">自动标注</span><span class="tag">AI 辅助研究</span></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SUMMARY ============ -->
+<div class="phase open">
+  <div class="phase-marker"></div>
+  <div class="phase-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="phase-num">总结</span>
+    <span class="phase-title">数字人文发展逻辑（考试框架）</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="phase-body">
+    <pre>数字人文发展史
+
+1949-1990s
+│
+人文计算 Humanities Computing
+│  Busa · Concordance · 文本编码 · 计算机作为工具
+│
+
+1990s-2000s
+│
+数字化与网络化
+│  数字档案 · 数字图书馆 · TEI · 开放共享
+│
+
+2000s-2010s
+│
+计算批评
+│  Moretti · Jockers · Manovich
+│  远读 · 文本挖掘 · 网络分析
+│
+
+2015-至今
+│
+AI 数字人文
+│  BERT · GPT · LLM · 多模态
+│
+
+同时发展：
+批判数字人文
+│  算法偏见 · 数字殖民 · 数字伦理
+│
+
+中国路径：
+古籍数字化 + 数字文献学 + AI 数字人文
+</pre>
+    <p style="margin-top:12px"><strong>下一步建议：</strong>整理第二部分 <strong>数字人文核心理论</strong>（远读、近读、文化分析、媒介理论、批判数字人文），因为那部分更容易直接变成考试题。</p>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  数字人文发展历程可视化 · 考研复习资料
+</footer>
+
+<script>
+  // Open first section by default on load; allow toggle
+  document.querySelectorAll('.phase-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+      var phase = this.parentElement;
+      phase.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>

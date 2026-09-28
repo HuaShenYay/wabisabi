@@ -4,9 +4,10 @@
  * Elements fade upward from a dimmed, blurred state as they enter viewport.
  * Honors prefers-reduced-motion: content is visible instantly if reduced.
  */
+/** @param {HTMLElement} node @param {{threshold?: number, rootMargin?: string, once?: boolean}} options */
 export function reveal(node, options = {}) {
 	const {
-		threshold = 0.15,
+		threshold = 0,
 		rootMargin = '0px 0px -8% 0px',
 		once = true
 	} = options;

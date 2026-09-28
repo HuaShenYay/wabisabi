@@ -1,32 +1,19 @@
 /* ===== Portfolio - SvelteKit Stylesheet ===== */
-/* Original: https://www.tomsears.me/ */
-/* Direction: Neo Wabi-Sabi - warm paper, organic texture, imperfect calm */
+/* Design System: DESIGN.md — 新侘寂主义 (Neo-Wabisabi) v1.0 */
+/* 全部颜色/间距/圆角/动效均引用 Design Token，禁止硬编码（DESIGN.md §16） */
 /* Seven Principles: Kanso / Fukinsei / Shibui / Shizen / Yugen / Datsuzoku / Seijaku */
 
-/* ===== Font Faces ===== */
-@font-face {
-	font-family: "Neue Haas Grotesk Display";
-	src: url("/fonts/NHaasGroteskDSStd-45Lt.woff") format("woff");
-	font-weight: 300;
-	font-style: normal;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "Neue Haas Grotesk Display";
-	src: url("/fonts/NHaasGroteskDSStd-55Rg.woff") format("woff");
-	font-weight: 400;
-	font-style: normal;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "Orelo Semi Wide";
-	src: url("/fonts/Orelo-SemiWide.woff2") format("woff2");
-	font-weight: 400;
-	font-style: normal;
-	font-display: block;
-}
+/* ===== Fonts =====
+   按 DESIGN.md §5.1：拒绝几何无衬线体，正文与标题走衬线/人文字体栈。
+   Noto Serif SC 对应规范中的 Source Han Serif（思源宋体开源同源），
+   Cormorant Garamond / EB Garamond 为拉丁声部；display=swap 保护 LCP。
+   LXGW WenKai 依赖系统本地安装，缺失时降级至 Noto Serif SC。 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+/* 京華老宋体 1.007：更接近早期扫描铅字的参差印痕，用于非阅读页显示字。
+   CDN: 中文网字计划；字体授权与版本信息: https://www.zikuxq.com/font/8173.html */
+@import url('https://cn-font.claude-code-best.win/packages/jhlst/dist/%E4%BA%AC%E8%8F%AF%E8%80%81%E5%AE%8B%E4%BD%93v1_007/result.css');
+/* 3.0 字体作为 CDN 不可用时的回退。 */
+@import url('https://fontsapi.zeoseven.com/309/main/result.css');
 
 /* ===== CSS Reset ===== */
 *,
@@ -49,7 +36,7 @@ html {
 	-webkit-text-size-adjust: 100%;
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+	font-family: var(--font-body, serif);
 	-webkit-font-smoothing: antialiased;
 	text-rendering: geometricPrecision;
 	height: 100%;
@@ -90,30 +77,128 @@ img, video {
 	display: none;
 }
 
-/* ===== Neo Wabi-Sabi Design Tokens ===== */
+/* =====================================================================
+   Design Tokens — Single Source of Truth（DESIGN.md §16 附录，原样落地）
+   组件样式只允许引用语义 token，不允许硬编码颜色/间距数值。
+   ===================================================================== */
 :root {
-	/* Typography */
-	--font-family--body: "Neue Haas Grotesk Display", -apple-system, sans-serif;
-	--font-family--display: "Orelo Semi Wide", -apple-system, sans-serif;
+	/* ===== 原始色板（大地色系，禁纯黑纯白） ===== */
+	--raw-paper: #F3EFE6;        /* 宣纸，主背景 */
+	--raw-paper-alt: #EBE4D6;    /* 皮纸，区块交替背景 */
+	--raw-paper-deep: #DDD3BF;   /* 陶胎，深色分区背景 */
+	--raw-ink: #2A2924;          /* 墨色，正文主色 */
+	--raw-ink-soft: #55524A;     /* 淡墨，次要文字 */
+	--raw-ink-faint: #8C8777;    /* 远山，仅限大字号/装饰 */
+	--raw-clay: #A97C5A;         /* 陶土，主强调 / 链接 */
+	--raw-clay-deep: #86593C;    /* 焙陶，hover / active */
+	--raw-moss: #6C7458;         /* 苔痕，次强调 */
+	--raw-slate: #6D7B7A;        /* 青灰，信息/辅助 */
+	--raw-rust: #9C5642;         /* 锈红，强调 */
+	--raw-kintsugi: #B08A4E;     /* 金缮，每屏至多一处 */
 
-	/* Space */
-	--grid-margin: 1.25rem;
+	/* ===== 语义色（组件层唯一入口） ===== */
+	--color-bg: var(--raw-paper);
+	--color-bg-alt: var(--raw-paper-alt);
+	--color-bg-deep: var(--raw-paper-deep);
+	--color-text: var(--raw-ink);
+	--color-text-muted: var(--raw-ink-soft);
+	--color-text-faint: var(--raw-ink-faint);
+	--color-link: var(--raw-clay);
+	--color-link-hover: var(--raw-clay-deep);
+	--color-link-wash: rgba(169, 124, 90, 0.12); /* 陶土淡染，hover 底色/装饰 */
+	--color-accent: var(--raw-moss);
+	--color-info: var(--raw-slate);
+	--color-emphasis: var(--raw-rust);
+	--color-special: var(--raw-kintsugi);
+	--color-border: rgba(42, 41, 36, 0.14);
+	--color-divider: rgba(42, 41, 36, 0.08);
+
+	/* ===== 字体（DESIGN.md §5.1） ===== */
+	--font-heading-reading: "LXGW WenKai", "霞鹜文楷", "Source Han Serif SC", "Noto Serif SC", serif;
+	/* 1.007 保留更明显的旧扫描痕迹；3.0 是在线回退，阅读正文另用原字体。 */
+	--font-heading: "KingHwa_OldSong", "KingHwaOldSong", var(--font-heading-reading);
+	--font-body: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+	--font-latin: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+	--font-ui: "PingFang SC", "Noto Sans SC", sans-serif;
+	/* 站点扩展：笔意/题跋（楷体）——规范未列，作为 --font-heading 的手写补充声部 */
+	--font-brush: "Kaiti SC", "STKaiti", "KaiTi", "BiauKai", serif;
+
+	/* ===== 字号（Fluid Type Scale） ===== */
+	--text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
+	--text-sm: clamp(0.875rem, 0.83rem + 0.2vw, 0.9375rem);
+	--text-base: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
+	--text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem);
+	--text-xl: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+	--text-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+	--text-3xl: clamp(2.25rem, 1.7rem + 2.4vw, 3.5rem);
+
+	/* ===== 行高与字距 ===== */
+	--leading-tight: 1.35;
+	--leading-base: 1.85;
+	--leading-loose: 2.1;
+	--tracking-heading: 0.04em;
+	--tracking-base: 0.01em;
+
+	/* ===== 间距（斐波那契式有机刻度） ===== */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 13px;
+	--space-4: 21px;
+	--space-5: 34px;
+	--space-6: 55px;
+	--space-7: 89px;
+	--space-8: 144px;
+	--space-9: 233px;
+
+	/* ===== 圆角（非均值，手工修边） ===== */
+	--radius-sharp: 2px 6px 2px 6px;
+	--radius-soft: 3px 14px 4px 12px;
+	--radius-organic: 255px 15px 225px 15px / 15px 225px 15px 255px;
+
+	/* ===== 阴影（纸叠在纸上） ===== */
+	--shadow-paper: 0 2px 12px rgba(42, 41, 36, 0.06);
+	--shadow-lifted: 0 8px 32px rgba(42, 41, 36, 0.10), 0 2px 6px rgba(42, 41, 36, 0.06);
+
+	/* ===== 动效 ===== */
+	--ease-organic: cubic-bezier(0.19, 1, 0.22, 1);
+	--ease-settle: cubic-bezier(0.34, 0.01, 0.16, 1);
+	--duration-fast: 180ms;
+	--duration-base: 360ms;
+	--duration-slow: 620ms;
+
+	/* =====================================================================
+	   迁移兼容层（Deprecated aliases）
+	   旧 token 名一律重指向新语义 token；新代码禁止使用以下名称。
+	   ===================================================================== */
+	--paper: var(--color-bg);
+	--paper-warm: var(--color-bg-alt);
+	--paper-deep: var(--color-bg-deep);
+	--ink: var(--color-text);
+	--ink-soft: var(--color-text-muted);
+	--stone: var(--color-text-faint);
+	--fog: color-mix(in srgb, var(--raw-ink-faint) 55%, var(--raw-paper));
+	--sand: color-mix(in srgb, var(--raw-ink-faint) 34%, var(--raw-paper));
+	--clay: var(--color-link);
+	--clay-light: rgba(169, 124, 90, 0.12);
+	--shadow: rgba(42, 41, 36, 0.08);
+	--shadow-deep: rgba(42, 41, 36, 0.14);
+	--cn-songti: var(--font-heading);
+	--cn-kaiti: var(--font-brush);
+	--font-family--body: var(--font-ui);
+	--font-family--display: var(--font-latin);
+	--ease-viscous: var(--ease-organic);
+	--color--light-gray: var(--color-bg);
+	--color--dark-gray: var(--color-text);
+	--color--orange: var(--color-link);
+
+	/* ===== 布局 ===== */
+	--grid-margin: var(--space-4);
 	--header-height: 5rem;
-	--spacer-height: 3.5rem;
-
-	/* Neo Wabi-Sabi Palette */
-	--paper: #e8e5de;
-	--paper-deep: #ddd9d0;
-	--paper-warm: #e3ded4;
-	--ink: #262320;
-	--ink-soft: #3d3a35;
-	--clay: #9e6b55;
-	--clay-light: rgba(158, 107, 85, 0.12);
-	--sand: #c9c0b3;
-	--stone: #8a8379;
-	--fog: #b5afa4;
-	--shadow: rgba(38, 35, 32, 0.08);
-	--shadow-deep: rgba(38, 35, 32, 0.14);
+	--spacer-height: var(--space-6);
+	/* Home: one continuous shore-to-manuscript handoff. */
+	--hero-height: 189svh;
+	--hero-handoff: 55svh;
+	--manuscript-width: 1440px;
 
 	/* Organic imperfection (Fukinsei) */
 	--tilt-1: -0.28deg;
@@ -126,22 +211,24 @@ img, video {
 	--yugen-blur: 3px;
 	--yugen-lift: 18px;
 
-	/* Legacy aliases */
-	--color--light-gray: var(--paper);
-	--color--dark-gray: var(--ink);
-	--color--orange: var(--clay);
-
 	--viewport-height: 100vh;
 }
 
 /* ===== Body & Layout Shell ===== */
 body {
-	font-family: var(--font-family--body);
-	line-height: 1.2;
-	background-color: var(--paper);
-	color: var(--ink);
-	cursor: url("data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%228%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3C%2Fsvg%3E") 4 4, auto;
+	font-family: var(--font-body);
+	line-height: var(--leading-tight);
+	letter-spacing: var(--tracking-base);
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	cursor: auto;
 	overflow-x: clip;
+}
+
+/* Belt-and-braces: never let bare white show through
+   (page transitions, overscroll, pre-hydration frames) */
+html {
+	background-color: var(--color-bg);
 }
 
 body::before {
@@ -170,8 +257,14 @@ body::after {
 /* Theme is locked to warm paper light mode for the Neo Wabi-Sabi atmosphere */
 
 ::selection {
-	background: var(--clay);
-	color: var(--paper);
+	background: var(--color-link);
+	color: var(--color-bg);
+}
+
+/* 无障碍硬底线（DESIGN.md §12）：键盘焦点必须清晰可辨 */
+:focus-visible {
+	outline: 2px solid var(--color-link-hover);
+	outline-offset: 3px;
 }
 
 .page-root {
@@ -188,19 +281,19 @@ body::after {
 	inset: 0 0 auto 0;
 	height: var(--viewport-height, 100vh);
 	background:
-		radial-gradient(ellipse at 18% 8%, rgba(158, 107, 85, 0.08), transparent 42%),
-		radial-gradient(ellipse at 82% 92%, rgba(138, 131, 121, 0.07), transparent 38%),
-		radial-gradient(ellipse at 50% 50%, rgba(201, 192, 179, 0.05), transparent 55%),
-		linear-gradient(168deg, var(--paper) 0%, var(--paper-warm) 40%, var(--paper-deep) 100%);
+		radial-gradient(ellipse at 18% 8%, rgba(169, 124, 90, 0.08), transparent 42%),
+		radial-gradient(ellipse at 82% 92%, rgba(140, 135, 119, 0.07), transparent 38%),
+		radial-gradient(ellipse at 50% 50%, rgba(221, 211, 191, 0.05), transparent 55%),
+		linear-gradient(168deg, var(--color-bg) 0%, var(--color-bg-alt) 40%, var(--color-bg-deep) 100%);
 	z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
 	.page-background {
 		background:
-			radial-gradient(ellipse at 25% 15%, rgba(196, 143, 118, 0.08), transparent 45%),
-			radial-gradient(ellipse at 75% 85%, rgba(154, 147, 137, 0.05), transparent 40%),
-			var(--paper);
+			radial-gradient(ellipse at 25% 15%, rgba(169, 124, 90, 0.08), transparent 45%),
+			radial-gradient(ellipse at 75% 85%, rgba(140, 135, 119, 0.05), transparent 40%),
+			var(--color-bg);
 	}
 }
 
@@ -250,26 +343,32 @@ body::after {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
+	/* 导航属 UI 声部（DESIGN.md §5.1），字间距放宽（§11） */
+	font-family: var(--font-ui);
+	font-size: var(--text-sm);
+	letter-spacing: 0.06em;
 }
 
 .site-header .nav-link {
 	display: flex;
 	position: relative;
-	transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: opacity var(--duration-base) var(--ease-organic);
 }
 
 .site-header .nav-link:hover {
-	opacity: 0.55;
+	text-decoration: underline;
+	text-underline-offset: var(--space-2);
 }
 
 .nav-separator {
 	display: flex;
 	align-items: center;
-	color: var(--stone);
+	color: var(--color-text-faint);
 }
 
 .nav-current {
-	opacity: 0.35;
+	text-decoration: underline;
+	text-underline-offset: var(--space-2);
 }
 
 /* ===== Hero Typography ===== */
@@ -279,58 +378,18 @@ body::after {
 	height: 220vh;
 }
 
-/* ===== Body Text & Lists ===== */
-.body-text,
-.section-list,
-.section-paragraph {
-	font-family: var(--font-family--body);
-	text-transform: uppercase;
-	font-weight: 300;
-	font-size: 1.25rem;
-	letter-spacing: 0.03em;
-	color: var(--ink);
-}
-
+/* ===== Section label（小标签，UI 声部） ===== */
 .section-label {
-	font-size: 0.85rem;
+	font-family: var(--font-ui);
+	font-size: var(--text-xs);
 	line-height: 1.5;
 	letter-spacing: 0.08em;
-	color: var(--stone);
+	color: var(--color-text-faint);
 }
 
 /* Digital deboss: letterpress indent into paper (Yūgen) */
 .deboss-text {
-	text-shadow: 0 1px 0.5px rgba(232, 229, 222, 0.6), 0 -0.5px 0.5px rgba(38, 35, 32, 0.15);
-}
-
-.section-list li {
-	display: flex;
-	justify-content: space-between;
-}
-
-/* ===== Marquee ===== */
-.marquee-text {
-	font-size: max(10rem, 24vw);
-	line-height: 0.8;
-}
-
-.marquee-wrap {
-	display: inline-block;
-	font-family: var(--font-family--display);
-	text-transform: uppercase;
-	font-size: max(6rem, 16vw);
-	line-height: 0.9;
-	letter-spacing: -0.02em;
-	white-space: nowrap;
-	margin-left: var(--indent, -1em);
-	will-change: transform;
-	color: var(--ink);
-	opacity: 0.94;
-}
-
-.marquee-section {
-	overflow: hidden;
-	grid-column: 1 / -1;
+	text-shadow: 0 1px 0.5px rgba(243, 239, 230, 0.6), 0 -0.5px 0.5px rgba(42, 41, 36, 0.15);
 }
 
 /* ===== Links with Underline ===== */
@@ -339,44 +398,19 @@ body::after {
 	text-decoration-line: underline;
 	text-decoration-thickness: 1px;
 	text-underline-position: under;
-	text-decoration-color: var(--sand);
-	transition: text-decoration-color 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+	text-decoration-color: var(--color-border);
+	transition: text-decoration-color var(--duration-base) var(--ease-organic), color var(--duration-base) var(--ease-organic), opacity var(--duration-base) var(--ease-organic);
 }
 
 @media (hover: hover) {
 	.link-underline:hover {
 		text-decoration-color: currentColor;
+		color: var(--color-link-hover);
 	}
 }
 
 a {
 	cursor: inherit;
-}
-
-/* ===== Intro Section ===== */
-.section-label.intro {
-	display: none;
-}
-
-.section-paragraph.intro {
-	text-indent: 4em;
-	grid-column: 1 / -1;
-	max-width: 35em;
-	color: var(--ink);
-}
-
-/* ===== Content Sections (Links) ===== */
-.section-label.links {
-	grid-column: 1 / 3;
-}
-
-.section-list.links {
-	grid-column: 3 / -1;
-	margin-bottom: calc(0.5 * var(--spacer-height));
-}
-
-.section-list.links li {
-	margin-bottom: 6px;
 }
 
 /* ===== Spacer ===== */
@@ -389,19 +423,11 @@ a {
 @media (min-width: 600px) {
 	:root {
 		--grid-margin: 5%;
-		--spacer-height: 4.5rem;
+		--spacer-height: var(--space-7);
 	}
 
 	html {
 		font-size: 18px;
-	}
-
-	.section-label.links {
-		grid-column: 2 / 4;
-	}
-
-	.section-list.links {
-		grid-column: 4 / -1;
 	}
 }
 
@@ -409,7 +435,7 @@ a {
 @media (min-width: 900px) {
 	:root {
 		--header-height: 6.5rem;
-		--spacer-height: 6rem;
+		--spacer-height: var(--space-7);
 	}
 
 	.desktopOnly {
@@ -424,54 +450,17 @@ a {
 		grid-template-columns: repeat(12, minmax(0, 1fr));
 		grid-column-gap: 1rem;
 	}
-
-	.body-text {
-		font-size: 1.4rem;
-	}
-
-	.section-label.intro {
-		display: block;
-		grid-column: 1 / 3;
-	}
-
-	.section-paragraph.intro {
-		grid-column: 3 / -2;
-	}
-
-	.section-label.links {
-		grid-column: 6 / 8;
-	}
-
-	.section-list.links {
-		grid-column: 8 / -1;
-	}
 }
 
 /* ===== Responsive: 1200px+ ===== */
 @media (min-width: 1200px) {
 	:root {
 		--grid-margin: 7%;
-		--spacer-height: 7rem;
+		--spacer-height: var(--space-8);
 	}
 
 	.grid {
 		grid-column-gap: 1.5rem;
-	}
-
-	.section-label.intro {
-		grid-column: 3 / 5;
-	}
-
-	.section-paragraph.intro {
-		grid-column: 5 / -2;
-	}
-
-	.section-label.links {
-		grid-column: 7 / 8;
-	}
-
-	.section-list.links {
-		grid-column: 8 / -2;
 	}
 }
 
@@ -479,7 +468,7 @@ a {
 @media (min-width: 1800px) {
 	:root {
 		--grid-margin: 12%;
-		--spacer-height: 9rem;
+		--spacer-height: var(--space-8);
 	}
 
 	.grid {
@@ -501,6 +490,7 @@ a {
 }
 
 /* ===== Custom Cursor ===== */
+.has-custom-cursor body { cursor: none; }
 .cursor-ring {
 	--size: 44px;
 	position: fixed;
@@ -508,13 +498,13 @@ a {
 	height: var(--size);
 	top: calc(var(--size) * -0.5);
 	left: calc(var(--size) * -0.5);
-	border: solid 1px var(--clay);
+	border: solid 1px var(--color-link);
 	border-radius: 100%;
 	pointer-events: none;
 	z-index: 9999;
 	opacity: 0;
-	transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-	animation: cursor-breathe 4s ease-in-out infinite;
+	transition: opacity var(--duration-base) var(--ease-organic), width var(--duration-base) var(--ease-organic), height var(--duration-base) var(--ease-organic);
+	transform: translate(var(--ring-x, 0), var(--ring-y, 0));
 }
 
 .cursor-ring.active {
@@ -528,31 +518,26 @@ a {
 	height: calc(var(--radius) * 2);
 	top: calc(var(--radius) * -1);
 	left: calc(var(--radius) * -1);
-	background: var(--clay);
+	background: var(--color-link);
 	border-radius: var(--radius);
 	pointer-events: none;
 	z-index: 9999;
 	opacity: 0;
-	transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: opacity var(--duration-base) var(--ease-organic);
 }
 
 .cursor-dot.active {
 	opacity: 0.85;
 }
 
-@keyframes cursor-breathe {
-	0%, 100% { transform: translate(var(--ring-x, 0), var(--ring-y, 0)) scale(1); }
-	50% { transform: translate(var(--ring-x, 0), var(--ring-y, 0)) scale(1.06); }
-}
-
 /* Hide custom cursor on touch devices */
-@media (hover: none) {
+@media (hover: none), (prefers-reduced-motion: reduce) {
 	.cursor-ring,
 	.cursor-dot {
 		display: none;
 	}
 
-	body {
+	body, .has-custom-cursor body {
 		cursor: auto;
 	}
 }
@@ -565,8 +550,8 @@ a {
 	top: 0;
 	width: 2.5rem;
 	height: 1px;
-	background: linear-gradient(90deg, var(--sand), transparent);
-	opacity: 0.3;
+	background: linear-gradient(90deg, var(--color-bg-deep), transparent);
+	opacity: 0.5;
 	pointer-events: none;
 }
 
@@ -575,34 +560,44 @@ a {
 		opacity: var(--yugen-dim, 0.12);
 		transform: translateY(var(--yugen-lift, 18px));
 		filter: blur(var(--yugen-blur, 3px));
-		transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1),
-		            transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
-		            filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: opacity 1.1s var(--ease-organic),
+		            transform 1.1s var(--ease-organic),
+		            filter 1.1s var(--ease-organic);
 	}
 
 	.reveal-visible {
 		opacity: 1;
 		transform: translateY(0);
 		filter: blur(0);
-		transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1),
-		            transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
-		            filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: opacity 1.1s var(--ease-organic),
+		            transform 1.1s var(--ease-organic),
+		            filter 1.1s var(--ease-organic);
 	}
 
-/* ===== Fukinsei: organic rotation offsets on sections ===== */
-.grid-section:nth-of-type(1) { transform: rotate(var(--tilt-1)); }
-.grid-section:nth-of-type(2) { transform: rotate(var(--tilt-2)); }
-.grid-section:nth-of-type(3) { transform: rotate(var(--tilt-3)); }
-.grid-section:nth-of-type(4) { transform: rotate(var(--tilt-4)); }
-
-/* Counter-rotate inner grid so text stays readable while section tilts */
-.grid-section > .grid {
-	transform: rotate(calc(var(--counter-tilt, 0) * -1));
+/* ===== Still Water: staggered ink-develop (子元素逐行错峰显影) ===== */
+/* Applied via use:develop — the container never moves; its children surface
+   out of fog one after another, like lines of ink developing on wet paper. */
+.is-developing > * {
+	opacity: var(--yugen-dim, 0.12);
+	transform: translateY(16px);
+	filter: blur(var(--yugen-blur, 3px));
 }
 
-/* ===== Seijaku: generous varied spacing for tranquility ===== */
+.is-developed > * {
+	opacity: 1;
+	transform: translateY(0);
+	filter: blur(0);
+	transition: opacity 1.05s var(--ease-organic),
+	            transform 1.05s var(--ease-organic),
+	            filter 1.05s var(--ease-organic);
+	transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+/* Keep text-bearing sections level; imperfection belongs to decorative paper. */
+
+/* ===== Seijaku: generous spacing for tranquility（区块间距 ≥ --space-7，移动端可降至 --space-6） ===== */
 .grid-section + .grid-section {
-	margin-top: calc(0.8 * var(--spacer-height));
+	margin-top: var(--spacer-height);
 }
 
 /* ===== Datsuzoku: organic ink-stroke divider ===== */
@@ -614,11 +609,22 @@ a {
 	position: relative;
 }
 
+/* ===== 金缮分割线（DESIGN.md §9.3）：金色修补痕迹，每屏至多一处 ===== */
+.kintsugi-seam {
+	grid-column: 1 / -1;
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent, var(--color-special) 40%,
+		var(--color-special) 60%, transparent
+	);
+	margin-block: var(--space-6);
+	opacity: 0.7;
+}
+
 /* ===== Fukinsei: session-seeded horizontal drift per block ===== */
 /* Uses `translate` (independent of `transform: rotate`) so tilt is preserved. */
-.section-label,
-.section-list,
-.section-paragraph {
+.section-label {
 	translate: var(--offset-x, 0) 0;
 }
 
@@ -631,9 +637,9 @@ a {
 	height: 1px;
 	background: linear-gradient(90deg,
 		transparent 0%,
-		var(--sand) 20%,
-		var(--stone) 50%,
-		var(--sand) 80%,
+		var(--color-bg-deep) 20%,
+		var(--color-text-faint) 50%,
+		var(--color-bg-deep) 80%,
 		transparent 100%);
 	opacity: 0.25;
 }
@@ -650,6 +656,13 @@ a {
 	}
 
 	.reveal-hidden {
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+
+	.is-developing > *,
+	.is-developed > * {
 		opacity: 1;
 		transform: none;
 		filter: none;

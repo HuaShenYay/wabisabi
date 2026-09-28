@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字人文发展史 — 考研复习框架</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --muted: #555;
+    --accent: #1a6b4c;
+    --accent-light: #e8f0ec;
+    --border: #e0e0e0;
+    --card-bg: #ffffff;
+    --tag-bg: #f0f0f0;
+    --quote-bg: #f5faf7;
+    --timeline: #1a6b4c;
+    --warn-bg: #fef9e7;
+    --warn-border: #f0c040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    border-bottom: 3px solid var(--accent);
+    padding: 48px 0 32px;
+    text-align: center;
+  }
+  header h1 { font-size: 28px; font-weight: 700; color: var(--accent); margin-bottom: 8px; letter-spacing: 1px; }
+  header p { color: var(--muted); font-size: 14px; }
+
+  .toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 32px;
+    margin: 32px 0;
+  }
+  .toc h2 { font-size: 16px; margin-bottom: 12px; color: var(--accent); }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; font-size: 14px; }
+  .toc a { color: var(--fg); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+  .toc a:hover { border-bottom-color: var(--accent); }
+  .toc .sub { margin-left: 20px; font-size: 13px; color: var(--muted); }
+
+  h2 {
+    font-size: 22px;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 8px;
+    margin: 48px 0 24px;
+  }
+  h3 { font-size: 18px; margin: 32px 0 16px; color: var(--fg); }
+  h4 { font-size: 16px; margin: 20px 0 10px; color: var(--muted); font-weight: 600; }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin: 24px 0;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: 0.3;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -26px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .timeline-item .year {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .quote {
+    background: var(--quote-bg);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 14px;
+    color: #444;
+    border-radius: 0 4px 4px 0;
+  }
+  .quote::before { content: "❝ "; }
+  .quote::after { content: " ❞"; }
+
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 2px;
+  }
+  .tag-accent {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .comparison .side {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .comparison .side.old { background: #f5f5f5; }
+  .comparison .side.new { background: var(--accent-light); }
+  .comparison .side h4 { margin-top: 0; font-size: 14px; }
+
+  .framework {
+    background: var(--card-bg);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .question-box {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .question-box h4 { color: #8a6d14; margin-top: 0; }
+
+  ul, ol { padding-left: 20px; }
+  li { margin: 4px 0; font-size: 14px; }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .project-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+  }
+  .project-item h4 { font-size: 14px; margin-bottom: 4px; color: var(--accent); }
+  .project-item p { font-size: 13px; color: var(--muted); }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+  .flow .step {
+    background: var(--accent-light);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    text-align: center;
+    min-width: 80px;
+  }
+  .flow .arrow { font-size: 20px; color: var(--accent); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    margin-top: 48px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .comparison { grid-template-columns: 1fr; }
+    header h1 { font-size: 22px; }
+    h2 { font-size: 18px; }
+  }
+
+  /* print */
+  @media print {
+    body { font-size: 12px; }
+    header { padding: 16px 0; }
+    h2 { margin: 32px 0 12px; }
+    .card, .comparison, .framework, .project-grid { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <h1>数字人文的发展历程</h1>
+  <p>从人文计算（Humanities Computing）到 AI 时代的批判数字人文 —— 考研复习核心框架</p>
+  <p style="margin-top:8px; font-size:13px;">回答三个核心问题：① 从哪里来？ ② 为什么改名？ ③ 范式如何变化？</p>
+</header>
+
+<!-- TOC -->
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#pre">前数字人文时期：人文计算（1949—1990年代）</a></li>
+    <li><a href="#transition">转型时期：从人文计算到数字人文（1990s—2000s）</a></li>
+    <li><a href="#naming">"Digital Humanities" 名称的出现</a></li>
+    <li><a href="#stages">数字人文的发展阶段</a></li>
+    <li><a href="#critique">批判数字人文与 AI 时代（2015至今）</a></li>
+    <li><a href="#china">中国数字人文的发展</a></li>
+    <li><a href="#summary">总结与发展逻辑</a></li>
+  </ol>
+</nav>
+
+<!-- QUES BOX -->
+<div class="question-box">
+  <h4>🎯 复习核心三个问题</h4>
+  <p><strong>① 数字人文从哪里来？</strong> → 从人文计算（Humanities Computing）演变而来</p>
+  <p><strong>② 为什么改名？</strong> → 从"工具"转向"方法与理论"，从计算机辅助到数字技术重塑人文学</p>
+  <p><strong>③ 范式变化？</strong> → 从细读（Close Reading）到远读（Distant Reading）；从个人研究到计算驱动；从文本单一到多模态</p>
+</div>
+
+<!-- PART ONE -->
+<h2 id="pre">一、前数字人文时期：人文计算（Humanities Computing）</h2>
+<h3>时间范围：约 1949年 — 1990年代</h3>
+<div class="card">
+  <strong>核心概念：</strong> Humanities Computing（人文计算），数字人文的前身。这一阶段尚未广泛使用"Digital Humanities"这一名称。
+</div>
+
+<h4>产生背景</h4>
+<ul>
+  <li>20世纪中期计算机技术出现</li>
+  <li>人文学者思考：计算机是否能帮助处理大量资料？</li>
+  <li>形成 <span class="tag">计算机技术</span> + <span class="tag">人文学研究</span> 的结合</li>
+</ul>
+
+<h3>代表人物：Roberto Busa（"数字人文之父"）</h3>
+<div class="project-grid">
+  <div class="project-item">
+    <h4>Index Thomisticus（1949起）</h4>
+    <p>利用 IBM 穿孔卡技术，对 Thomas Aquinas（托马斯·阿奎那）的拉丁文著作进行词语整理</p>
+  </div>
+</div>
+
+<h4>方法：Concordance（词语索引）</h4>
+<div class="comparison">
+  <div class="side old">
+    <h4>传统方式</h4>
+    <p>人工翻阅，逐页查找关键词</p>
+  </div>
+  <div class="side new">
+    <h4>计算方式</h4>
+    <p>输入关键词 → 机器自动找到：出现次数、位置、上下文</p>
+  </div>
+</div>
+
+<h4>人文计算时期的特点</h4>
+<ol>
+  <li><strong>计算机是工具</strong> — 学者提出问题 → 计算机帮助处理数据</li>
+  <li><strong>研究对象主要是文本</strong> — 文学作品、宗教文本、历史文献</li>
+  <li><strong>目标是提高效率</strong> — 解决"如何更快处理人文学资料"</li>
+</ol>
+
+<div class="card" style="border-color:#c0392b;">
+  <strong>⚠ 局限：</strong>计算机只是辅助工具，没有改变人文学研究的问题意识。<br>
+  <span class="quote">以前怎么研究，现在只是更快。</span>
+</div>
+
+<!-- PART TWO -->
+<h2 id="transition">二、转型时期：从人文计算到数字人文</h2>
+<h3>时间：约 1990年代末 — 2000年代</h3>
+<div class="card">这是数字人文真正形成的关键阶段。</div>
+
+<h4>三个转变原因</h4>
+
+<div class="card">
+  <h4>① 计算机环境改变</h4>
+  <p>90年代：个人电脑普及，互联网出现。计算机不再只是大型机构拥有的工具，普通研究者也可以使用。</p>
+</div>
+
+<div class="card">
+  <h4>② 数字资源爆炸</h4>
+  <p><strong>过去：</strong>研究对象 = 纸质文本<br>
+  <strong>后来：</strong>电子文本、数字档案、图片、视频、音频、数据库</p>
+  <p style="margin-top:8px;">问题从"如何查资料" → "如何管理和分析海量数字资料"</p>
+</div>
+
+<div class="card">
+  <h4>③ 网络改变知识生产方式</h4>
+  <p>互联网带来：开放共享、在线协作、数字出版、数据库建设</p>
+  <div class="flow">
+    <div class="step">个人书房</div>
+    <span class="arrow">→</span>
+    <div class="step">网络空间</div>
+  </div>
+</div>
+
+<!-- PART THREE -->
+<h2 id="naming">三、"Digital Humanities" 名称的出现</h2>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="year">1990年代末</div>
+    <p>"Digital Humanities" 一词开始出现</p>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2004年</div>
+    <p>出版 <strong>《A Companion to Digital Humanities》</strong><br>
+    编者：Susan Schreibman, Ray Siemens, John Unsworth<br>
+    推动 DH 成为正式学术领域名称</p>
+  </div>
+</div>
+
+<h4>为什么不用 Humanities Computing？</h4>
+<div class="comparison">
+  <div class="side old">
+    <h4>Humanities Computing</h4>
+    <p>强调：<strong>计算</strong></p>
+    <p>关键词：工具</p>
+    <p>例如：计算词频、统计作者用词</p>
+  </div>
+  <div class="side new">
+    <h4>Digital Humanities</h4>
+    <p>强调：<strong>数字环境下重新思考人文学</strong></p>
+    <p>关键词：方法、理论、知识生产</p>
+  </div>
+</div>
+
+<div class="card">
+  <strong>一句话对比：</strong><br>
+  人文计算：<em>用计算机帮助人文学</em><br>
+  数字人文：<em>数字技术改变人文学</em>
+</div>
+
+<!-- PART FOUR -->
+<h2 id="stages">四、数字人文的发展阶段</h2>
+
+<!-- Phase 1 -->
+<h3>第一阶段：数字化与网络化阶段（1990s — 2000s中期）</h3>
+<div class="card">
+  <strong>核心：</strong> 把人文学资料转移到数字空间<br>
+  <strong>关键词：</strong> Digital Archive · Digital Library · Digital Museum <span class="tag-tag">保存、整理、共享</span>
+</div>
+
+<div class="project-grid">
+  <div class="project-item">
+    <h4>TEI（Text Encoding Initiative）</h4>
+    <p>建立统一文本数字化标准，让古籍与文学作品可被机器读取</p>
+  </div>
+  <div class="project-item">
+    <h4>Google Books</h4>
+    <p>大量书籍扫描，形成大型数字文本资源</p>
+  </div>
+  <div class="project-item">
+    <h4>NINES</h4>
+    <p>19世纪文学数字研究平台</p>
+  </div>
+</div>
+
+<div class="card" style="border-color:#e0b040;">
+  <strong>问题：</strong>仍然主要是"把资料搬到网上"，尚未深入计算方法。
+</div>
+
+<!-- Phase 2 -->
+<h3>第二阶段：计算批评与远读阶段（2000s中期 — 2010s）</h3>
+<div class="card">
+  <strong>核心变化：</strong>从数字化 → 计算化<br>
+  <strong>过去：</strong>把10000本小说放入电脑<br>
+  <strong>现在：</strong>利用算法分析10000本小说
+</div>
+
+<h4>代表人物与理论</h4>
+
+<div class="project-grid">
+  <div class="project-item">
+    <h4>Franco Moretti</h4>
+    <p><strong>Distant Reading（远读）</strong><br>不研究少数经典，用数据研究 thousands of texts<br>代表作：《Graphs, Maps, Trees》</p>
+  </div>
+  <div class="project-item">
+    <h4>Matthew Jockers</h4>
+    <p><strong>Macroanalysis（宏观分析）</strong><br>主题模型 + 文本分析，研究文学趋势</p>
+  </div>
+  <div class="project-item">
+    <h4>Lev Manovich</h4>
+    <p><strong>Cultural Analytics（文化分析）</strong><br>研究对象扩大：文学 → 图像、电影、社交媒体</p>
+  </div>
+  <div class="project-item">
+    <h4>Stephen Ramsay</h4>
+    <p><strong>Algorithmic Criticism（算法批评）</strong><br>算法不仅是工具，也是一种阅读方式</p>
+  </div>
+</div>
+
+<h4>主要方法</h4>
+<span class="tag">Text Mining</span>
+<span class="tag">Topic Modeling</span>
+<span class="tag">Network Analysis</span>
+<span class="tag">GIS</span>
+<span class="tag">Visualization</span>
+
+<div class="card" style="background:#f0f7f4;">
+  <strong>影响：</strong>人文学者开始利用计算方法提出<strong>新的问题</strong>，而不仅仅是更快地回答旧问题。
+</div>
+
+<!-- PART FIVE -->
+<h2 id="critique">五、批判数字人文与 AI 时代（2015年至今）</h2>
+<div class="card">这一阶段出现两个并行方向。</div>
+
+<h3>方向一：AI 数字人文</h3>
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="year">2018 — BERT</div>
+    <p>机器语言理解能力提升</p>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2020 — GPT-3</div>
+    <p>生成式语言模型进入研究领域</p>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2022 — ChatGPT</div>
+    <p>普通研究者可直接使用大模型：文本分析、资料整理、辅助写作</p>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2024+ — 多模态</div>
+    <p>文本、图片、视频、声音统一分析，研究对象进一步扩大</p>
+  </div>
+</div>
+
+<div class="card">
+  <strong>核心问题：</strong>
+  <ul>
+    <li>AI 能否进行文学解释？</li>
+    <li>AI 生成文本是否具有作者性？</li>
+    <li>大模型是否存在文化偏见？</li>
+    <li>人文学者如何与 AI 协作？</li>
+  </ul>
+</div>
+
+<h3>方向二：批判数字人文（Critical Digital Humanities）</h3>
+<div class="card">
+  <strong>核心观点：</strong>数字技术不是中立的。数据和算法背后存在 <strong>权力、资本、文化选择</strong>。
+</div>
+
+<div class="project-grid">
+  <div class="project-item">
+    <h4>David Berry</h4>
+    <p>数字技术背后的社会结构</p>
+  </div>
+  <div class="project-item">
+    <h4>Roopika Risam</h4>
+    <p>数字殖民：西方数据是否占据主导？</p>
+  </div>
+  <div class="project-item">
+    <h4>Amy Earhart</h4>
+    <p>数字档案的选择性：谁被保存？谁被遗忘？</p>
+  </div>
+</div>
+
+<!-- PART SIX -->
+<h2 id="china">六、中国数字人文的发展</h2>
+<div class="card">中国不能完全照搬西方路线。</div>
+
+<h4>特点</h4>
+<ol>
+  <li><strong>数字化起步较晚</strong>，直接进入互联网时代</li>
+  <li><strong>传统文献学具有数字人文基础</strong>：目录学、版本学、校勘学本身就具有分类、整理、知识组织的特质</li>
+</ol>
+
+<h4>主要方向</h4>
+<div class="project-grid">
+  <div class="project-item">
+    <h4>① 古籍数字化</h4>
+    <p>古籍数据库建设</p>
+  </div>
+  <div class="project-item">
+    <h4>② 数字文献学</h4>
+    <p>利用数字方法研究版本关系、作者判断、文本传播<br>例：NLP 分析某篇文章是否为某作者作品</p>
+  </div>
+  <div class="project-item">
+    <h4>③ AI 数字人文</h4>
+    <p>大语言模型、古籍 OCR、知识图谱、自动标注、AI 辅助研究</p>
+  </div>
+</div>
+
+<!-- PART SEVEN -->
+<h2 id="summary">七、总结：数字人文的发展逻辑</h2>
+
+<div class="framework">
+数字人文发展逻辑：
+
+人文计算 (1949-1990s)
+  计算机作为工具 → 提高效率 → 辅助研究
+       ↓
+数字化与网络化 (1990s-2000s)
+  数字档案/图书馆/博物馆 → 资源建设 → TEI, Google Books
+       ↓
+计算批评与远读 (2000s-2010s)
+  Moretti远读 / 文本挖掘 / 主题模型 / 网络分析
+  → 从数字化到计算化，提出新问题
+       ↓
+AI与批判数字人文 (2015-至今)
+  AI方向：BERT → GPT → LLM → 多模态
+  批判方向：算法偏见 / 数字殖民 / 数字伦理
+       ↓
+中国路径：古籍数字化 + 数字文献学 + AI数字人文
+</div>
+
+<div class="framework" style="font-family: sans-serif; line-height: 1.8; white-space: normal;">
+<strong>一句话总结：</strong><br>
+数字人文经历了从"计算机辅助人文学"（Humanities Computing），到"数字资源建设"（Digitalization），再到"计算方法改变人文学研究"（Computational Humanities），最终进入"AI 与批判反思并存"的发展阶段。
+</div>
+
+<!-- FINAL FRAMEWORK -->
+<h2>📋 最终考试框架</h2>
+<div class="framework">
+  数字人文发展史
+
+  1949-1990s  │  人文计算 Humanities Computing
+              │    Busa · Concordance · 文本编码 · 计算机作为工具
+
+  ───────────┼────────────────────────────────────────
+
+  1990s-2000s │  数字化与网络化
+              │    数字档案 · 数字图书馆 · TEI · 开放共享
+
+  ───────────┼────────────────────────────────────────
+
+  2000s-2010s │  计算批评
+              │    Moretti · Jockers · Manovich · 远读
+              │    文本挖掘 · 主题模型 · 网络分析 · GIS
+
+  ───────────┼────────────────────────────────────────
+
+  2015-至今   │  AI数字人文
+              │    BERT · GPT · LLM · 多模态
+              │
+              │  同时发展：批判数字人文
+              │    算法偏见 · 数字殖民 · 数字伦理
+              │
+              │  中国路径：
+              │    古籍数字化 + 数字文献学 + AI数字人文
+</div>
+
+<footer>
+  <p>考研复习笔记 · 数字人文发展史 · 版本 2.0</p>
+  <p>下一步建议：整理 <strong>第二部分：数字人文核心理论</strong>（远读、近读、文化分析、媒介理论、批判数字人文）</p>
+</footer>
+
+</div>
+</body>
+</html>

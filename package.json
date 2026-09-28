@@ -9,18 +9,36 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+		"test": "vitest run --config vitest.config.ts",
+		"sanity:seed": "node scripts/sanity-seed.mjs",
+		"studio:dev": "vite --config sanity/studio.vite.config.js dev",
+		"studio:build": "vite --config sanity/studio.vite.config.js build",
+		"studio:deploy": "cd sanity && sanity deploy --schema-required",
+		"sanity:site-plan": "cd sanity && sanity exec ../scripts/sanity-site-seed.mjs --with-user-token",
+		"sanity:site-import": "cd sanity && sanity exec ../scripts/sanity-site-seed.mjs --with-user-token -- --apply"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
+		"@types/three": "^0.185.4",
 		"svelte": "^5.56.1",
 		"svelte-check": "^4.6.0",
 		"typescript": "^6.0.3",
-		"vite": "^8.0.16"
+		"vite": "^8.0.16",
+		"vitest": "^5.0.2"
 	},
 	"dependencies": {
+		"@sanity/cli": "^7.13.0",
+		"@sanity/client": "^7.25.0",
+		"@sanity/image-url": "^2.1.1",
+		"@sanity/vision": "^6.6.0",
+		"@vitejs/plugin-react": "^6.0.4",
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8",
+		"sanity": "^6.6.0",
+		"styled-components": "^6.1.15",
 		"three": "^0.185.1"
 	}
 }

@@ -11,11 +11,9 @@ export interface FocusItem {
 }
 
 export const focusAreas: readonly FocusItem[] = [
-	{ label: '数字人文', desc: '计算机技术与文学、影视研究的结合' },
-	{ label: 'AIGC 与创作', desc: '生成式图像、三维交互与美育影像' },
-	{ label: '诗歌分析系统', desc: '古典诗歌情感智能分析与推荐' },
-	{ label: '影视与视觉', desc: '镜头语言、节奏与实验影像表达' },
-	{ label: '精神分析', desc: '弗洛伊德、拉康作为人文研究视角' }
+	{ label: 'AIGC艺术创作', desc: '研究具有美学质感的生成式图像、影像' },
+	{ label: '数字人文', desc: '计算机技术与人文学研究的结合' },
+	{ label: '精神分析', desc: '关注人的无意识，创伤，爱欲等' }
 ] as const;
 
 export interface EducationEntry {
@@ -28,7 +26,12 @@ export const education: readonly EducationEntry[] = [
 	{
 		school: '上海杉达学院',
 		major: '软件工程（本科）',
-		note: '专升本，原信息安全专业'
+		note: ''
+	},
+	{
+		school: '上海电子信息职业技术学院',
+		major: '信息安全（专科）',
+		note: ''
 	}
 ] as const;
 
@@ -38,8 +41,8 @@ export interface PhilosophyItem {
 }
 
 export const designPhilosophy: readonly PhilosophyItem[] = [
-	{ label: '侘寂 · Wabi-Sabi', desc: '残缺、质朴、不完美之美' },
-	{ label: '幽玄 · Yugen', desc: '深邃幽暗的神秘意境' },
-	{ label: '素简 · Kanso', desc: '去除冗余的纯净表达' },
-	{ label: '静寂 · Seijaku', desc: '安宁内敛的视觉气质' }
+	{
+		label: 'Neo-Wabi-Sabi',
+		desc: '在数字介质中寻找残缺与不完美的诗意 - 拒绝对称的秩序让每次会话都有独特偏移，深邃幽暗的意境在模糊与揭示之间缓缓浮现，高粘滞的流动如墨晕开归于宁静'
+	}
 ] as const;

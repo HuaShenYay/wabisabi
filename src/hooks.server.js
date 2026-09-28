@@ -7,21 +7,19 @@
  */
 
 /** @type {import('@sveltejs/kit').HandleServerError} */
-export function handleError({ error, event, message, status, code }) {
+export function handleError({ error, event, message, status }) {
 	// Log structured error context for operations troubleshooting
 	console.error('[Server Error]', {
 		status,
-		code,
-		message: message ?? error?.message,
+		message,
 		path: event.url.pathname,
 		method: event.request.method,
 		timestamp: new Date().toISOString(),
-		errorName: error?.name,
-		stack: error?.stack?.split('\n').slice(0, 5).join('\n')
+		errorName: error instanceof Error ? error.name : 'UnknownError',
+		stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5).join('\n') : undefined
 	});
 
 	return {
-		message: status === 404 ? '页面未找到' : '服务器内部错误，请稍后再试',
-		code
+		message: status === 404 ? '页面未找到' : '服务器内部错误，请稍后再试'
 	};
 }

@@ -10,9 +10,14 @@
  * Presentation (SvelteKit svelte:head).
  */
 
-import { profile } from '$lib/domain/profile.js';
-import { socialLinks } from '$lib/domain/social.js';
-import { siteConfig } from '$lib/config/site.js';
+import { profile, type Profile } from '$lib/domain/profile.js';
+import { socialLinks, type SocialLink } from '$lib/domain/social.js';
+import { siteConfig, type SiteConfig } from '$lib/config/site.js';
+
+/** Safe for a JSON-LD script element, including CMS-authored strings. */
+export function serializeJsonLd(value: object): string {
+	return JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+}
 
 export interface SeoMeta {
 	title: string;
@@ -54,21 +59,21 @@ export function generateSeoMeta(path: string = '/'): SeoMeta {
 	};
 }
 
-export function generatePersonJsonLd() {
-	const sameAs = socialLinks
+export function generatePersonJsonLd(person: Profile = profile, links: readonly SocialLink[] = socialLinks, settings: SiteConfig = siteConfig) {
+	const sameAs = links
 		.filter((link) => link.platform !== 'email')
 		.map((link) => link.url);
 
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'Person',
-		name: `${profile.name} (${profile.nameEn})`,
-		jobTitle: profile.title,
-		description: profile.bio,
-		email: `mailto:${profile.email}`,
+		name: `${person.name} (${person.nameEn})`,
+		jobTitle: person.title,
+		description: person.bio,
+		email: `mailto:${person.email}`,
 		address: {
 			'@type': 'PostalAddress',
-			addressLocality: profile.location,
+			addressLocality: person.location,
 			addressCountry: 'CN'
 		},
 		knowsAbout: [
@@ -83,21 +88,21 @@ export function generatePersonJsonLd() {
 			'Creative Coding'
 		],
 		sameAs,
-		url: siteConfig.url
+		url: settings.url
 	};
 }
 
-export function generateWebsiteJsonLd() {
+export function generateWebsiteJsonLd(settings: SiteConfig = siteConfig) {
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',
-		name: siteConfig.name,
-		url: siteConfig.url,
-		description: siteConfig.description,
-		inLanguage: siteConfig.language,
+		name: settings.name,
+		url: settings.url,
+		description: settings.description,
+		inLanguage: settings.language,
 		author: {
 			'@type': 'Person',
-			name: siteConfig.author
+			name: settings.author
 		}
 	};
 }

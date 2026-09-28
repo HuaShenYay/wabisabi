@@ -1,2 +1,2 @@
-// Prerender all pages at build time for optimal SEO and performance
-export const prerender = true;
+// CMS-backed routes must stay dynamic so newly published works resolve immediately.
+export const prerender = false;

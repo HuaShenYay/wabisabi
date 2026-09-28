@@ -1,8 +1,8 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
 	import { reveal } from '$lib/actions/reveal.js';
-	import { profile } from '$lib/domain/profile.js';
-	import { siteConfig } from '$lib/config/site.js';
+	let { data } = $props();
+	const profile = $derived(data.profile);
 
 	const year = new Date().getFullYear();
 </script>
@@ -11,7 +11,6 @@
 	<title>版权声明 - {profile.name}</title>
 	<meta name="description" content="版权声明与使用条款。{profile.name}作品集网站的版权信息、使用条款与隐私说明。" />
 	<meta name="robots" content="noindex, follow" />
-	<link rel="canonical" href="{siteConfig.url}/copyright" />
 </svelte:head>
 
 <Header />
@@ -67,8 +66,8 @@
 			<li><span class="credit-name">SvelteKit</span><span class="credit-role">框架</span></li>
 			<li><span class="credit-name">Three.js</span><span class="credit-role">三维场景</span></li>
 			<li><span class="credit-name">SVG Filters</span><span class="credit-role">文字浮雕与纹理</span></li>
-			<li><span class="credit-name">Neue Haas Grotesk</span><span class="credit-role">正文字体</span></li>
-			<li><span class="credit-name">Orelo Semi Wide</span><span class="credit-role">展示字体</span></li>
+			<li><span class="credit-name">Source Han Serif / Songti</span><span class="credit-role">正文字体</span></li>
+			<li><span class="credit-name">LXGW WenKai / Cormorant Garamond</span><span class="credit-role">标题字体</span></li>
 		</ol>
 		<p class="copyright-paragraph">
 			设计灵感来源于侘寂美学与当代极简主义设计的交叉地带。
@@ -103,10 +102,10 @@
 	}
 
 	.copyright-paragraph {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 1.05rem;
 		line-height: 1.75;
-		color: var(--ink);
+		color: var(--color-text);
 		font-weight: 300;
 		max-width: 38em;
 		margin-bottom: 1.2rem;
@@ -114,14 +113,14 @@
 
 	.copyright-paragraph strong {
 		font-weight: 400;
-		color: var(--ink);
+		color: var(--color-text);
 	}
 
 	.copyright-meta {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 0.85rem;
 		letter-spacing: 0.05em;
-		color: var(--stone);
+		color: var(--color-text-muted);
 		margin-top: 1.5rem;
 	}
 
@@ -135,36 +134,36 @@
 		justify-content: space-between;
 		align-items: baseline;
 		padding: 0.6rem 0;
-		border-bottom: 1px solid var(--sand);
+		border-bottom: 1px solid var(--color-bg-deep);
 		opacity: 0.5;
-		border-image: linear-gradient(90deg, transparent, var(--sand) 15%, var(--sand) 85%, transparent) 1;
+		border-image: linear-gradient(90deg, transparent, var(--color-bg-deep) 15%, var(--color-bg-deep) 85%, transparent) 1;
 	}
 
 	.credits-list li:first-child {
-		border-top: 1px solid var(--sand);
+		border-top: 1px solid var(--color-bg-deep);
 		border-top-style: solid;
-		border-image: linear-gradient(90deg, transparent, var(--sand) 15%, var(--sand) 85%, transparent) 1;
+		border-image: linear-gradient(90deg, transparent, var(--color-bg-deep) 15%, var(--color-bg-deep) 85%, transparent) 1;
 	}
 
 	.credit-name {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 1rem;
-		color: var(--ink-soft);
+		color: var(--color-text-muted);
 		font-weight: 300;
 	}
 
 	.credit-role {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 0.8rem;
-		color: var(--fog);
+		color: var(--color-text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 	}
 
 	.copyright-contact {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 1.1rem;
-		color: var(--clay);
+		color: var(--color-link);
 		margin-top: 0.5rem;
 	}
 

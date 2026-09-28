@@ -8,6 +8,7 @@
 	const message = $derived(page.error?.message ?? '未知错误');
 
 	// Wabi-Sabi spirit: each error has its own poetic reflection
+	/** @type {Record<number, string>} */
 	const reflections = {
 		404: '此处空无一物，恰如残缺之美。',
 		500: '石上有裂，光得以入。'
@@ -71,51 +72,51 @@
 	}
 
 	.error-status-label {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 0.85rem;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		color: var(--fog);
+		color: var(--color-text-muted);
 		font-weight: 300;
 		margin-bottom: 1.5rem;
 	}
 
 	.error-display {
-		font-family: var(--font-family--display);
+		font-family: var(--font-latin);
 		font-size: clamp(8rem, 24vw, 18rem);
 		line-height: 0.85;
 		letter-spacing: -0.03em;
-		color: var(--ink);
+		color: var(--color-text);
 		text-transform: uppercase;
 		opacity: 0.92;
 		margin-bottom: 2rem;
 	}
 
 	.error-reflection {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: clamp(1.1rem, 2.2vw, 1.6rem);
 		font-weight: 300;
-		color: var(--ink-soft);
+		color: var(--color-text-muted);
 		line-height: 1.6;
 		max-width: 28em;
 		letter-spacing: 0.02em;
 	}
 
 	.error-detail {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 0.9rem;
-		color: var(--stone);
+		color: var(--color-text-muted);
 		line-height: 1.5;
 		margin-bottom: 2rem;
 		max-width: 35em;
 	}
 
 	.error-home-link {
-		font-family: var(--font-family--body);
+		font-family: var(--font-ui);
 		font-size: 1.1rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		font-weight: 300;
-		color: var(--clay);
+		color: var(--color-link);
 	}
 </style>
