@@ -51,4 +51,15 @@ describe('CMS source of truth', () => {
 		state.fetch.mockResolvedValue([{label:'bad',url:'javascript:alert(1)',platform:'github'},{label:'mail',url:'mailto:hello@example.com',platform:'email'}]);
 		expect(await getSocialLinks()).toEqual([{label:'mail',url:'mailto:hello@example.com',platform:'email'}]);
 	});
+	it('deduplicates concurrent in-flight queries and skips malformed article slugs', async () => {
+		state.fetch.mockResolvedValue({ name: '并发作者' });
+		const [a, b] = await Promise.all([getProfile(), getProfile()]);
+		expect(a.name).toBe('并发作者');
+		expect(b.name).toBe('并发作者');
+		expect(state.fetch).toHaveBeenCalledTimes(1);
+
+		state.fetch.mockClear();
+		expect(await getArticlePageData('../invalid')).toBeNull();
+		expect(state.fetch).not.toHaveBeenCalled();
+	});
 });

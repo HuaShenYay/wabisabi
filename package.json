@@ -20,25 +20,25 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",
-		"@sveltejs/kit": "^2.63.0",
-		"@sveltejs/vite-plugin-svelte": "^7.1.2",
-		"@types/three": "^0.185.4",
-		"svelte": "^5.56.1",
-		"svelte-check": "^4.6.0",
+		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@types/three": "^0.186.0",
+		"svelte": "^5.57.1",
+		"svelte-check": "^4.7.6",
 		"typescript": "^6.0.3",
-		"vite": "^8.0.16",
+		"vite": "^8.3.1",
 		"vitest": "^5.0.2"
 	},
 	"dependencies": {
-		"@sanity/cli": "^7.13.0",
-		"@sanity/client": "^7.25.0",
+		"@sanity/cli": "^8.13.0",
+		"@sanity/client": "^8.8.0",
 		"@sanity/image-url": "^2.1.1",
-		"@sanity/vision": "^6.6.0",
-		"@vitejs/plugin-react": "^6.0.4",
-		"react": "^19.2.8",
-		"react-dom": "^19.2.8",
-		"sanity": "^6.6.0",
-		"styled-components": "^6.1.15",
-		"three": "^0.185.1"
+		"@sanity/vision": "^6.16.0",
+		"@vitejs/plugin-react": "^6.1.1",
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0",
+		"sanity": "^6.16.0",
+		"styled-components": "^6.5.3",
+		"three": "^0.186.1"
 	}
 }

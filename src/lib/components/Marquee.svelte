@@ -17,15 +17,21 @@
 		if (reduce || !seamWord || !seam) return;
 
 		let ticking = false;
+		let listening = false;
+		let lastX = '';
 
 		function update() {
 			if (!seamWord || !seam) return;
 			const rect = seam.getBoundingClientRect();
-			const centre = rect.top + rect.height / 2 - window.innerHeight / 2;
-			const progress = Math.max(-1, Math.min(1, centre / window.innerHeight));
+			const vh = window.innerHeight;
+			const centre = rect.top + rect.height / 2 - vh / 2;
+			const progress = Math.max(-1, Math.min(1, centre / vh));
 			const range = Math.min(34, window.innerWidth * 0.034);
-			const x = -progress * range;
-			seamWord.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+			const nextX = (-progress * range).toFixed(2);
+			if (nextX !== lastX) {
+				lastX = nextX;
+				seamWord.style.transform = `translate3d(${nextX}px, 0, 0)`;
+			}
 		}
 
 		function onScroll() {
@@ -38,10 +44,26 @@
 			}
 		}
 
-		window.addEventListener('scroll', onScroll, { passive: true });
+		const visibility = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting && !listening) {
+					listening = true;
+					window.addEventListener('scroll', onScroll, { passive: true });
+					update();
+				} else if (!entry.isIntersecting && listening) {
+					listening = false;
+					window.removeEventListener('scroll', onScroll);
+				}
+			},
+			{ rootMargin: '100px 0px' }
+		);
+		visibility.observe(seam);
 		update();
 
-		return () => window.removeEventListener('scroll', onScroll);
+		return () => {
+			visibility.disconnect();
+			if (listening) window.removeEventListener('scroll', onScroll);
+		};
 	});
 </script>
 

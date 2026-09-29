@@ -26,16 +26,26 @@ import {
 	type PhilosophyItem
 } from '$lib/domain/portfolio.js';
 
+const inflight = new Map<string, Promise<unknown>>();
+
 /** Never silently republish demo content when a configured CMS is unavailable. */
 async function withFallback<T>(query: () => Promise<T>, fallback: T, label: string, scope: 'site' | 'works' = 'site'): Promise<T> {
 	// An existing Post-only Studio does not own the site's biography or education yet.
 	if (!isSanityConfigured || (scope === 'site' && sanityContentScope === 'posts')) return fallback;
-	try {
-		return await query();
-	} catch (err) {
-		console.error(`[cms] Unable to read published ${label}`);
-		error(503, '内容暂时无法读取，请稍后重试。');
-	}
+	const existing = inflight.get(label) as Promise<T> | undefined;
+	if (existing) return existing;
+	const pending = (async () => {
+		try {
+			return await query();
+		} catch (err) {
+			console.error(`[cms] Unable to read published ${label}`);
+			error(503, '内容暂时无法读取，请稍后重试。');
+		} finally {
+			inflight.delete(label);
+		}
+	})();
+	inflight.set(label, pending);
+	return pending;
 }
 
 /* ============================================================
@@ -370,14 +380,11 @@ function workLink(p: Project | undefined): WorkLink | null {
  * Returns null when the slug does not match a project.
  */
 export async function getArticlePageData(slug: string): Promise<ArticlePageData | null> {
-	const all = await getProjects();
-	const idx = all.findIndex((p) => p.slug === slug);
-	if (idx === -1) return null;
-	const project = all[idx];
-
-	const [profile, content] = await Promise.all([
+	if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
+	const [all, profile, remoteContent] = await Promise.all([
+		getProjects(),
 		getProfile(),
-		withFallback<{ body: ArticleBlock[]; showCover: boolean }>(
+		withFallback<{ body: ArticleBlock[]; showCover: boolean } | null>(
 			async () => {
 				const raw = await getSanityClient().fetch<{ body?: PortableBlock[]; showCover?: boolean } | null>(
 					`*[_type in ["project", "post"] && slug.current == $slug] | order((_type == "project") desc, _createdAt desc)[0] { body, "showCover": defined(cover) || defined(mainImage) }`,
@@ -385,11 +392,15 @@ export async function getArticlePageData(slug: string): Promise<ArticlePageData 
 				);
 				return { body: mapArticleBody(raw?.body, image => sanityImageUrl(image, { w: 1600 })), showCover: raw?.showCover === true };
 			},
-			{ body: seedArticleBody(project), showCover: Boolean(project.cover) },
+			null,
 			`article:${slug}`,
 			'works'
 		)
 	]);
+	const idx = all.findIndex((p) => p.slug === slug);
+	if (idx === -1) return null;
+	const project = all[idx];
+	const content = remoteContent ?? { body: seedArticleBody(project), showCover: Boolean(project.cover) };
 
 	return {
 		profile,

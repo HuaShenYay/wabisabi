@@ -1,0 +1,43 @@
+export {
+	ACESFilmicToneMapping,
+	BackSide,
+	Box3,
+	BoxGeometry,
+	BufferAttribute,
+	CanvasTexture,
+	CatmullRomCurve3,
+	Color,
+	CylinderGeometry,
+	DirectionalLight,
+	Euler,
+	Fog,
+	FogExp2,
+	Group,
+	HemisphereLight,
+	IcosahedronGeometry,
+	InstancedMesh,
+	LineCurve3,
+	MathUtils,
+	Matrix4,
+	Mesh,
+	MeshBasicMaterial,
+	MeshStandardMaterial,
+	PCFShadowMap,
+	PerspectiveCamera,
+	PlaneGeometry,
+	Quaternion,
+	SRGBColorSpace,
+	Scene,
+	ShaderMaterial,
+	SphereGeometry,
+	Sprite,
+	SpriteMaterial,
+	Texture,
+	TubeGeometry,
+	Vector3,
+	WebGLRenderer
+} from 'three';
+export { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+export { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+export { Reflector } from 'three/examples/jsm/objects/Reflector.js';
+export { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';

@@ -6,7 +6,7 @@
 		let destroyed = false;
 		let cleanup = () => {};
 		// The landscape is entirely geometry. Render only on resize, not on an idle animation loop.
-		void import('three').then(THREE => {
+		void import('./wabi-three.js').then(THREE => {
 			if (destroyed) return;
 			let renderer: Three.WebGLRenderer;
 			try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'low-power' }); }
@@ -28,6 +28,12 @@
 			const material = new THREE.MeshStandardMaterial({ color: stone, roughness: 1, flatShading: true });
 			let seed = 732;
 			const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+			const geometries: Three.BufferGeometry[] = [];
+			const matrix = new THREE.Matrix4();
+			const pos = new THREE.Vector3();
+			const euler = new THREE.Euler();
+			const quat = new THREE.Quaternion();
+			const scale = new THREE.Vector3();
 			for (let row = 0; row < 3; row++) {
 				for (let i = 0; i < 16; i++) {
 					const geometry = new THREE.IcosahedronGeometry(1, 1);
@@ -37,15 +43,24 @@
 						const wear = .86 + Math.sin(x * 9 + z * 7) * .12;
 						vertices.setXYZ(v, x * wear, y * wear, z * wear);
 					}
-					geometry.computeVertexNormals();
-					const rock = new THREE.Mesh(geometry, material);
 					const x = (i - 7.5) * 2.7;
 					const rise = Math.abs(x) / 12;
-					rock.position.set(x, -2 + rise + random() * .55, -row * 7);
-					rock.scale.set(1.6 + random(), .65 + rise + random() * .7, 1.2 + random());
-					rock.rotation.set(random() * .3, random() * 3, random() * .3);
-					scene.add(rock);
+					pos.set(x, -2 + rise + random() * .55, -row * 7);
+					scale.set(1.6 + random(), .65 + rise + random() * .7, 1.2 + random());
+					euler.set(random() * .3, random() * 3, random() * .3);
+					quat.setFromEuler(euler);
+					matrix.compose(pos, quat, scale);
+					geometry.applyMatrix4(matrix);
+					geometry.computeVertexNormals();
+					geometries.push(geometry);
 				}
+			}
+			const merged = THREE.mergeGeometries(geometries, false);
+			for (const g of geometries) g.dispose();
+			if (merged) {
+				const mesh = new THREE.Mesh(merged, material);
+				mesh.matrixAutoUpdate = false;
+				scene.add(mesh);
 			}
 			const render = () => {
 				const { width, height } = host.getBoundingClientRect();

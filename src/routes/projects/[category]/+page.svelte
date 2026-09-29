@@ -86,11 +86,11 @@
 		{:else if meta.layout === 'stills'}
 			<!-- Layout II: 装裱剧照 stacked mounted stills -->
 			<div class="stills-stack">
-				{#each items as p (p.slug)}
+				{#each items as p, i (p.slug)}
 					<article class="stills-item" use:reveal>
 						<a class="stills-link" href="/projects/{meta.slug}/{p.slug}">
 							<div class="mounted-frame">
-								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} />
+								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} eager={i === 0} />
 							</div>
 							<div class="stills-caption">
 								<span class="stills-index">{p.index}</span>
@@ -105,7 +105,7 @@
 		{:else if meta.layout === 'draft'}
 			<!-- Layout III: 图稿研究 meta left, mounted image right -->
 			<div class="draft-stack">
-				{#each items as p (p.slug)}
+				{#each items as p, i (p.slug)}
 					<article class="draft-item" use:reveal>
 						<div class="draft-meta">
 							<span class="draft-index">{p.index}</span>
@@ -126,7 +126,7 @@
 						</div>
 						<a class="draft-figure" href="/projects/{meta.slug}/{p.slug}" aria-label="阅读{p.title}">
 							<div class="mounted-frame">
-								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} />
+								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} eager={i === 0} />
 							</div>
 						</a>
 					</article>
@@ -139,7 +139,7 @@
 					<article class="plate-item" use:reveal>
 						<a class="plate-figure" href="/projects/{meta.slug}/{p.slug}" aria-label="阅读{p.title}">
 							<div class="mounted-frame">
-								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} />
+								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} eager={i === 0} />
 							</div>
 							<span class="plate-label">图{figNumerals[i] ?? i + 1}</span>
 						</a>

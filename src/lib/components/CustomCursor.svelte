@@ -19,8 +19,7 @@
 		function animate() {
 			ringX += (x - ringX) * .12;
 			ringY += (y - ringY) * .12;
-			ring.style.setProperty('--ring-x', `${ringX}px`);
-			ring.style.setProperty('--ring-y', `${ringY}px`);
+			ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
 			frame = Math.abs(x - ringX) + Math.abs(y - ringY) > .1 ? requestAnimationFrame(animate) : 0;
 		}
 		function move(event: PointerEvent) {
@@ -31,10 +30,10 @@
 				ring.classList.add('active'); dot.classList.add('active');
 				document.documentElement.classList.add('has-custom-cursor');
 			}
-			dot.style.transform = `translate(${x}px, ${y}px)`;
+			dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 			if (!frame) animate();
 		}
-		document.addEventListener('pointermove', move);
+		document.addEventListener('pointermove', move, { passive: true });
 		document.documentElement.addEventListener('pointerleave', hide);
 		window.addEventListener('blur', hide);
 		preference.addEventListener('change', hide);
