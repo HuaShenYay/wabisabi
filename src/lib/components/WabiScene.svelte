@@ -802,38 +802,43 @@
 				waterUniforms.time.value = time;
 				mouseX += (targetMouseX - mouseX) * .035;
 				mouseY += (targetMouseY - mouseY) * .035;
-				smoothScroll += (scrollProgress - smoothScroll) * .08;
+				smoothScroll += (scrollProgress - smoothScroll) * .09;
 				if (Math.abs(scrollProgress - smoothScroll) < 0.0001) smoothScroll = scrollProgress;
 
 				const p = currentView === 'projects' ? 0 : smoothScroll;
 				if (Math.abs(p - lastReportedProgress) > 0.0004) {
 					lastReportedProgress = p;
 					onProgress?.(p);
-					container.style.setProperty('--intro-opacity', String(Math.max(0, 1 - p * 4)));
-					container.style.setProperty('--intro-drift', `${-p * 36}px`);
-					if (editorial) editorial.inert = p > .24;
+					const introOpacity = Math.max(0, 1 - Math.pow(Math.min(1, p / 0.48), 1.25));
+					container.style.setProperty('--intro-opacity', introOpacity.toFixed(3));
+					container.style.setProperty('--intro-drift', `${(-p * 48).toFixed(1)}px`);
+					container.style.setProperty('--scene-scale', (1 - p * 0.035).toFixed(3));
+					const veil = Math.min(1, Math.max(0, (p - 0.15) / 0.7));
+					container.style.setProperty('--scene-veil', veil.toFixed(3));
+					if (editorial) editorial.inert = p > .45;
 				}
-				// Cinematic ease: slow crawl in, accelerate through gate, slow drift out
+				// Narrative ease: calm water glide toward the shore
 				const eased = p * p * (3 - 2 * p);
-				const invT = 1 - eased;
 
-				// Bezier path: start → torii gate → beyond
-				let camX = invT * invT * 0.18 + 2 * invT * eased * (-3.55) + eased * eased * (-5.5);
-				// Camera dips low approaching the gate, rises after passing through
-				const gateDip = Math.sin(eased * Math.PI);
-				let camY = invT * invT * 2.36 + 2 * invT * eased * 2.32 + eased * eased * 3.4 - gateDip * .35;
-				const camZ = invT * invT * 19.4 + 2 * invT * eased * (-1.9) + eased * eased * (-9.0);
+				// Gentle, poetic approach toward torii gate and stone shore (泊舟渡水)
+				let camX = THREE.MathUtils.lerp(0.18, -1.05, eased);
+				let camY = THREE.MathUtils.lerp(2.36, 2.52, eased);
+				let camZ = THREE.MathUtils.lerp(19.4, 12.2, eased);
+
 				if (!reduced) {
-					camX += mouseX * .22 * (1 - eased);
-					camY -= mouseY * .1 * (1 - eased);
+					// Subtle water wave respiration, inspired by The Boat's floating perspective
+					const waveSway = Math.sin(time * 0.6) * 0.03 * (1 - eased);
+					const waveBob = Math.cos(time * 0.8) * 0.015 * (1 - eased);
+					camX += mouseX * .22 * (1 - eased) + waveSway;
+					camY -= mouseY * .1 * (1 - eased) + waveBob;
 				}
 
-				// LookAt leads the camera — looks ahead toward where it's going
-				const lead = Math.min(eased + .18, 1);
+				// LookAt stays composed on the gateway and distant mountains
 				const mobile = containerWidth < 600;
-				const lookX = (mobile ? -3.3 : -2.3) * (1 - eased) + (-5.5) * eased;
-				const lookY = (mobile ? 3.3 : 2.85) + (3.8 - (mobile ? 3.3 : 2.85)) * lead - Math.sin(lead * Math.PI) * .2;
-				const lookZ = -1.7 + (-18.0 - (-1.7)) * lead;
+				const lookX = THREE.MathUtils.lerp(mobile ? -3.3 : -2.3, -3.2, eased);
+				const lookY = THREE.MathUtils.lerp(mobile ? 3.3 : 2.85, 2.95, eased);
+				const lookZ = THREE.MathUtils.lerp(-1.7, -3.6, eased);
+
 				if (currentView === 'projects') {
 					destination.set(mobile ? 9.7 : 10.4, 2.55, 17.3);
 					destinationLook.set(mobile ? 8.1 : 8.6, 2.3, -2.5);
@@ -848,10 +853,9 @@
 				lookAt.lerpVectors(fromLook, destinationLook, easedTravel);
 				camera.lookAt(lookAt);
 
-				// Subtle cinematic roll: tilts slightly as passing through, levels out after
-				camera.rotation.z = currentView === 'projects' ? 0 : Math.sin(eased * Math.PI) * .025;
+				// Calm horizon - no dizzying roll
+				camera.rotation.z = 0;
 
-				// Keep scene fully visible; sticky scroll-away reveals content naturally
 				renderer.render(scene, camera);
 				frameDirty = false;
 			}
@@ -925,6 +929,7 @@
 </script>
 
 <div class="wabi-scene" data-view={view} class:scene-unavailable={unavailable} class:scene-ready={sceneReady && rocksReady} bind:this={container} aria-label={view === 'projects' ? '鸟居右侧水岸的三维作品场景' : '日落水面的三维鸟居'}>
+	<div class="scene-atmosphere-veil" aria-hidden="true"></div>
 	<div class="scene-editorial" bind:this={editorial}>{@render children?.()}</div>
 	{#if unavailable}<p class="scene-notice" role="status">当前设备无法显示 3D 场景，仍可继续阅读与浏览作品。</p>{/if}
 	{#if simplified && !unavailable}<p class="scene-quality-note" role="status">部分模型未能载入，当前显示基础三维场景。</p>{/if}
@@ -937,7 +942,26 @@
 	.scene-notice { position: absolute; top: 45%; left: var(--grid-margin); right: var(--grid-margin); max-width: 28em; color: var(--color-bg); font-size: var(--text-sm); line-height: var(--leading-base); }
 	.scene-quality-note { position: absolute; top: var(--space-7); left: var(--grid-margin); right: var(--grid-margin); max-width: 28em; color: var(--color-bg); font: var(--text-xs)/var(--leading-base) var(--font-ui); text-shadow: 0 1px var(--space-2) var(--color-text); }
 	.scene-editorial { position: absolute; inset: 0; z-index: 2; opacity: var(--intro-opacity, 1); transform: translateY(var(--intro-drift, 0px)); }
-	.wabi-scene :global(canvas) { display: block; width: 100% !important; height: 100% !important; }
+	.wabi-scene :global(canvas) {
+		display: block;
+		width: 100% !important;
+		height: 100% !important;
+		transform: scale(var(--scene-scale, 1));
+		transform-origin: 50% 50%;
+		transition: transform 60ms linear;
+	}
+	/* Atmospheric paper veil that smoothly dissolves the 3D scene into warm manuscript paper */
+	.scene-atmosphere-veil {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		pointer-events: none;
+		background: radial-gradient(ellipse 96% 82% at 50% 48%,
+			color-mix(in srgb, var(--color-bg) 88%, transparent) 0%,
+			var(--color-bg) 92%);
+		opacity: var(--scene-veil, 0);
+		transition: opacity 60ms linear;
+	}
 	.wabi-scene::after {
 		content: '';
 		position: absolute;

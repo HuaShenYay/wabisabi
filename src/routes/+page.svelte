@@ -36,14 +36,9 @@
 	.about-manuscript {
 		position: relative;
 		margin-top: calc(-1 * var(--hero-handoff));
-		padding-top: var(--hero-handoff);
-		/* A translucent paper edge borrows the live water beneath it. */
-		background: linear-gradient(180deg,
-			transparent 0,
-			color-mix(in srgb, var(--color-bg) 8%, transparent) calc(var(--hero-handoff) * .18),
-			color-mix(in srgb, var(--color-bg) 56%, transparent) calc(var(--hero-handoff) * .5),
-			color-mix(in srgb, var(--color-bg) 94%, transparent) calc(var(--hero-handoff) * .82),
-			var(--color-bg) var(--hero-handoff));
+		padding-top: var(--space-7);
+		background: var(--color-bg);
+		box-shadow: 0 -20px 48px rgba(42, 41, 36, 0.05);
 	}
 	:global(.page-root:has(.scene-unavailable)) .hero-3d-wrapper { height: 100svh; }
 	:global(.page-root:has(.scene-unavailable)) .about-manuscript { margin-top: 0; padding-top: 0; background: var(--color-bg); }

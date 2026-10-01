@@ -116,7 +116,14 @@
 <CustomCursor />
 <a class="skip-link" href="#main-content">跳至内容</a>
 
-<div class="page-root" style:--hero-intro-opacity={Math.max(0, 1 - heroScroll * 4)} style:--hero-intro-drift={`${-heroScroll * 36}px`} style:--hero-intro-visibility={heroScroll > .24 ? 'hidden' : 'visible'}>
+<div class="page-root"
+	style:--hero-scroll={heroScroll.toFixed(3)}
+	style:--hero-intro-opacity={Math.max(0, 1 - Math.pow(Math.min(1, heroScroll / 0.48), 1.25)).toFixed(3)}
+	style:--hero-intro-drift={`${(-heroScroll * 48).toFixed(1)}px`}
+	style:--hero-intro-blur={`${Math.min(6, heroScroll * 12).toFixed(1)}px`}
+	style:--hero-intro-visibility={heroScroll > 0.55 ? 'hidden' : 'visible'}
+	style:--hero-veil-opacity={Math.min(1, Math.max(0, (heroScroll - 0.15) / 0.65)).toFixed(3)}
+>
 	<div class="page-background"></div>
 	{#if worldMounted}
 		<div class="world-backdrop" class:world-home={isHome} hidden={!isWorldPage}>

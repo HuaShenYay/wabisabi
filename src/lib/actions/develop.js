@@ -1,10 +1,9 @@
 /**
- * Still-Water develop action (显影).
- * The container itself never moves; its direct children surface out of fog
- * one after another with a viscous, staggered delay, like lines of ink
- * developing on wet paper. Pairs with the .is-developing / .is-developed
- * rules in app.css. Honors prefers-reduced-motion.
- *
+ * Still-Water & Showcase develop action (显影).
+ * Supports both direct children and nested `[data-reveal-item]` showcase elements,
+ * surfacing them with staggered timing and releasing GPU filter layers once settled.
+ * Honors prefers-reduced-motion.
+ */
 /** @type {Map<string, IntersectionObserver>} */
 const sharedObservers = new Map();
 /** @type {MediaQueryList | undefined} */
@@ -39,12 +38,13 @@ function getSharedObserver(threshold, rootMargin) {
  * @param {{ threshold?: number, rootMargin?: string, once?: boolean }} [options]
  */
 export function develop(node, options = {}) {
-	const { threshold = 0, rootMargin = '0px 0px -8% 0px', once = true } = options;
+	const { threshold = 0.08, rootMargin = '0px 0px -6% 0px', once = true } = options;
 
-	// Seed each child with its sequence index so CSS can stagger the delay.
-	const children = node.children;
-	for (let i = 0; i < children.length; i++) {
-		/** @type {HTMLElement} */ (children[i]).style.setProperty('--i', String(i));
+	const revealItems = node.querySelectorAll('[data-reveal-item]');
+	const targets = revealItems.length > 0 ? Array.from(revealItems) : Array.from(node.children);
+
+	for (let i = 0; i < targets.length; i++) {
+		/** @type {HTMLElement} */ (targets[i]).style.setProperty('--i', String(i));
 	}
 
 	reducedMotionQuery ??= window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -86,3 +86,4 @@ export function develop(node, options = {}) {
 		}
 	};
 }
+

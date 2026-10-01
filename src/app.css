@@ -191,8 +191,8 @@ img, video {
 	--header-height: 5rem;
 	--spacer-height: var(--space-6);
 	/* Home: one continuous shore-to-manuscript handoff. */
-	--hero-height: 189svh;
-	--hero-handoff: 55svh;
+	--hero-height: 142svh;
+	--hero-handoff: 34svh;
 	--manuscript-width: 1440px;
 
 	/* Organic imperfection (Fukinsei) */
