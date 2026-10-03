@@ -66,6 +66,8 @@ const PROJECT_FIELDS = `
 	aspect,
 	externalUrl,
 	publishedAt,
+	"categoryTitles": categories[]->title,
+	"categorySlugs": categories[]->slug.current,
 	"legacyCategories": categories[]->title,
 	"excerpt": body[_type == "block" && style == "normal"][0].children[].text,
 	"order": coalesce(order, 0)
@@ -78,7 +80,7 @@ interface SanityProject {
 	title: string;
 	titleEn: string;
 	year: string;
-	category: ProjectCategory;
+	category: string;
 	role: string;
 	summary: string;
 	cover: ContentImage | null;
@@ -86,15 +88,56 @@ interface SanityProject {
 	externalUrl?: string;
 	order: number;
 	publishedAt?: string;
+	categoryTitles?: string[];
+	categorySlugs?: string[];
 	legacyCategories?: string[];
 	excerpt?: string[];
 }
 
 function postCategory(p: SanityProject): ProjectCategory {
-	const tags = p.legacyCategories ?? [];
-	// Existing literature, photograph, essay and portfolio posts share the art volume.
-	return categoryOrder.find(category => tags.includes(category) || tags.includes(categoryMeta[category].slug)) ?? '文学艺术';
+	const raw = [
+		...(p.categoryTitles ?? []),
+		...(p.categorySlugs ?? []),
+		...(p.legacyCategories ?? [])
+	].map(s => (typeof s === 'string' ? s.trim().toLowerCase() : ''));
+
+	if (raw.some(t => t === 'photograph' || t === 'photography' || t === 'photo' || t === '摄影映像' || t === '摄影' || t === 'aigc影片' || t === 'movie')) {
+		return '摄影映像';
+	}
+	if (raw.some(t => t === 'essay' || t === 'essays' || t === '知识杂文' || t === '随笔' || t === '杂文')) {
+		return '知识杂文';
+	}
+	if (raw.some(t => t === 'literature' || t === '文学艺术' || t === '文学' || t === '诗歌' || t === '散文')) {
+		return '文学艺术';
+	}
+	if (raw.some(t => t === 'websites' || t === 'website' || t === '网站')) {
+		return '网站';
+	}
+	if (raw.some(t => t === 'digital-humanities' || t === '数字人文')) {
+		return '数字人文';
+	}
+
+	return '文学艺术';
 }
+
+function normalizeProjectCategory(category: string | undefined, p: SanityProject): ProjectCategory {
+	if (!category) return postCategory(p);
+	const lower = category.trim().toLowerCase();
+	if (lower === 'photograph' || lower === 'photography' || lower === '摄影映像' || lower === 'aigc影片') return '摄影映像';
+	if (lower === 'essay' || lower === 'essays' || lower === '知识杂文' || lower === '随笔') return '知识杂文';
+	if (lower === 'literature' || lower === '文学艺术') return '文学艺术';
+	if (lower === 'websites' || lower === 'website' || lower === '网站') return '网站';
+	if (lower === 'digital-humanities' || lower === '数字人文') return '数字人文';
+	if ((categoryOrder as readonly string[]).includes(category)) return category as ProjectCategory;
+	return postCategory(p);
+}
+
+const isAllowedCategory = (c: unknown): boolean => {
+	if (typeof c !== 'string') return false;
+	const norm = c.trim().toLowerCase();
+	return (categoryOrder as readonly string[]).includes(c) ||
+		['photograph', 'photography', 'photo', 'essay', 'essays', 'literature', 'websites', 'website', 'digital-humanities', 'aigc影片'].includes(norm);
+};
 
 function mapProject(p: SanityProject, position: number): Project {
 	const ratio = p.cover ? imageAspectRatio(p.cover) : undefined;
@@ -107,7 +150,7 @@ function mapProject(p: SanityProject, position: number): Project {
 		title: p.title.trim(),
 		titleEn: p.titleEn ?? '',
 		year: p.year || p.publishedAt?.slice(0, 4) || '',
-		category: p._type === 'post' ? postCategory(p) : p.category,
+		category: p._type === 'post' ? postCategory(p) : normalizeProjectCategory(p.category, p),
 		role: p.role ?? '',
 		summary: p.summary || (excerpt.length > 120 ? `${Array.from(excerpt).slice(0, 120).join('')}…` : excerpt),
 		cover: sanityImageUrl(p.cover, { w: 1600, h: aspect === 'portrait_4_3' ? 2133 : aspect === 'landscape_4_3' ? 1200 : 900, fit: 'crop' }) ?? '',
@@ -122,7 +165,7 @@ export async function getProjects(): Promise<Project[]> {
 			const raw = await getSanityClient().fetch<SanityProject[]>(
 				`*[_type in ["project", "post"]] | order(coalesce(order, 0) asc, coalesce(year, publishedAt, _createdAt) desc, _id asc) { ${PROJECT_FIELDS} }`
 			);
-			const valid = raw.filter(p => p && typeof p.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug) && (p._type === 'post' || categoryOrder.includes(p.category)) && typeof p.title === 'string' && p.title.trim());
+			const valid = raw.filter(p => p && typeof p.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug) && (p._type === 'post' || isAllowedCategory(p.category)) && typeof p.title === 'string' && p.title.trim());
 			// New Project documents take precedence if an old Post has the same URL.
 			const projectSlugs = new Set(valid.filter(p => p._type !== 'post').map(p => p.slug));
 			return valid.filter(p => p._type !== 'post' || !projectSlugs.has(p.slug)).map(mapProject);

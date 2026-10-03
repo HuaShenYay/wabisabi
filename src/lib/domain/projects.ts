@@ -5,7 +5,7 @@
  * grouped by one of four categories.
  */
 
-export type ProjectCategory = '文学艺术' | 'AIGC影片' | '网站' | '数字人文';
+export type ProjectCategory = '文学艺术' | '摄影映像' | '知识杂文' | '网站' | '数字人文';
 
 export interface Project {
 	readonly slug: string;
@@ -22,12 +22,13 @@ export interface Project {
 }
 
 /**
- * The four categories in fixed display order.
+ * The five categories in fixed display order.
  * Used by the page to iterate sections in a stable sequence.
  */
 export const categoryOrder: readonly ProjectCategory[] = [
 	'文学艺术',
-	'AIGC影片',
+	'摄影映像',
+	'知识杂文',
 	'网站',
 	'数字人文'
 ] as const;
@@ -61,14 +62,14 @@ export const projects: readonly Project[] = [
 		aspect: 'portrait_4_3'
 	},
 
-	// ===== AIGC影片 =====
+	// ===== 摄影映像 =====
 	{
 		slug: 'mirror-stage',
 		index: '03',
 		title: '镜像阶段',
 		titleEn: 'Mirror Stage',
 		year: '2024',
-		category: 'AIGC影片',
+		category: '摄影映像',
 		role: 'Creative Technologist',
 		summary:
 			'拉康「镜像阶段」的 Three.js 译写，观者的轮廓被水面反射缓慢拉扯成形又溶解，是一次关于自我认同的交互式叙事。',
@@ -81,7 +82,7 @@ export const projects: readonly Project[] = [
 		title: '碑拓生成器',
 		titleEn: 'Rubbing Diffusion',
 		year: '2023',
-		category: 'AIGC影片',
+		category: '摄影映像',
 		role: 'AIGC Creator',
 		summary:
 			'训练一个仅生成拓片质感的小型扩散模型，让石头风化的肌理成为可书写的笔触，模糊了「拓」与「作」之间的界限。',
@@ -89,10 +90,25 @@ export const projects: readonly Project[] = [
 		aspect: 'landscape_16_9'
 	},
 
+	// ===== 知识杂文 =====
+	{
+		slug: 'reading-typography-notes',
+		index: '05',
+		title: '阅读字体与心得',
+		titleEn: 'Notes on Typography & Reading',
+		year: '2026',
+		category: '知识杂文',
+		role: 'Writer',
+		summary:
+			'关于长时间屏幕阅读体验的字体排印札记，探讨衬线曲度、行气呼吸与灰度平衡对阅读心流的幽微影响。',
+		cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=vintage%20typography%20book%2C%20open%20pages%20with%20elegant%20chinese%20typesetting%2C%20warm%20ambient%20light%2C%20minimalist%2C%20wabisabi%20paper%20texture&image_size=landscape_16_9',
+		aspect: 'landscape_16_9'
+	},
+
 	// ===== 网站 =====
 	{
 		slug: 'wabisabi-site',
-		index: '05',
+		index: '06',
 		title: 'Wabi-Sabi 个人站',
 		titleEn: 'Wabi-Sabi Portfolio',
 		year: '2025',
@@ -108,7 +124,7 @@ export const projects: readonly Project[] = [
 	// ===== 数字人文 =====
 	{
 		slug: 'classical-poetry-atlas',
-		index: '06',
+		index: '07',
 		title: '古典诗歌情感图谱',
 		titleEn: 'Classical Poetry Atlas',
 		year: '2024',
@@ -131,12 +147,15 @@ export function groupByCategory(
 ): Record<ProjectCategory, Project[]> {
 	const groups: Record<ProjectCategory, Project[]> = {
 		'文学艺术': [],
-		'AIGC影片': [],
+		'摄影映像': [],
+		'知识杂文': [],
 		'网站': [],
 		'数字人文': []
 	};
 	for (const p of items) {
-		groups[p.category].push(p);
+		if (groups[p.category]) {
+			groups[p.category].push(p);
+		}
 	}
 	return groups;
 }
@@ -168,21 +187,29 @@ export const categoryMeta: Record<ProjectCategory, CategoryMeta> = {
 		slug: 'literature',
 		numeral: '壹',
 		en: 'Literature & Art',
-		subtag: '诗文影像',
+		subtag: '诗文创作',
 		intro: '文学与艺术创作。诗境、影像与精神分析在此交织，以文字为底，以图像为墨。',
 		layout: 'catalog'
 	},
-	'AIGC影片': {
-		slug: 'aigc-films',
+	'摄影映像': {
+		slug: 'photograph',
 		numeral: '贰',
-		en: 'AIGC Films',
-		subtag: '生成叙事',
-		intro: '生成式影像实验。以扩散模型与潜空间为片场，探索 AI 与叙事的边界。',
+		en: 'Photography & Visuals',
+		subtag: '光影定格',
+		intro: '摄影与动态影像创作。以镜头凝固时间，在光影流转中捕捉刹那的永恒。',
 		layout: 'stills'
+	},
+	'知识杂文': {
+		slug: 'essay',
+		numeral: '叁',
+		en: 'Essays & Notes',
+		subtag: '思辨札记',
+		intro: '思维碎片、阅读笔记与技术随笔。在杂记与漫谈中沉淀认知的涟漪。',
+		layout: 'catalog'
 	},
 	'网站': {
 		slug: 'websites',
-		numeral: '叁',
+		numeral: '肆',
 		en: 'Websites',
 		subtag: '界面空间',
 		intro: '数字空间的营造。以代码构建可栖居的界面，让浏览成为一种居住。',
@@ -190,7 +217,7 @@ export const categoryMeta: Record<ProjectCategory, CategoryMeta> = {
 	},
 	'数字人文': {
 		slug: 'digital-humanities',
-		numeral: '肆',
+		numeral: '伍',
 		en: 'Digital Humanities',
 		subtag: '数据诗学',
 		intro: '技术与人文的交汇。让古典文本与计算方法互文，在数据中读出诗学。',

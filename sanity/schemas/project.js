@@ -51,7 +51,8 @@ export const projectSchema = {
 			options: {
 				list: [
 					{ title: '文学艺术 · Literature & Art', value: '文学艺术' },
-					{ title: 'AIGC影片 · AIGC Film', value: 'AIGC影片' },
+					{ title: '摄影映像 · Photography & Visuals', value: '摄影映像' },
+					{ title: '知识杂文 · Essays & Notes', value: '知识杂文' },
 					{ title: '网站 · Website', value: '网站' },
 					{ title: '数字人文 · Digital Humanities', value: '数字人文' }
 				]

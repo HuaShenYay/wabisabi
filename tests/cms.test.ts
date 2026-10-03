@@ -62,4 +62,21 @@ describe('CMS source of truth', () => {
 		expect(await getArticlePageData('../invalid')).toBeNull();
 		expect(state.fetch).not.toHaveBeenCalled();
 	});
+	it('maps sanity photograph to 摄影映像, essay to 知识杂文, and literature to 文学艺术', async () => {
+		state.fetch.mockResolvedValue([
+			{ _type: 'post', slug: 'photo-one', title: '摄影一', legacyCategories: ['portfolio', 'photograph'] },
+			{ _type: 'post', slug: 'essay-one', title: '杂文一', legacyCategories: ['essay'] },
+			{ _type: 'post', slug: 'poem-one', title: '诗歌一', legacyCategories: ['portfolio', 'literature'] },
+			{ _type: 'project', slug: 'proj-photo', title: '影像项目', category: 'photograph' },
+			{ _type: 'project', slug: 'proj-essay', title: '杂文项目', category: '知识杂文' }
+		]);
+		const projects = await getProjects();
+		expect(projects).toEqual([
+			expect.objectContaining({ slug: 'photo-one', category: '摄影映像' }),
+			expect.objectContaining({ slug: 'essay-one', category: '知识杂文' }),
+			expect.objectContaining({ slug: 'poem-one', category: '文学艺术' }),
+			expect.objectContaining({ slug: 'proj-photo', category: '摄影映像' }),
+			expect.objectContaining({ slug: 'proj-essay', category: '知识杂文' })
+		]);
+	});
 });

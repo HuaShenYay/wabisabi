@@ -39,7 +39,8 @@ export const siteConfig = {
 		{ path: '/', label: 'Home', changefreq: 'monthly', priority: '1.0' },
 		{ path: '/projects', label: 'Project', changefreq: 'monthly', priority: '0.9' },
 		{ path: '/projects/literature', label: 'Literature & Art', changefreq: 'monthly', priority: '0.8' },
-		{ path: '/projects/aigc-films', label: 'AIGC Films', changefreq: 'monthly', priority: '0.8' },
+		{ path: '/projects/photograph', label: 'Photography & Visuals', changefreq: 'monthly', priority: '0.8' },
+		{ path: '/projects/essay', label: 'Essays & Notes', changefreq: 'monthly', priority: '0.8' },
 		{ path: '/projects/websites', label: 'Websites', changefreq: 'monthly', priority: '0.8' },
 		{ path: '/projects/digital-humanities', label: 'Digital Humanities', changefreq: 'monthly', priority: '0.8' },
 		{ path: '/copyright', label: 'Copyright', changefreq: 'yearly', priority: '0.3' }
