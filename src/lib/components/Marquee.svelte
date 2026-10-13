@@ -9,9 +9,8 @@
 	/** @type {HTMLElement | undefined} */
 	let seam;
 
-	// Chrono-slow horizontal parallax anchored to the element's viewport
-	// position: the name is fully centred as it passes mid-screen and drifts
-	// only gently on either side, so the three characters never clip.
+	// Viscous horizontal parallax anchored to the element's viewport position:
+	// monumental letters drift across the paper horizon as the user scrolls.
 	onMount(() => {
 		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (reduce || !seamWord || !seam) return;
@@ -26,7 +25,7 @@
 			const vh = window.innerHeight;
 			const centre = rect.top + rect.height / 2 - vh / 2;
 			const progress = Math.max(-1, Math.min(1, centre / vh));
-			const range = Math.min(34, window.innerWidth * 0.034);
+			const range = Math.min(64, window.innerWidth * 0.06);
 			const nextX = (-progress * range).toFixed(2);
 			if (nextX !== lastX) {
 				lastX = nextX;
@@ -55,7 +54,7 @@
 					window.removeEventListener('scroll', onScroll);
 				}
 			},
-			{ rootMargin: '100px 0px' }
+			{ rootMargin: '120px 0px' }
 		);
 		visibility.observe(seam);
 		update();
@@ -67,48 +66,114 @@
 	});
 </script>
 
-<section bind:this={seam} class="name-seam" aria-label={profile.name}>
-	<p class="seam-label">Afterword</p>
-	<span bind:this={seamWord} class="seam-word deboss-text">{profile.name}</span>
-	<p class="seam-kicker">{profile.nameEn} · {profile.location} · {profile.title}</p>
+<!--
+	v2「間 · 休止符」(Interval / Ma)
+	A monumental architectural pause between the autobiography and links.
+	Carries a colossal, cropped inscription across the horizon and machine-voice
+	coordinates beneath it.
+-->
+<section bind:this={seam} class="interval-section" aria-label="间 · 休止符">
+	<header class="interval-head machine">
+		<span class="seal" aria-hidden="true"></span>
+		<span>INTERVAL · 間</span>
+		<span class="head-rule" aria-hidden="true"></span>
+		<span>EPILOGUE</span>
+	</header>
+
+	<div class="interval-stage">
+		<span bind:this={seamWord} class="colossal-title" aria-hidden="true">
+			{profile.nameEn}
+		</span>
+		<p class="interval-verse">
+			在空无与数字之间，留下微温的墨痕。
+		</p>
+	</div>
+
+	<footer class="interval-meta machine">
+		<span>{profile.name} — {profile.title}</span>
+		<span>LOC. {profile.location}</span>
+		<span>PORTFOLIO ARCHIVE / 2026</span>
+	</footer>
 </section>
 
 <style>
-	.name-seam {
+	.interval-section {
 		grid-column: 1 / -1;
+		position: relative;
 		overflow: hidden;
-		padding-block: var(--space-8) var(--space-7);
+		padding-block: var(--space-9) var(--space-8);
+		border-top: 1px solid var(--color-divider);
+		border-bottom: 1px solid var(--color-divider);
+		background: radial-gradient(ellipse 90% 70% at 50% 50%, color-mix(in srgb, var(--color-bg-alt) 65%, transparent), transparent 75%);
 		user-select: none;
 	}
-	.seam-label { margin-left: var(--grid-margin); margin-bottom: var(--space-5); font: italic var(--text-base)/var(--leading-base) var(--font-latin); color: var(--color-text-muted); }
 
-	.seam-word {
-		display: block;
-		font-family: var(--font-heading);
-		font-size: clamp(calc(var(--text-3xl) * 1.5), 14vw, calc(var(--text-3xl) * 3));
-		line-height: var(--leading-tight);
-		letter-spacing: var(--tracking-heading);
-		white-space: nowrap;
-		color: var(--color-text);
-		opacity: 0.9;
-		margin-left: var(--grid-margin);
-		will-change: transform;
-	}
-
-	.seam-kicker {
-		font-family: var(--font-ui);
-		font-size: var(--text-xs);
-		line-height: var(--leading-base);
-		letter-spacing: var(--tracking-heading);
+	.interval-head {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		padding-inline: var(--grid-margin);
 		color: var(--color-text-muted);
-		margin-top: var(--space-5);
-		margin-left: var(--grid-margin);
-		margin-right: var(--grid-margin);
+		margin-bottom: var(--space-6);
+	}
+	.head-rule { width: var(--space-6); height: 1px; background: currentColor; opacity: .4; }
+
+	.interval-stage {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		min-height: 38svh;
+		padding-inline: var(--grid-margin);
 	}
 
-	@media (max-width: 600px) {
-		.name-seam { padding-block: var(--space-7); }
-		.seam-kicker { max-width: 25em; }
+	/* 巨物: colossal cropped English name in Orelo / Display Latin */
+	.colossal-title {
+		display: block;
+		font-family: var(--font-display-latin);
+		font-size: min(var(--display-0), 28vw);
+		line-height: 0.9;
+		letter-spacing: var(--tracking-crush);
+		color: var(--color-text);
+		opacity: 0.16;
+		white-space: nowrap;
+		margin-left: calc(-1 * var(--grid-margin) * 0.5);
+		will-change: transform;
+		pointer-events: none;
 	}
-	@media (prefers-reduced-motion: reduce) { .seam-word { transform: none !important; will-change: auto; } }
+
+	/* 刻 · vertical single-line verse anchored against the colossal letters */
+	.interval-verse {
+		writing-mode: vertical-rl;
+		font-family: var(--font-heading);
+		font-size: clamp(var(--text-lg), 1rem + 0.6vw, var(--text-2xl));
+		letter-spacing: .34em;
+		line-height: 1.4;
+		color: var(--color-text);
+		margin-left: auto;
+		z-index: 1;
+		text-shadow: 0 1px 18px var(--color-bg);
+	}
+
+	.interval-meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: var(--space-3);
+		padding-inline: var(--grid-margin);
+		margin-top: var(--space-7);
+		color: var(--color-text-faint);
+	}
+
+	@media (max-width: 768px) {
+		.interval-section { padding-block: var(--space-8); }
+		.interval-stage { flex-direction: column; align-items: flex-start; gap: var(--space-5); min-height: auto; }
+		.colossal-title { font-size: 26vw; margin-left: 0; }
+		.interval-verse { writing-mode: horizontal-tb; margin-left: 0; font-size: var(--text-base); letter-spacing: .16em; }
+		.interval-meta { flex-direction: column; gap: var(--space-2); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.colossal-title { transform: none !important; will-change: auto; }
+	}
 </style>

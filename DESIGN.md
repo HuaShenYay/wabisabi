@@ -555,3 +555,70 @@
   --duration-slow: 620ms;
 }
 ```
+
+---
+
+## 17. Neo-Wabisabi v2.0「残响 · Avant-Wabi」先锋演进规范
+
+> 版本 v2.0 · 演进于 2026-10 · 核心思想：先锋张力、物料印刷感与三声部排印
+
+### 17.1 设计演进背景
+在保留 v1.0 七大核心原则（Kanso, Fukinsei, Shibui, Shizen, Yūgen, Datsuzoku, Seijaku）的基础上，针对“审美缺乏先锋艺术感、高级时尚感与物料冲击力”的问题实施超进化，建立三大视觉张力轴线：
+1. **巨物与空无（Monumental Scale vs. Radical Void）**：极度压缩的行距、贯穿视口的巨幅活字轮廓水印与大面积停顿留白形成空间压迫感与冥想感。
+2. **手作与机器对位（Hand-Craft vs. Machine Precision）**：保留宋楷手作刻印韵味的同时，引入博物馆藏品级机器精密标定（时间码、经纬坐标、藏品编号、细黑体等宽排印）。
+3. **物料物理与印刷微观（Print & Halftone Materiality）**：摆脱现代 Web 廉价的扁平与玻璃拟态，采用报纸调幅网点（AM Halftone）、8×8 拜耳抖动（Bayer Dither）、墨晕显影与活字压印质感。
+
+### 17.2 第八原则：残响（Zankyō 残響）
+- **核心定义**：余白之后的微光与震颤。交互动作结束之后，不发生突兀的硬切，而是如同钟声或墨池泛漪般留下黏滞衰减的物理痕迹。
+- **技术落地**：
+  - **墨滴光标（Custom Ink Cursor）**：采用 `mix-blend-mode: difference` 的骨白墨滴，掠过文字与背景时实时反转色值，移动时具粘弹性滞后，悬停时扩为 64px 阅览放大镜，离开时触发残响。
+  - **3D 拜耳抖动着色器**：Three.js 场景经全屏后处理着色器量化为五阶墨色阶梯与 8×8 Bayer 抖动网点，光标悬停处黏性划开显露细腻原画。
+  - **着色器内嵌调幅网点（In-Shader AM Halftone）**：巨物「間」等离屏字符在 WebGL 片元着色器内通过 45° 旋转网点筛网二次印刷，实现深邃的高定纸面印刷感。
+
+### 17.3 三声部排印系统（Three Typographic Voices）
+- **刻印声部（Inscribed Voice）**：`--font-heading: "KingHwa_OldSong"`，承载古典刻本的刀刀见骨、墨晕入木。用于巨物案名、章节大题、首字印章。
+- **书写声部（Literary Voice）**：`--font-body: "Source Han Serif SC"` / `LXGW WenKai`，承载人文随笔与长文叙事，舒适的行距与清晰的屏显可读性。
+- **机器声部（Machine Voice）**：`--font-machine: "Neue Haas Grotesk Display"` / `Orelo` / `monospace`，极细、高字距（`letter-spacing: 0.24em`）、全大写。用于年代、坐标、案卷序列码（`ARCHIVE // 01`）、参数度量。
+
+### 17.4 新增 Token 体系
+```css
+:root {
+  /* 夜墨层与骨白（用于沉入深渊的对比章节） */
+  --raw-night: #1B1A17;
+  --raw-night-soft: #2E2C27;
+  --raw-bone: #E9E2D2;
+  --raw-bone-muted: #A8A08E;
+
+  /* 朱印（全站唯一高饱和点，每屏至多一处） */
+  --raw-cinnabar: #B23A26;
+  --color-seal: var(--raw-cinnabar);
+
+  /* 巨物与微观尺度 */
+  --text-micro: 0.625rem;
+  --text-4xl: clamp(3.5rem, 2rem + 6vw, 7rem);
+  --display-1: clamp(6rem, 18vw, 22rem);
+  --display-0: clamp(10rem, 34vw, 40rem);
+  --tracking-machine: 0.24em;
+  --tracking-crush: -0.04em;
+
+  /* 动效周期 */
+  --ease-ink: cubic-bezier(0.65, 0, 0.15, 1);
+  --duration-bleed: 1200ms;
+  --duration-unmount: 1100ms;
+  --duration-stamp: 80ms;
+  --duration-ma: 280ms;
+  --duration-echo: 420ms;
+}
+```
+
+### 17.5 五大先锋动效语法
+1. **墨晕（Bleed）**：元素通过 `use:develop` 指令从池底向外晕开，垂直微移 + 模糊收敛 + `clip-path` 顶端到底端自然落定。
+2. **揭裱（Unmount）**：画作卡片悬浮与载入时的纸缘托裱微层递升。
+3. **刻印（Stamp）**：按钮及链接按压时的瞬时下凹感（`80ms`）。
+4. **間（Ma）**：行与行、元素与元素错峰入场的留白停顿（`280ms`）。
+5. **残响（Echo）**：鼠标或焦点移开后的缓释拖尾（`420ms`）。
+
+### 17.6 图像物料化与装裱体系
+- **物料化滤镜与网点**：图版组件 `Artwork.svelte` 叠加 5px 调幅纸基网点微层（`artwork-veil`），悬停时柔和退去。
+- **档案裁剪角标（Archival Crop Marks）**：装裱图框四角带有细线 L 型角标与交叉刻线，呼应博物馆馆藏研究画册的工艺质感。
+

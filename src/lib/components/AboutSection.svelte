@@ -122,7 +122,7 @@
 	</section>
 
 	<!-- 三 · 道篇 · 造物观 (A way of making · Philosophical Manifesto) -->
-	<section class="movement mv-creed manuscript-grid" aria-labelledby="philosophy-heading" use:develop>
+	<section class="movement mv-creed manuscript-grid night-ink" aria-labelledby="philosophy-heading" use:develop>
 		<span class="chapter-watermark" aria-hidden="true">道</span>
 		<header class="mv-head sticky-head" data-reveal-item>
 			<span class="chapter-badge">道篇 · 第三</span>
@@ -171,16 +171,18 @@
 		position: relative;
 	}
 
-	/* Faint, atmospheric calligraphy watermark seal for each narrative chapter (inspired by The Boat) */
+	/* v2 巨物: each chapter carries one colossal, cropped outline glyph —
+	   visible enough to weigh on the page, hollow enough not to compete. */
 	.chapter-watermark {
 		position: absolute;
-		right: 3%;
-		top: var(--space-6);
+		right: -0.12em;
+		top: var(--space-5);
 		font-family: var(--font-heading);
-		font-size: clamp(8rem, 16vw, 18rem);
+		font-size: var(--display-1);
 		line-height: 1;
-		color: var(--color-text);
-		opacity: 0.038;
+		letter-spacing: var(--tracking-crush);
+		color: transparent;
+		-webkit-text-stroke: 1px color-mix(in srgb, var(--color-text) 20%, transparent);
 		pointer-events: none;
 		user-select: none;
 		z-index: 0;
@@ -196,13 +198,23 @@
 		}
 	}
 
+	/* 机 · chapter labels read like museum catalogue numbers */
 	.chapter-badge {
-		display: inline-block;
-		font: italic var(--text-xs)/var(--leading-base) var(--font-latin);
-		color: var(--color-link);
-		letter-spacing: .12em;
-		margin-bottom: var(--space-2);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font: 400 var(--text-micro)/1.6 var(--font-machine);
+		color: var(--color-text-muted);
+		letter-spacing: var(--tracking-machine);
+		margin-bottom: var(--space-3);
 		text-transform: uppercase;
+	}
+	.chapter-badge::before {
+		content: '';
+		width: var(--space-5);
+		height: 1px;
+		background: currentColor;
+		opacity: .6;
 	}
 
 	.chapter-en {
@@ -218,20 +230,24 @@
 	}
 
 	/* Still-Water develop transitions with viscous organic timing */
+	/* v2 墨晕 Bleed: lines surface from a blurred ink pool and settle downward */
 	.manuscript-grid:global(.is-developing) [data-reveal-item] {
 		opacity: 0;
-		transform: translateY(22px) rotate(var(--item-tilt, 0deg));
-		filter: blur(4px);
+		transform: translateY(10px) rotate(var(--item-tilt, 0deg));
+		filter: blur(12px);
+		clip-path: inset(-50% -50% 45% -50%);
 	}
 	.manuscript-grid:global(.is-developed) [data-reveal-item] {
 		opacity: 1;
 		transform: none;
 		filter: none;
+		clip-path: inset(-50% -50% -50% -50%);
 		transition:
-			opacity 900ms var(--ease-organic),
-			transform 900ms var(--ease-organic),
-			filter 900ms var(--ease-organic);
-		transition-delay: calc(var(--i, 0) * 85ms);
+			opacity var(--duration-bleed) var(--ease-organic),
+			transform var(--duration-bleed) var(--ease-organic),
+			filter calc(var(--duration-bleed) * 1.1) var(--ease-organic),
+			clip-path var(--duration-unmount) var(--ease-ink);
+		transition-delay: calc(var(--i, 0) * 120ms);
 	}
 
 	/* Section 0: 序卷 · 题跋 (Preface) */
@@ -241,8 +257,8 @@
 	}
 	.preface-head { padding-top: var(--space-2); }
 	h2 {
-		font: 400 var(--text-3xl)/var(--leading-tight) var(--font-heading);
-		letter-spacing: .16em;
+		font: 400 var(--text-4xl)/1 var(--font-heading);
+		letter-spacing: var(--tracking-crush);
 		margin-top: var(--space-2);
 	}
 	.preface-identity {
@@ -250,7 +266,12 @@
 		font: italic var(--text-base)/var(--leading-base) var(--font-latin);
 		color: var(--color-text-muted);
 	}
-	.identity-name { display: block; }
+	.identity-name {
+		display: block;
+		font: 400 var(--text-micro)/1.6 var(--font-machine);
+		letter-spacing: var(--tracking-machine);
+		text-transform: uppercase;
+	}
 	.identity-loc {
 		display: block;
 		font: var(--text-sm)/var(--leading-base) var(--font-body);
@@ -306,6 +327,16 @@
 		font: 400 var(--text-2xl)/var(--leading-tight) var(--font-heading);
 		letter-spacing: var(--tracking-heading);
 		margin-top: var(--space-2);
+	}
+	/* 刻 · on wide screens chapter names hang vertically like scroll titles */
+	@media (min-width: 901px) {
+		.mv-head h3 {
+			writing-mode: vertical-rl;
+			font-size: var(--text-3xl);
+			letter-spacing: .3em;
+			line-height: 1.1;
+			margin-block: var(--space-4) var(--space-4);
+		}
 	}
 	.focus-list {
 		padding-top: var(--space-2);
@@ -420,18 +451,22 @@
 	}
 
 	/* Movement 三: 道篇 · 造物观 (Creed Scrollytelling) */
+	/* v2 夜墨: the creed sinks into night ink — the page's one deep breath.
+	   The torn top edge is the 裂 (rupture) between paper and ink. */
 	.mv-creed {
 		position: relative;
 		isolation: isolate;
 		grid-template-columns: 26fr 74fr;
-		padding-block: var(--space-8);
+		padding-block: var(--space-9);
+		background: transparent;
 	}
 	.mv-creed::before {
 		content: '';
 		position: absolute;
 		z-index: -1;
 		inset: 0 calc(-1 * max(0px, (100vw - var(--manuscript-width)) / 2));
-		background: var(--color-bg-alt);
+		background: var(--raw-night);
+		clip-path: polygon(0% 2.2%, 7% 0.6%, 16% 1.8%, 29% 0%, 41% 1.4%, 53% 0.3%, 66% 1.9%, 78% 0.4%, 89% 1.6%, 100% 0.2%, 100% 100%, 0% 100%);
 	}
 	.creed {
 		max-width: 40em;
@@ -446,13 +481,13 @@
 			opacity var(--duration-slow) var(--ease-organic),
 			border-color var(--duration-slow) var(--ease-organic),
 			transform var(--duration-slow) var(--ease-organic);
-		opacity: 0.52;
+		opacity: 0.36;
 	}
 	.creed-card + .creed-card { margin-top: var(--space-8); }
 	/* Active creed in reading zone illuminates with full ink richness */
 	.creed-card.is-active-creed {
 		opacity: 1;
-		border-left-color: var(--color-link);
+		border-left-color: var(--raw-bone);
 		transform: translateX(2px);
 	}
 
@@ -463,9 +498,10 @@
 		margin-bottom: var(--space-4);
 	}
 	.creed-badge {
-		font: italic var(--text-xs) var(--font-latin);
-		color: var(--color-link);
-		letter-spacing: .08em;
+		font: 400 var(--text-micro)/1.6 var(--font-machine);
+		color: var(--color-text-muted);
+		letter-spacing: var(--tracking-machine);
+		text-transform: uppercase;
 	}
 	.creed-label {
 		font: italic var(--text-base)/var(--leading-base) var(--font-latin);
@@ -515,7 +551,7 @@
 		.preface { grid-template-columns: 30fr 70fr; }
 		.mv-edu { grid-template-columns: 34fr 66fr; }
 		.mv-creed { grid-template-columns: 30fr 70fr; }
-		.chapter-watermark { font-size: clamp(6rem, 12vw, 10rem); }
+		.chapter-watermark { font-size: clamp(7rem, 22vw, 12rem); }
 	}
 
 	@media (max-width: 600px) {

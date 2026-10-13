@@ -12,7 +12,7 @@
 			active = false;
 			cancelAnimationFrame(frame);
 			frame = 0;
-			ring.classList.remove('active');
+			ring.classList.remove('active', 'is-hover', 'is-press');
 			dot.classList.remove('active');
 			document.documentElement.classList.remove('has-custom-cursor');
 		}
@@ -33,6 +33,18 @@
 			dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 			if (!frame) animate();
 		}
+		// v2 墨点: swell into a reading lens over anything interactive; the
+		// width/height transition leaves a short 残响 (echo) when leaving.
+		const interactive = 'a, button, [role="button"], summary, label, input, select, textarea';
+		function over(event: PointerEvent) {
+			const target = event.target instanceof Element ? event.target.closest(interactive) : null;
+			ring.classList.toggle('is-hover', Boolean(target));
+		}
+		function press() { if (active) ring.classList.add('is-press'); }
+		function release() { ring.classList.remove('is-press'); }
+		document.addEventListener('pointerover', over, { passive: true });
+		document.addEventListener('pointerdown', press, { passive: true });
+		document.addEventListener('pointerup', release, { passive: true });
 		document.addEventListener('pointermove', move, { passive: true });
 		document.documentElement.addEventListener('pointerleave', hide);
 		window.addEventListener('blur', hide);
@@ -40,6 +52,9 @@
 		return () => {
 			hide();
 			document.removeEventListener('pointermove', move);
+			document.removeEventListener('pointerover', over);
+			document.removeEventListener('pointerdown', press);
+			document.removeEventListener('pointerup', release);
 			document.documentElement.removeEventListener('pointerleave', hide);
 			window.removeEventListener('blur', hide);
 			preference.removeEventListener('change', hide);

@@ -39,19 +39,21 @@
 		<a class="link-underline" href="/projects">作品</a>
 		<span class="crumb-sep" aria-hidden="true">/</span>
 		<a class="link-underline" href="/projects/{cat.slug}">{article.category}</a>
+		<span class="seal" aria-hidden="true"></span>
+		<span class="work-code machine">ENTRY // {article.slug.toUpperCase()}</span>
 	</p>
 	<h1 class="work-title deboss-text">{article.title}</h1>
 	{#if article.titleEn}<p class="work-title-en">{article.titleEn}</p>{/if}
 	<dl class="work-spec">
-		{#if article.year}<div class="spec-cell"><dt>年份</dt><dd>{article.year}</dd></div>{/if}
-		{#if article.role}<div class="spec-cell"><dt>身份</dt><dd>{article.role}</dd></div>{/if}
-		<div class="spec-cell"><dt>分卷</dt><dd>第{cat.numeral}卷 · {cat.subtag}</dd></div>
+		{#if article.year}<div class="spec-cell"><dt class="machine">YEAR</dt><dd>{article.year}</dd></div>{/if}
+		{#if article.role}<div class="spec-cell"><dt class="machine">ROLE</dt><dd>{article.role}</dd></div>{/if}
+		<div class="spec-cell"><dt class="machine">VOLUME</dt><dd>第{cat.numeral}卷 · {cat.subtag}</dd></div>
 		{#if article.externalUrl}
 			<div class="spec-cell">
-				<dt>链接</dt>
+				<dt class="machine">LINK</dt>
 				<dd>
-					<a class="link-underline spec-url" href={article.externalUrl} target="_blank" rel="noopener noreferrer">
-						访问站点
+					<a class="link-underline spec-url machine" href={article.externalUrl} target="_blank" rel="noopener noreferrer">
+						VISIT ↗
 					</a>
 				</dd>
 			</div>
@@ -121,22 +123,22 @@
 	<div class="work-nav-inner">
 		{#if data.prevWork}
 			<a class="work-nav-link" href="/projects/{data.prevWork.categorySlug}/{data.prevWork.slug}">
-				<span class="work-nav-dir">上一件</span>
+				<span class="work-nav-dir machine">PREV // 上一件</span>
 				<span class="work-nav-title">{data.prevWork.title}</span>
 			</a>
 		{:else}
 			<span class="work-nav-link" aria-hidden="true"></span>
 		{/if}
-		<a class="work-nav-index link-underline" href="/projects/{cat.slug}">返回分卷</a>
+		<a class="work-nav-index link-underline" href="/projects/{cat.slug}">返回分卷 · 第{cat.numeral}卷</a>
 		{#if data.nextWork}
 			<a class="work-nav-link work-nav-next" href="/projects/{data.nextWork.categorySlug}/{data.nextWork.slug}">
-				<span class="work-nav-dir">下一件</span>
+				<span class="work-nav-dir machine">NEXT // 下一件</span>
 				<span class="work-nav-title">{data.nextWork.title}</span>
 			</a>
 		{:else}
 			<span class="work-nav-link" aria-hidden="true"></span>
 		{/if}
-</div>
+	</div>
 </nav>
 
 <Footer />
@@ -157,13 +159,19 @@
 		letter-spacing: 0.08em;
 		color: var(--color-text-muted);
 		display: flex;
-		gap: 0.6rem;
-		align-items: baseline;
+		gap: 0.8rem;
+		align-items: center;
 		margin-bottom: 2.2rem;
 	}
 
 	.crumb-sep {
 		color: var(--color-text-muted);
+	}
+
+	.work-code {
+		color: var(--color-text-muted);
+		opacity: 0.65;
+		margin-left: 0.4rem;
 	}
 
 	.work-title {
@@ -178,7 +186,7 @@
 
 	.work-title-en {
 		grid-column: 1 / -1;
-		font: italic var(--text-lg)/var(--leading-base) var(--font-latin);
+		font: italic var(--text-lg)/var(--leading-base) var(--font-display-latin);
 		letter-spacing: var(--tracking-heading);
 		color: var(--color-text-muted);
 		margin-top: var(--space-3);
@@ -219,11 +227,11 @@
 	/* ============ 装裱 mounted frame (shared) ============ */
 
 	.mounted-frame {
-		padding: 2px;
-		border: 8px solid var(--color-bg-alt);
-		outline: 1px solid rgba(158, 107, 85, 0.12);
-		outline-offset: 7px;
-		box-shadow: 0 2px 14px var(--shadow);
+		position: relative;
+		padding: 3px;
+		background: var(--color-bg-alt);
+		border: 1px solid var(--color-border);
+		box-shadow: 0 4px 20px var(--shadow);
 	}
 
 

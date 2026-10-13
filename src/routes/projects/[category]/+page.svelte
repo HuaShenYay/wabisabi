@@ -32,6 +32,7 @@
 
 <!-- 卷首 Volume lead -->
 <section class="grid vol-lead" use:reveal>
+	<span class="vol-watermark" aria-hidden="true">{meta.numeral}</span>
 	<div class="vol-lead-mark" aria-hidden="true"></div>
 	<span class="vol-numeral" aria-hidden="true" style="--stamp-tilt: -0.6deg">{meta.numeral}</span>
 	<div class="vol-lead-body">
@@ -39,10 +40,12 @@
 			<a class="link-underline" href="/projects">作品</a>
 			<span class="vol-breadcrumb-sep" aria-hidden="true">/</span>
 			<span>第{meta.numeral}卷</span>
+			<span class="seal" aria-hidden="true"></span>
+			<span class="vol-code machine">ARCHIVE // {meta.slug.toUpperCase()}</span>
 		</p>
 		<h1 class="vol-title deboss-text">{data.category}</h1>
 		<p class="vol-subtag">{meta.subtag}</p>
-		<p class="vol-en">{meta.en} <span class="vol-count">{count}</span></p>
+		<p class="vol-en">{meta.en} <span class="vol-count machine">[{count} WORKS]</span></p>
 		<p class="vol-colophon">{meta.intro}</p>
 	</div>
 </section>
@@ -53,7 +56,7 @@
 <section class="grid vol-works">
 	<aside class="vol-side" aria-hidden="true">
 		<span class="vol-side-numeral">{meta.numeral}</span>
-		<span class="vol-side-count">{count} 件</span>
+		<span class="vol-side-count machine">ACCESSION [{count}]</span>
 	</aside>
 
 	<div class="vol-content">
@@ -69,14 +72,14 @@
 				{#each items as p (p.slug)}
 					<li class="catalog-row" use:reveal>
 						<a class="catalog-link" href="/projects/{meta.slug}/{p.slug}">
-							<span class="catalog-index">{p.index}</span>
+							<span class="catalog-index machine">{p.index}</span>
 							<span class="catalog-main">
 								<span class="catalog-title-cn">{p.title}</span>
 								<span class="catalog-title-en">{p.titleEn}</span>
 								<span class="catalog-summary">{p.summary}</span>
 							</span>
 							<span class="catalog-meta">
-								<span class="catalog-year">{p.year}</span>
+								<span class="catalog-year machine">{p.year}</span>
 								<span class="catalog-role">{p.role}</span>
 							</span>
 						</a>
@@ -93,9 +96,9 @@
 								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} eager={i === 0} />
 							</div>
 							<div class="stills-caption">
-								<span class="stills-index">{p.index}</span>
+								<span class="stills-index machine">PLATE // {p.index}</span>
 								<h2 class="mounted-title">{p.title}</h2>
-								<span class="stills-year">{p.year}</span>
+								<span class="stills-year machine">{p.year}</span>
 								<p class="stills-summary">{p.summary}</p>
 							</div>
 						</a>
@@ -108,19 +111,19 @@
 				{#each items as p, i (p.slug)}
 					<article class="draft-item" use:reveal>
 						<div class="draft-meta">
-							<span class="draft-index">{p.index}</span>
+							<span class="draft-index machine">STUDY // {p.index}</span>
 							<h2 class="draft-title">
 								<a class="draft-title-link" href="/projects/{meta.slug}/{p.slug}">{p.title}</a>
 							</h2>
 							<p class="draft-title-en">{p.titleEn}</p>
-							<dl class="draft-spec">
-								<div class="spec-row"><dt>年份</dt><dd>{p.year}</dd></div>
-								<div class="spec-row"><dt>身份</dt><dd>{p.role}</dd></div>
+							<dl class="draft-spec machine">
+								<div class="spec-row"><dt>YEAR</dt><dd>{p.year}</dd></div>
+								<div class="spec-row"><dt>ROLE</dt><dd>{p.role}</dd></div>
 							</dl>
 							<p class="draft-summary">{p.summary}</p>
 							{#if p.externalUrl}
-								<a class="link-underline draft-url" href={p.externalUrl} target="_blank" rel="noopener noreferrer">
-									{stripUrl(p.externalUrl)}
+								<a class="link-underline draft-url machine" href={p.externalUrl} target="_blank" rel="noopener noreferrer">
+									{stripUrl(p.externalUrl)} ↗
 								</a>
 							{/if}
 						</div>
@@ -141,17 +144,17 @@
 							<div class="mounted-frame">
 								<Artwork src={p.cover} alt={p.title} aspect={p.aspect} eager={i === 0} />
 							</div>
-							<span class="plate-label">图{figNumerals[i] ?? i + 1}</span>
+							<span class="plate-label">图{figNumerals[i] ?? i + 1} <span class="plate-code machine">// {p.index}</span></span>
 						</a>
 						<div class="plate-caption">
-							<span class="plate-index">{p.index}</span>
+							<span class="plate-index machine">CATALOG // {p.index}</span>
 							<h2 class="plate-title">
 								<a class="plate-title-link" href="/projects/{meta.slug}/{p.slug}">{p.title}</a>
 							</h2>
 							<p class="plate-title-en">{p.titleEn}</p>
-							<dl class="draft-spec">
-								<div class="spec-row"><dt>年份</dt><dd>{p.year}</dd></div>
-								<div class="spec-row"><dt>身份</dt><dd>{p.role}</dd></div>
+							<dl class="draft-spec machine">
+								<div class="spec-row"><dt>YEAR</dt><dd>{p.year}</dd></div>
+								<div class="spec-row"><dt>ROLE</dt><dd>{p.role}</dd></div>
 							</dl>
 							<p class="plate-summary">{p.summary}</p>
 						</div>
@@ -169,7 +172,7 @@
 	<div class="vol-nav-inner">
 		{#if data.prev}
 			<a class="vol-nav-link vol-nav-prev" href="/projects/{data.prev.slug}">
-				<span class="vol-nav-dir">上一卷</span>
+				<span class="vol-nav-dir machine">PREV // 上一卷</span>
 				<span class="vol-nav-title">{data.prev.numeral} · {data.prev.title}</span>
 			</a>
 		{:else}
@@ -178,7 +181,7 @@
 		<a class="vol-nav-index link-underline" href="/projects">全卷目录</a>
 		{#if data.next}
 			<a class="vol-nav-link vol-nav-next" href="/projects/{data.next.slug}">
-				<span class="vol-nav-dir">下一卷</span>
+				<span class="vol-nav-dir machine">NEXT // 下一卷</span>
 				<span class="vol-nav-title">{data.next.numeral} · {data.next.title}</span>
 			</a>
 		{:else}
@@ -196,6 +199,20 @@
 
 	.vol-lead {
 		position: relative;
+	}
+
+	.vol-watermark {
+		position: absolute;
+		right: 0;
+		top: -2rem;
+		font-family: var(--font-brush);
+		font-size: clamp(8rem, 20vw, 18rem);
+		line-height: 1;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(42, 41, 36, 0.05);
+		pointer-events: none;
+		user-select: none;
+		z-index: 0;
 	}
 
 	.vol-lead-mark {
@@ -218,25 +235,34 @@
 		padding: 0.9rem 0.45rem;
 		border: 1px solid rgba(158, 107, 85, 0.3);
 		margin-top: 0.4rem;
+		z-index: 1;
 	}
 
 	.vol-lead-body {
 		grid-column: 3 / -1;
+		position: relative;
+		z-index: 1;
 	}
 
-.vol-breadcrumb {
+	.vol-breadcrumb {
 		font-family: var(--font-ui);
 		font-size: 0.8rem;
 		letter-spacing: 0.08em;
 		color: var(--color-text-muted);
 		margin-bottom: 2rem;
 		display: flex;
-		gap: 0.6rem;
-		align-items: baseline;
+		gap: 0.8rem;
+		align-items: center;
 	}
 
 	.vol-breadcrumb-sep {
 		color: var(--color-text-muted);
+	}
+
+	.vol-code {
+		color: var(--color-text-muted);
+		opacity: 0.65;
+		margin-left: 0.4rem;
 	}
 
 	.vol-title {
@@ -257,15 +283,18 @@
 	}
 
 	.vol-en {
-		font: italic var(--text-lg)/var(--leading-base) var(--font-latin);
+		font: italic var(--text-lg)/var(--leading-base) var(--font-display-latin);
 		letter-spacing: var(--tracking-heading);
 		color: var(--color-text-muted);
 		margin-top: var(--space-2);
+		display: flex;
+		gap: 1rem;
+		align-items: baseline;
 	}
 
-.vol-count {
+	.vol-count {
 		color: var(--color-text-muted);
-		margin-left: 0.5em;
+		opacity: 0.75;
 	}
 
 	.vol-colophon {
@@ -400,17 +429,15 @@
 
 	.stills-caption {
 		display: grid;
-		grid-template-columns: 2.5rem 1fr auto;
-		gap: 0.5rem 1rem;
+		grid-template-columns: auto 1fr auto;
+		gap: 0.5rem 1.2rem;
 		align-items: baseline;
 		margin-top: 1.6rem;
 	}
 
 .stills-index {
-		font-family: var(--font-ui);
-		font-size: 0.78rem;
-		letter-spacing: 0.1em;
 		color: var(--color-text-muted);
+		opacity: 0.8;
 	}
 
 	.mounted-title {
@@ -490,7 +517,7 @@
 
 .draft-title-en,
 	.plate-title-en {
-		font: italic var(--text-base)/var(--leading-base) var(--font-latin);
+		font: italic var(--text-base)/var(--leading-base) var(--font-display-latin);
 		letter-spacing: var(--tracking-heading);
 		color: var(--color-text-muted);
 		margin-top: 0.5rem;
@@ -573,8 +600,16 @@
 		bottom: -1.9rem;
 		font-family: var(--font-brush);
 		font-size: 0.9rem;
-		letter-spacing: 0.3em;
+		letter-spacing: 0.2em;
 		color: var(--color-link);
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+	}
+
+	.plate-code {
+		color: var(--color-text-muted);
+		opacity: 0.7;
 	}
 
 	.plate-caption {

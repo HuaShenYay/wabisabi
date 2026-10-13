@@ -6,7 +6,6 @@
 
 	const socialLinks = $derived(data?.socialLinks ?? seedSocial);
 
-	// Give each platform a brush-hand Chinese title; fall back to the label.
 	/** @type {Record<string, string>} */
 	const cnByPlatform = {
 		email: '来信',
@@ -22,21 +21,31 @@
 	const cnLabel = (link) => cnByPlatform[link.platform] ?? link.label;
 </script>
 
+<!--
+	v2「响篇 · 联络」(Communication / Echo)
+	Museum accession records: accession numbers, KingHwa headings, machine labels,
+	and a single cinnabar stamp on hover.
+-->
 <section id="links" class="links grid-section">
 	<span class="chapter-watermark" aria-hidden="true">响</span>
 	<div class="grid links-inner" use:develop>
 		<header class="links-head" data-reveal-item>
-			<span class="chapter-badge">响篇 · 联络</span>
+			<span class="chapter-badge machine">
+				<span class="badge-rule" aria-hidden="true"></span>
+				CAT. N° 05 — COMMUNICATION
+			</span>
 			<h2 class="links-title">联络</h2>
 			<span class="links-en">Elsewhere</span>
 			<p class="links-note">若有共鸣，欢迎来信。</p>
 		</header>
 		<ol class="link-list">
-			{#each socialLinks as link}
+			{#each socialLinks as link, index}
 				<li class="link-row" data-reveal-item>
-					<a class="big-link" href={link.url}>
+					<a class="big-link" href={link.url} target={link.platform === 'email' ? undefined : '_blank'} rel={link.platform === 'email' ? undefined : 'noopener noreferrer'}>
+						<span class="link-seal seal" aria-hidden="true"></span>
+						<span class="link-num machine">0{index + 1}</span>
 						<span class="bl-cn">{cnLabel(link)}</span>
-						<span class="bl-en">{link.label}</span>
+						<span class="bl-en machine">{link.label}</span>
 						<span class="bl-mark" aria-hidden="true">↗</span>
 					</a>
 				</li>
@@ -49,31 +58,37 @@
 	.links {
 		position: relative;
 		overflow: hidden;
-		padding-block: var(--space-8);
+		padding-block: var(--space-9) var(--space-8);
 	}
 
+	/* v2 巨物: monumental outline glyph */
 	.chapter-watermark {
 		position: absolute;
-		right: 3%;
+		right: -0.12em;
 		top: var(--space-4);
 		font-family: var(--font-heading);
-		font-size: clamp(8rem, 16vw, 18rem);
+		font-size: var(--display-1);
 		line-height: 1;
-		color: var(--color-text);
-		opacity: 0.035;
+		letter-spacing: var(--tracking-crush);
+		color: transparent;
+		-webkit-text-stroke: 1px color-mix(in srgb, var(--color-text) 20%, transparent);
 		pointer-events: none;
 		user-select: none;
 		z-index: 0;
 	}
 
 	.chapter-badge {
-		font: italic var(--text-xs)/var(--leading-base) var(--font-latin);
-		color: var(--color-link);
-		letter-spacing: .12em;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font: 400 var(--text-micro)/1.6 var(--font-machine);
+		color: var(--color-text-muted);
+		letter-spacing: var(--tracking-machine);
 		text-transform: uppercase;
 		flex-basis: 100%;
-		margin-bottom: var(--space-1);
+		margin-bottom: var(--space-2);
 	}
+	.badge-rule { width: var(--space-5); height: 1px; background: currentColor; opacity: .6; }
 
 	.links-inner {
 		row-gap: 0;
@@ -82,21 +97,24 @@
 		z-index: 1;
 	}
 
-	/* Still-Water develop transitions with viscous organic timing */
+	/* v2 墨晕 Bleed */
 	.links-inner:global(.is-developing) [data-reveal-item] {
 		opacity: 0;
-		transform: translateY(20px);
-		filter: blur(4px);
+		transform: translateY(10px);
+		filter: blur(12px);
+		clip-path: inset(-50% -50% 45% -50%);
 	}
 	.links-inner:global(.is-developed) [data-reveal-item] {
 		opacity: 1;
 		transform: none;
 		filter: none;
+		clip-path: inset(-50% -50% -50% -50%);
 		transition:
-			opacity 900ms var(--ease-organic),
-			transform 900ms var(--ease-organic),
-			filter 900ms var(--ease-organic);
-		transition-delay: calc(var(--i, 0) * 80ms);
+			opacity var(--duration-bleed) var(--ease-organic),
+			transform var(--duration-bleed) var(--ease-organic),
+			filter calc(var(--duration-bleed) * 1.1) var(--ease-organic),
+			clip-path var(--duration-unmount) var(--ease-ink);
+		transition-delay: calc(var(--i, 0) * 110ms);
 	}
 
 	.links-head {
@@ -105,14 +123,20 @@
 		align-items: baseline;
 		gap: var(--space-3);
 		flex-wrap: wrap;
-		margin-bottom: var(--space-5);
+		margin-bottom: var(--space-6);
 	}
-	.links-note { flex-basis: 100%; font-size: var(--text-sm); line-height: var(--leading-base); color: var(--color-text-muted); margin-top: var(--space-2); }
+	.links-note {
+		flex-basis: 100%;
+		font-size: var(--text-sm);
+		line-height: var(--leading-base);
+		color: var(--color-text-muted);
+		margin-top: var(--space-2);
+	}
 
 	.links-title {
 		font-family: var(--font-heading);
-		font-size: var(--text-2xl);
-		letter-spacing: var(--tracking-heading);
+		font-size: var(--text-3xl);
+		letter-spacing: var(--tracking-crush);
 		color: var(--color-text);
 	}
 
@@ -130,17 +154,15 @@
 	}
 
 	.link-row {
-		border-top: 1px solid var(--color-link-wash);
+		border-top: 1px solid var(--color-divider);
 		position: relative;
 		transition: transform var(--duration-base) var(--ease-organic);
 	}
-
 	.link-row:last-child {
-		border-bottom: 1px solid var(--color-link-wash);
+		border-bottom: 1px solid var(--color-divider);
 	}
-
 	.link-row:hover {
-		transform: translateX(4px);
+		transform: translateX(6px);
 	}
 
 	.big-link {
@@ -148,8 +170,24 @@
 		align-items: baseline;
 		gap: var(--space-4);
 		padding: var(--space-5) 0;
-		min-height: 44px;
+		min-height: 48px;
 		position: relative;
+	}
+
+	/* 朱印 seal emerges on hover */
+	.link-seal {
+		position: absolute;
+		left: calc(-1 * var(--space-4));
+		top: calc(50% - 3.5px);
+		opacity: 0;
+		transform: scale(0.4);
+		transition: opacity var(--duration-base) var(--ease-organic), transform var(--duration-base) var(--ease-organic);
+	}
+
+	.link-num {
+		font-size: var(--text-micro);
+		color: var(--color-text-faint);
+		letter-spacing: var(--tracking-machine);
 	}
 
 	.bl-cn {
@@ -162,66 +200,49 @@
 		transition: color var(--duration-slow) var(--ease-organic);
 	}
 
-	/* Ink line draws in beneath the Chinese title on hover (墨线绘入). */
-	.bl-cn::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: calc(-1 * var(--space-2));
-		height: 1px;
-		background: var(--color-link);
-		transform: scaleX(0);
-		transform-origin: left center;
-		transition: transform var(--duration-slow) var(--ease-organic);
-	}
-
 	.bl-en {
-		font-family: var(--font-ui);
-		font-size: var(--text-xs);
-		letter-spacing: var(--tracking-heading);
+		font-size: var(--text-micro);
+		letter-spacing: var(--tracking-machine);
 		color: var(--color-text-muted);
+		text-transform: uppercase;
 		transition: color var(--duration-slow) var(--ease-organic);
 	}
 
 	.bl-mark {
 		margin-left: auto;
 		align-self: center;
-		font-size: var(--text-lg);
+		font-size: var(--text-base);
 		color: var(--color-text-muted);
-		opacity: .65;
+		opacity: .55;
 		transition: opacity var(--duration-slow) var(--ease-organic), color var(--duration-slow) var(--ease-organic), transform var(--duration-base) var(--ease-organic);
 	}
 
 	@media (hover: hover) {
+		.big-link:hover .link-seal {
+			opacity: 1;
+			transform: scale(1);
+		}
 		.big-link:hover .bl-cn {
 			color: var(--color-link);
 		}
-		.big-link:hover .bl-cn::after {
-			transform: scaleX(1);
-		}
 		.big-link:hover .bl-en {
-			color: var(--color-text-muted);
+			color: var(--color-text);
 		}
 		.big-link:hover .bl-mark {
 			opacity: 1;
 			color: var(--color-link);
-			transform: translate(2px, -2px);
+			transform: translate(3px, -3px);
 		}
 	}
 
 	@media (min-width: 600px) {
-		.links-head {
-			grid-column: 2 / -1;
-		}
-		.link-list {
-			grid-column: 2 / -1;
-		}
+		.links-head { grid-column: 2 / -1; }
+		.link-list { grid-column: 2 / -1; }
 	}
 
 	@media (min-width: 900px) {
 		.links-head {
-			grid-column: 3 / 5;
+			grid-column: 3 / 6;
 			flex-direction: column;
 			align-items: flex-start;
 			gap: var(--space-2);
@@ -230,27 +251,19 @@
 			top: 18svh;
 			align-self: start;
 		}
-		.link-list {
-			grid-column: 6 / 13;
-		}
-		.chapter-watermark {
-			font-size: clamp(6rem, 12vw, 10rem);
-		}
+		.link-list { grid-column: 6 / 13; }
+		.chapter-watermark { font-size: clamp(8rem, 24vw, 16rem); }
 	}
 
 	@media (min-width: 1200px) {
-		.links-head {
-			grid-column: 4 / 6;
-		}
-		.link-list {
-			grid-column: 7 / 13;
-		}
+		.links-head { grid-column: 3 / 6; }
+		.link-list { grid-column: 6 / 12; }
 	}
 
 	@media (max-width: 600px) {
-		.chapter-watermark {
-			display: none;
-		}
+		.chapter-watermark { display: none; }
+		.bl-cn { font-size: var(--text-xl); }
+		.link-seal { display: none; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -259,10 +272,9 @@
 			opacity: 1;
 			transform: none;
 			filter: none;
+			clip-path: none;
 			transition: none;
 		}
-		.link-row {
-			transform: none !important;
-		}
+		.link-row { transform: none !important; }
 	}
 </style>

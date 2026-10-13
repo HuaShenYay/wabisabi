@@ -93,6 +93,178 @@
 			const stoneSlabGeometries: Three.BufferGeometry[] = [];
 			const darkStoneSlabGeometries: Three.BufferGeometry[] = [];
 
+			/* ===== v2 版画化 Print pass (Neo-Wabisabi v2 §17.5) =====
+			   The scene renders into an offscreen target at reduced resolution
+			   (the dither cell hides it, and it saves fill-rate), then a single
+			   full-screen pass turns it into a moving ink print. */
+			const PRINT_SCALE = 0.75;
+			const printTarget = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthBuffer: true });
+			const printCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+			const printScene = new THREE.Scene();
+			const printUniforms = {
+				tScene: { value: printTarget.texture },
+				uResolution: { value: new THREE.Vector2(1, 1) },
+				uMouse: { value: new THREE.Vector2(.5, .5) },
+				uLens: { value: 0 },
+				uCell: { value: 2 },
+				uExposure: { value: renderer.toneMappingExposure },
+				uPixelRatio: { value: 1 },
+				tGlyph: { value: null as Three.Texture | null },
+				uGlyphAlpha: { value: 0 },
+				uGlyphShift: { value: 0 },
+				uGlyphReveal: { value: 0 }
+			};
+			const printMaterial = new THREE.ShaderMaterial({
+				uniforms: printUniforms,
+				depthTest: false,
+				depthWrite: false,
+				toneMapped: false,
+				vertexShader: /* glsl */ `
+					varying vec2 vUv;
+					void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
+				`,
+				fragmentShader: /* glsl */ `
+					uniform sampler2D tScene;
+					uniform vec2 uResolution;
+					uniform vec2 uMouse;
+					uniform float uLens;
+					uniform float uCell;
+					uniform float uExposure;
+					uniform float uPixelRatio;
+					uniform sampler2D tGlyph;
+					uniform float uGlyphAlpha;
+					uniform float uGlyphShift;
+					uniform float uGlyphReveal;
+					varying vec2 vUv;
+
+					vec3 RRTAndODTFit(vec3 v) {
+						vec3 a = v * (v + 0.0245786) - 0.000090537;
+						vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
+						return a / b;
+					}
+					vec3 acesFilmic(vec3 color) {
+						const mat3 inputMat = mat3(vec3(0.59719, 0.07600, 0.02840), vec3(0.35458, 0.90834, 0.13383), vec3(0.04823, 0.01566, 0.83777));
+						const mat3 outputMat = mat3(vec3(1.60475, -0.10208, -0.00327), vec3(-0.53108, 1.10813, -0.07276), vec3(-0.07367, -0.00605, 1.07602));
+						color *= uExposure / 0.6;
+						return clamp(outputMat * RRTAndODTFit(inputMat * color), 0.0, 1.0);
+					}
+					vec3 toSRGB(vec3 c) {
+						return mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), c));
+					}
+					float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
+					float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+					float bayer8(vec2 a) { return bayer4(0.5 * a) * 0.25 + bayer2(a); }
+
+					// Five-step ink ramp: 夜墨 → 焦墨 → 远山 → 皮纸 → 骨白
+					vec3 inkRamp(float level) {
+						vec3 c0 = vec3(0.106, 0.102, 0.090);
+						vec3 c1 = vec3(0.231, 0.220, 0.188);
+						vec3 c2 = vec3(0.490, 0.463, 0.400);
+						vec3 c3 = vec3(0.741, 0.706, 0.627);
+						vec3 c4 = vec3(0.914, 0.886, 0.824);
+						if (level < 0.5) return c0;
+						if (level < 1.5) return c1;
+						if (level < 2.5) return c2;
+						if (level < 3.5) return c3;
+						return c4;
+					}
+
+					void main() {
+						float cell = max(1.0, uCell * uPixelRatio);
+						vec2 frag = gl_FragCoord.xy;
+						vec2 cellCoord = floor(frag / cell);
+						vec2 sampleUv = (cellCoord * cell + 0.5 * cell) / uResolution;
+						vec3 colour = toSRGB(acesFilmic(texture2D(tScene, sampleUv).rgb));
+						vec3 fine = toSRGB(acesFilmic(texture2D(tScene, vUv).rgb));
+
+						float lum = dot(colour, vec3(0.299, 0.587, 0.114));
+						lum = smoothstep(0.05, 0.93, lum);
+						float v = lum * 4.0;
+						float level = floor(v) + step(bayer8(cellCoord), fract(v));
+						vec3 print = inkRamp(level);
+						// Keep a breath of the sunset so the print is warm, not grey.
+						print = mix(print, colour, 0.14);
+
+						// Lens: within a soft circle the halftone dissolves and the
+						// finer, true-colour world shows through.
+						float radius = min(uResolution.x, uResolution.y) * 0.17;
+						float d = distance(frag, uMouse * uResolution) / radius;
+						float lens = (1.0 - smoothstep(0.72, 1.0, d)) * uLens;
+						float rim = smoothstep(0.86, 0.95, d) * (1.0 - smoothstep(0.95, 1.04, d)) * uLens;
+						vec3 outColour = mix(print, fine, lens);
+						outColour = mix(outColour, vec3(0.914, 0.886, 0.824), rim * 0.35);
+
+						// 巨物 間: inside the colossal glyph the world is re-screened as
+						// an AM halftone (round dots on bone paper, 45°) — a second
+						// printing technique cut into the first.
+						vec2 glyphUv = vec2(vUv.x, vUv.y - uGlyphShift);
+						float glyph = texture2D(tGlyph, glyphUv).r * uGlyphAlpha;
+						glyph *= 1.0 - smoothstep(uGlyphReveal * 1.15 - 0.1, uGlyphReveal * 1.15, vUv.y);
+						if (glyph > 0.001) {
+							float screen = 7.0 * uPixelRatio;
+							vec2 rotated = mat2(0.7071, -0.7071, 0.7071, 0.7071) * frag;
+							vec2 local = fract(rotated / screen) - 0.5;
+							float tone = dot(fine, vec3(0.299, 0.587, 0.114));
+							float r = sqrt(clamp(1.0 - smoothstep(0.08, 0.95, tone), 0.0, 1.0)) * 0.62;
+							float aa = 1.2 / screen;
+							float dotMask = 1.0 - smoothstep(r - aa, r + aa, length(local));
+							vec3 halftone = mix(vec3(0.914, 0.886, 0.824), vec3(0.106, 0.102, 0.090), dotMask);
+							outColour = mix(outColour, halftone, glyph);
+						}
+						gl_FragColor = vec4(outColour, 1.0);
+					}
+				`
+			});
+			const printQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), printMaterial);
+			printQuad.frustumCulled = false;
+			printScene.add(printQuad);
+			let lensTarget = 0;
+			let lensMouseX = .5;
+			let lensMouseY = .5;
+			let lensTargetX = .5;
+			let lensTargetY = .5;
+
+			// The colossal 間 is drawn into a screen-aligned mask texture so the
+			// shader can re-screen the world inside it (CSS blending cannot reach
+			// into the canvas with a different printing technique).
+			const glyphCanvas = document.createElement('canvas');
+			const glyphTexture = new THREE.CanvasTexture(glyphCanvas);
+			glyphTexture.minFilter = THREE.LinearFilter;
+			glyphTexture.magFilter = THREE.LinearFilter;
+			glyphTexture.generateMipmaps = false;
+			printUniforms.tGlyph.value = glyphTexture;
+			const glyphFamily = '"KingHwa_OldSong", "KingHwaOldSong", "Noto Serif SC", "Songti SC", serif';
+			const glyphStart = performance.now();
+			function drawGlyph() {
+				const w = containerWidth || window.innerWidth;
+				const h = containerHeight || window.innerHeight;
+				const scale = Math.min(1, 1024 / Math.max(w, h));
+				const cw = Math.max(2, Math.round(w * scale));
+				const ch = Math.max(2, Math.round(h * scale));
+				glyphCanvas.width = cw;
+				glyphCanvas.height = ch;
+				const ctx = glyphCanvas.getContext('2d');
+				if (!ctx) return;
+				ctx.fillStyle = '#000';
+				ctx.fillRect(0, 0, cw, ch);
+				ctx.fillStyle = '#fff';
+				const mobile = w < 600;
+				const fontPx = (mobile ? w * .82 : Math.min(Math.max(160, w * .34), 640, h * .96)) * scale;
+				ctx.font = `400 ${fontPx}px ${glyphFamily}`;
+				ctx.textAlign = 'right';
+				if (mobile) {
+					ctx.textBaseline = 'top';
+					ctx.fillText('間', cw + fontPx * .14, ch * .13);
+				} else {
+					ctx.textBaseline = 'alphabetic';
+					ctx.fillText('間', cw + fontPx * .08, ch + fontPx * .1);
+				}
+				glyphTexture.needsUpdate = true;
+				frameDirty = true;
+				scheduleRender();
+			}
+			document.fonts?.load(`400 160px ${glyphFamily}`, '間').then(drawGlyph, () => {});
+
 			function scheduleRender() {
 				if (!animation && !destroyed && !contextLost && sceneVisible && !document.hidden && (!reduced || frameDirty)) {
 					animation = requestAnimationFrame(render);
@@ -756,6 +928,13 @@
 				containerLeft = rect.left;
 				containerTop = rect.top;
 				renderer.setSize(width, height, false);
+				const pixelRatio = renderer.getPixelRatio();
+				const drawWidth = Math.max(1, Math.floor(width * pixelRatio));
+				const drawHeight = Math.max(1, Math.floor(height * pixelRatio));
+				printTarget.setSize(Math.max(1, Math.floor(drawWidth * PRINT_SCALE)), Math.max(1, Math.floor(drawHeight * PRINT_SCALE)));
+				printUniforms.uResolution.value.set(drawWidth, drawHeight);
+				printUniforms.uPixelRatio.value = pixelRatio;
+				drawGlyph();
 				camera.aspect = width / height;
 				camera.fov = width < 600 ? 55 : 26;
 				camera.updateProjectionMatrix();
@@ -766,6 +945,15 @@
 				if (!sceneVisible || !containerWidth || !containerHeight) return;
 				targetMouseX = (event.clientX - containerLeft) / containerWidth - .5;
 				targetMouseY = (event.clientY - containerTop) / containerHeight - .5;
+				// The print lens belongs to a fine pointer only; touch keeps the pure print.
+				lensTarget = event.pointerType === 'mouse' ? 1 : 0;
+				lensTargetX = targetMouseX + .5;
+				lensTargetY = .5 - targetMouseY;
+				scheduleRender();
+			}
+
+			function hideLens() {
+				lensTarget = 0;
 				scheduleRender();
 			}
 
@@ -856,7 +1044,22 @@
 				// Calm horizon - no dizzying roll
 				camera.rotation.z = 0;
 
+				// Print pass: lens follows with viscous lag; scrolling coarsens the
+				// dither so the world dissolves into halftone before the paper veil.
+				lensMouseX += (lensTargetX - lensMouseX) * (reduced ? 1 : .14);
+				lensMouseY += (lensTargetY - lensMouseY) * (reduced ? 1 : .14);
+				const lensGoal = reduced ? 0 : lensTarget * (1 - smoothstep(.05, .4, p));
+				printUniforms.uLens.value += (lensGoal - printUniforms.uLens.value) * .08;
+				printUniforms.uMouse.value.set(lensMouseX, lensMouseY);
+				printUniforms.uCell.value = 2 + smoothstep(.12, .78, p) * 6;
+				const glyphGoal = currentView === 'projects' ? 0 : 1 - smoothstep(.15, .7, p);
+				printUniforms.uGlyphAlpha.value += (glyphGoal - printUniforms.uGlyphAlpha.value) * (reduced ? 1 : .08);
+				printUniforms.uGlyphShift.value = p * .26;
+				printUniforms.uGlyphReveal.value = reduced ? 1 : smoothstep(300, 2500, now - glyphStart);
+				renderer.setRenderTarget(printTarget);
 				renderer.render(scene, camera);
+				renderer.setRenderTarget(null);
+				renderer.render(printScene, printCamera);
 				frameDirty = false;
 			}
 
@@ -887,6 +1090,7 @@
 			});
 			visibility.observe(container);
 			window.addEventListener('pointermove', move, { passive: true });
+			document.documentElement.addEventListener('pointerleave', hideLens);
 			window.addEventListener('scroll', onScroll, { passive: true });
 			document.addEventListener('visibilitychange', onVisibilityChange);
 			motionQuery.addEventListener('change', updateMotion);
@@ -901,6 +1105,7 @@
 				observer.disconnect();
 				visibility.disconnect();
 				window.removeEventListener('pointermove', move);
+				document.documentElement.removeEventListener('pointerleave', hideLens);
 				window.removeEventListener('scroll', onScroll);
 				document.removeEventListener('visibilitychange', onVisibilityChange);
 				motionQuery.removeEventListener('change', updateMotion);
@@ -919,6 +1124,10 @@
 				sceneMaterials.forEach((item) => item.dispose());
 				textures.forEach((item) => item.dispose());
 				water.dispose();
+				printTarget.dispose();
+				glyphTexture.dispose();
+				printQuad.geometry.dispose();
+				printMaterial.dispose();
 				sunset.shadow.dispose();
 				renderer.dispose();
 				renderer.domElement.remove();

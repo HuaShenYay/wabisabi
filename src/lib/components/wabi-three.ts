@@ -34,8 +34,12 @@ export {
 	SpriteMaterial,
 	Texture,
 	TubeGeometry,
+	Vector2,
 	Vector3,
-	WebGLRenderer
+	WebGLRenderer,
+	WebGLRenderTarget,
+	OrthographicCamera,
+	LinearFilter
 } from 'three';
 export { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 export { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
