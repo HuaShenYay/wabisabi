@@ -62,38 +62,37 @@
 		position: absolute;
 		inset: 0;
 		object-fit: cover;
-		filter: saturate(0.82) contrast(0.95);
-		opacity: 0.88;
+		filter: saturate(0.76) contrast(1.04);
+		opacity: 0.9;
 		transition:
-			opacity var(--duration-base) var(--ease-organic),
-			filter var(--duration-base) var(--ease-organic),
-			transform var(--duration-slow) var(--ease-organic);
+			opacity 240ms steps(3, end),
+			filter 240ms steps(3, end);
 	}
 
 	.artwork.is-loaded img {
 		opacity: 1;
-		filter: saturate(0.88) contrast(0.98);
+		filter: saturate(0.82) contrast(1.02);
 	}
 
 	:global(a:hover) .artwork img {
-		transform: scale(1.02);
-		filter: saturate(0.95) contrast(1.02);
+		filter: saturate(0.92) contrast(1.06);
 	}
 
-	/* Archival print halftone / paper veil */
+	/* Raw fibrous washi-paper & mineral grain veil (replaces dot-matrix) */
 	.artwork-veil {
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		background-image: radial-gradient(rgba(27, 26, 23, 0.08) 1px, transparent 1px);
-		background-size: 5px 5px;
-		opacity: 0.35;
+		background-image: url("/noise.svg");
+		background-repeat: repeat;
+		background-size: 256px 256px;
+		opacity: 0.32;
 		mix-blend-mode: multiply;
-		transition: opacity var(--duration-base) var(--ease-organic);
+		transition: opacity 220ms steps(3, end);
 	}
 
 	:global(a:hover) .artwork-veil {
-		opacity: 0.12;
+		opacity: 0.14;
 	}
 
 	/* Archival registration / crop marks */

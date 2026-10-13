@@ -34,16 +34,10 @@
 	font-display: swap;
 }
 
-/* Animatable custom properties for halftone (网点) transitions. */
-@property --dot {
-	syntax: "<percentage>";
-	inherits: false;
-	initial-value: 0%;
-}
-@property --sweep {
-	syntax: "<percentage>";
-	inherits: false;
-	initial-value: 0%;
+/* Stepped stop-motion & tactile ratchet timing tokens (卡顿感与粗糙刻印) */
+:root {
+	--ease-stutter: steps(4, end);
+	--ease-ratchet: steps(3, end);
 }
 
 /* ===== CSS Reset ===== */
@@ -307,11 +301,21 @@ body::before {
 	inset: 0;
 	background-image: url("/noise.svg");
 	background-repeat: repeat;
-	background-size: 384px 384px;
+	background-size: 320px 320px;
 	pointer-events: none;
 	z-index: 9998;
-	opacity: 0.48;
+	opacity: 0.56;
 	mix-blend-mode: multiply;
+	animation: grain-ratchet 720ms steps(5, end) infinite;
+}
+
+@keyframes grain-ratchet {
+	0%   { background-position: 0 0; }
+	20%  { background-position: -52px 36px; }
+	40%  { background-position: 68px -28px; }
+	60%  { background-position: -36px -60px; }
+	80%  { background-position: 44px 52px; }
+	100% { background-position: 0 0; }
 }
 
 /* Yugen: a second fixed layer - subtle vignette that darkens edges, drawing eye inward */
@@ -665,27 +669,21 @@ a {
 		            filter 1.1s var(--ease-organic);
 	}
 
-/* ===== v2 墨晕 Bleed: staggered ink-develop (子元素逐行错峰显影) ===== */
-/* Applied via use:develop — the container never moves; each line surfaces
-   out of a blurred ink pool and "bleeds" downward into its final shape
-   (clip-path settles top → bottom), with a 間 (Ma) pause between lines. */
+/* ===== Stepped Woodblock Rubbing (刀刻拓印 · 逐帧卡顿显影) ===== */
 .is-developing > * {
 	opacity: 0;
-	transform: translateY(8px);
-	filter: blur(12px);
-	clip-path: inset(-50% -50% 38% -50%);
+	transform: translate(-4px, 10px) skewX(-1.2deg);
+	clip-path: inset(0 0 88% 0);
 }
 
 .is-developed > * {
 	opacity: 1;
 	transform: none;
-	filter: none;
-	clip-path: inset(-50% -50% -50% -50%);
+	clip-path: inset(0 0 0% 0);
 	transition:
-		opacity var(--duration-bleed) var(--ease-organic),
-		transform var(--duration-bleed) var(--ease-organic),
-		filter calc(var(--duration-bleed) * 1.1) var(--ease-organic),
-		clip-path var(--duration-unmount) var(--ease-ink);
+		opacity 420ms var(--ease-stutter, steps(4, end)),
+		transform 420ms var(--ease-stutter, steps(4, end)),
+		clip-path 420ms var(--ease-stutter, steps(4, end));
 	transition-delay: calc(var(--i, 0) * 120ms);
 }
 
@@ -711,6 +709,7 @@ a {
 	height: 7px;
 	background: var(--color-seal);
 	vertical-align: middle;
+	filter: url(#wabi-rough);
 }
 
 /* 夜墨区块：只用于 1~2 个"沉入"区块，非纯黑 */
@@ -735,14 +734,12 @@ a {
 	color: var(--raw-bone-muted);
 }
 
-/* 网点 Halftone：用于巨字/图像暗部的位图填充 */
-.halftone-fill {
-	color: transparent;
-	background-image: radial-gradient(circle at center, var(--halftone-ink, var(--color-text)) var(--dot-size, 34%), transparent calc(var(--dot-size, 34%) + 1%));
-	background-size: var(--halftone-cell, 6px) var(--halftone-cell, 6px);
-	background-repeat: repeat;
-	-webkit-background-clip: text;
-	background-clip: text;
+/* 刀刻飞白艺术字 (Woodblock & Stone-Rubbing Artistic Typography) */
+.woodblock-art {
+	font-family: var(--font-heading);
+	letter-spacing: var(--tracking-crush);
+	filter: url(#wabi-rough);
+	text-shadow: 3px -2px 0 rgba(169, 124, 90, 0.22);
 }
 
 /* Keep text-bearing sections level; imperfection belongs to decorative paper. */

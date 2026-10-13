@@ -113,16 +113,30 @@
 	{@html `<script type="application/ld+json">${websiteJsonLd}</script>`}
 </svelte:head>
 
+<!-- Global SVG Filter Bank: Woodblock erosion, dry-brush飛白 (feibai), and torn ink edges -->
+<svg class="wabi-svg-filters" width="0" height="0" aria-hidden="true" focusable="false">
+	<defs>
+		<!-- Subtle rough ink edge for headings, rules, and seals -->
+		<filter id="wabi-rough" x="-5%" y="-5%" width="110%" height="110%">
+			<feTurbulence type="fractalNoise" baseFrequency="0.04 0.12" numOctaves="2" seed="11" result="warp" />
+			<feDisplacementMap in="SourceGraphic" in2="warp" scale="1.6" xChannelSelector="R" yChannelSelector="G" />
+		</filter>
+		<!-- Heavy woodblock / stone-rubbing erosion strictly masked to glyph alpha (zero halo) -->
+		<filter id="wabi-erosion" x="-10%" y="-10%" width="120%" height="120%">
+			<feTurbulence type="turbulence" baseFrequency="0.028 0.08" numOctaves="3" seed="23" result="disp" />
+			<feDisplacementMap in="SourceGraphic" in2="disp" scale="3.8" xChannelSelector="R" yChannelSelector="G" result="warped" />
+		</filter>
+	</defs>
+</svg>
+
 <CustomCursor />
 <a class="skip-link" href="#main-content">跳至内容</a>
 
 <div class="page-root"
 	style:--hero-scroll={heroScroll.toFixed(3)}
-	style:--hero-intro-opacity={Math.max(0, 1 - Math.pow(Math.min(1, heroScroll / 0.48), 1.25)).toFixed(3)}
-	style:--hero-intro-drift={`${(-heroScroll * 48).toFixed(1)}px`}
-	style:--hero-intro-blur={`${Math.min(6, heroScroll * 12).toFixed(1)}px`}
-	style:--hero-intro-visibility={heroScroll > 0.55 ? 'hidden' : 'visible'}
-	style:--hero-veil-opacity={Math.min(1, Math.max(0, (heroScroll - 0.15) / 0.65)).toFixed(3)}
+	style:--hero-intro-opacity={Math.max(0, 1 - Math.pow(Math.min(1, heroScroll / 0.18), 1.15)).toFixed(3)}
+	style:--hero-intro-drift={`${(-heroScroll * 140).toFixed(1)}px`}
+	style:--hero-intro-visibility={heroScroll > 0.24 ? 'hidden' : 'visible'}
 >
 	<div class="page-background"></div>
 	{#if worldMounted}
@@ -138,6 +152,13 @@
 </div>
 
 <style>
+	.wabi-svg-filters {
+		position: absolute;
+		width: 0;
+		height: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
 	.skip-link { position: fixed; top: var(--space-3); left: var(--grid-margin); z-index: 10000; padding: var(--space-3) var(--space-4); background: var(--color-bg); color: var(--color-text); transform: translateY(-200%); }
 	.skip-link:focus { transform: none; }
 	.page-root {
@@ -153,28 +174,26 @@
 		inset: 0;
 		z-index: -1;
 	}
+	/* Fixed 3D sanctuary persists across the entire Hero + About continuum */
 	.world-backdrop {
-		position: absolute;
-		inset: 0 0 auto;
+		position: fixed;
+		inset: 0;
 		height: 100svh;
+		z-index: 0;
 		pointer-events: none;
 	}
-	/* Keep the real world pinned until the paper has covered the viewport. */
-	.world-home { height: calc(var(--hero-height) + 100svh); }
-	.world-home:has(:global(.scene-unavailable)) { height: 100svh; }
-	.world-backdrop:not(.world-home) { position: fixed; }
 	.world-backdrop[hidden] { display: none; }
 	/* Outgoing and incoming pages share the same grid cell so the
 	   crossfade never stacks them vertically (no layout jump). */
 	.page-content {
 		grid-area: 1 / 1;
 		position: relative;
+		z-index: 1;
 		min-width: 0;
 		min-height: 100vh;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.world-home { height: 100svh; }
 		.page-content {
 			animation: none !important;
 			transition: none !important;

@@ -25,8 +25,10 @@
 			const vh = window.innerHeight;
 			const centre = rect.top + rect.height / 2 - vh / 2;
 			const progress = Math.max(-1, Math.min(1, centre / vh));
+			// Quantized stepped horizontal drift (卡顿感)
+			const quantized = Math.round(progress * 12) / 12;
 			const range = Math.min(64, window.innerWidth * 0.06);
-			const nextX = (-progress * range).toFixed(2);
+			const nextX = (-quantized * range).toFixed(1);
 			if (nextX !== lastX) {
 				lastX = nextX;
 				seamWord.style.transform = `translate3d(${nextX}px, 0, 0)`;
@@ -102,8 +104,8 @@
 		position: relative;
 		overflow: hidden;
 		padding-block: var(--space-9) var(--space-8);
-		border-top: 1px solid var(--color-divider);
-		border-bottom: 1px solid var(--color-divider);
+		border-top: 1.5px solid var(--color-border);
+		border-bottom: 1.5px solid var(--color-border);
 		background: radial-gradient(ellipse 90% 70% at 50% 50%, color-mix(in srgb, var(--color-bg-alt) 65%, transparent), transparent 75%);
 		user-select: none;
 	}
@@ -116,7 +118,7 @@
 		color: var(--color-text-muted);
 		margin-bottom: var(--space-6);
 	}
-	.head-rule { width: var(--space-6); height: 1px; background: currentColor; opacity: .4; }
+	.head-rule { width: var(--space-6); height: 1.5px; background: currentColor; opacity: .5; filter: url(#wabi-rough); }
 
 	.interval-stage {
 		position: relative;
@@ -127,15 +129,17 @@
 		padding-inline: var(--grid-margin);
 	}
 
-	/* 巨物: colossal cropped English name in Orelo / Display Latin */
+	/* 巨物: colossal cropped English name in Orelo / Display Latin with woodblock erosion */
 	.colossal-title {
 		display: block;
 		font-family: var(--font-display-latin);
 		font-size: min(var(--display-0), 28vw);
 		line-height: 0.9;
 		letter-spacing: var(--tracking-crush);
-		color: var(--color-text);
-		opacity: 0.16;
+		color: rgba(42, 41, 36, 0.14);
+		-webkit-text-stroke: 1.5px rgba(42, 41, 36, 0.28);
+		text-shadow: 6px -3px 0 rgba(169, 124, 90, 0.16);
+		filter: url(#wabi-erosion);
 		white-space: nowrap;
 		margin-left: calc(-1 * var(--grid-margin) * 0.5);
 		will-change: transform;
@@ -152,7 +156,8 @@
 		color: var(--color-text);
 		margin-left: auto;
 		z-index: 1;
-		text-shadow: 0 1px 18px var(--color-bg);
+		filter: url(#wabi-rough);
+		text-shadow: 2px -1px 0 rgba(169, 124, 90, 0.18);
 	}
 
 	.interval-meta {

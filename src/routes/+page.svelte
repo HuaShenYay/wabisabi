@@ -9,15 +9,23 @@
 	let { data } = $props();
 </script>
 
-<div class="hero-3d-wrapper">
-	<div class="hero-editorial">
+<!--
+	Unified Hero-to-About Spatial Continuum (一卷到底 · 枯山水空间手卷)
+	Hero and About share a single unbroken 3D Karesansui & Mono-ha field
+	([data-scene-scroll]), linked by a continuous vertical dry-ink spine.
+-->
+<div class="wabi-continuum" data-scene-scroll>
+	<span class="continuum-spine" aria-hidden="true"></span>
+	<div class="hero-stage">
+		<Header />
 		<HeroIntro profile={data?.profile} />
 	</div>
-	<Header />
+	<div class="about-stage">
+		<AboutSection {data} />
+	</div>
 </div>
 
-<div class="about-manuscript">
-	<AboutSection {data} />
+<div class="colophon-tail">
 	<Marquee />
 	<LinksSection {data} />
 	<div class="spacer" style="--size: 1"></div>
@@ -25,25 +33,54 @@
 </div>
 
 <style>
-	.hero-3d-wrapper {
+	.wabi-continuum {
 		position: relative;
 		width: 100%;
-		/* Keep the navigation legible without turning it into a competing UI layer. */
-		color: var(--color-bg);
-		height: var(--hero-height);
+		color: var(--color-text);
 	}
-	.hero-editorial { position: sticky; top: 0; height: 100svh; }
-	.about-manuscript {
+
+	/* Unbroken vertical dry-ink registration axis linking Hero directly through About */
+	.continuum-spine {
+		position: absolute;
+		top: calc(var(--header-height) + var(--space-4));
+		bottom: var(--space-8);
+		left: var(--grid-margin);
+		width: 1px;
+		background: linear-gradient(
+			180deg,
+			var(--color-text) 0%,
+			rgba(42, 41, 36, 0.28) 18%,
+			rgba(42, 41, 36, 0.18) 72%,
+			rgba(233, 226, 210, 0.26) 92%,
+			transparent 100%
+		);
+		filter: url(#wabi-rough);
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	.hero-stage {
 		position: relative;
-		margin-top: calc(-1 * var(--hero-handoff));
-		padding-top: var(--space-7);
-		background: var(--color-bg);
-		box-shadow: 0 -20px 48px rgba(42, 41, 36, 0.05);
+		min-height: 100svh;
+		width: 100%;
 	}
-	:global(.page-root:has(.scene-unavailable)) .hero-3d-wrapper { height: 100svh; }
-	:global(.page-root:has(.scene-unavailable)) .about-manuscript { margin-top: 0; padding-top: 0; background: var(--color-bg); }
-	@media (prefers-reduced-motion: reduce) {
-		.hero-3d-wrapper { height: 100svh; }
-		.about-manuscript { margin-top: 0; padding-top: 0; background: var(--color-bg); }
+
+	/* About emerges directly out of the lower Hero horizon without any opaque card wall */
+	.about-stage {
+		position: relative;
+		z-index: 2;
+	}
+
+	.colophon-tail {
+		position: relative;
+		z-index: 2;
+		background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+		backdrop-filter: blur(3px);
+	}
+
+	@media (max-width: 600px) {
+		.continuum-spine {
+			display: none;
+		}
 	}
 </style>

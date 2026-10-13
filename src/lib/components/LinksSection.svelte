@@ -61,17 +61,19 @@
 		padding-block: var(--space-9) var(--space-8);
 	}
 
-	/* v2 巨物: monumental outline glyph */
+	/* v2 巨物: monumental woodblock-eroded outline glyph */
 	.chapter-watermark {
 		position: absolute;
-		right: -0.12em;
+		right: -0.06em;
 		top: var(--space-4);
 		font-family: var(--font-heading);
 		font-size: var(--display-1);
-		line-height: 1;
+		line-height: 0.9;
 		letter-spacing: var(--tracking-crush);
-		color: transparent;
-		-webkit-text-stroke: 1px color-mix(in srgb, var(--color-text) 20%, transparent);
+		color: rgba(42, 41, 36, 0.06);
+		-webkit-text-stroke: 1.5px color-mix(in srgb, var(--color-text) 26%, transparent);
+		text-shadow: 7px -4px 0 rgba(169, 124, 90, 0.14);
+		filter: url(#wabi-erosion);
 		pointer-events: none;
 		user-select: none;
 		z-index: 0;
@@ -88,7 +90,7 @@
 		flex-basis: 100%;
 		margin-bottom: var(--space-2);
 	}
-	.badge-rule { width: var(--space-5); height: 1px; background: currentColor; opacity: .6; }
+	.badge-rule { width: var(--space-5); height: 1.5px; background: currentColor; opacity: .7; filter: url(#wabi-rough); }
 
 	.links-inner {
 		row-gap: 0;
@@ -97,23 +99,20 @@
 		z-index: 1;
 	}
 
-	/* v2 墨晕 Bleed */
+	/* Stepped stop-motion woodblock reveal */
 	.links-inner:global(.is-developing) [data-reveal-item] {
 		opacity: 0;
-		transform: translateY(10px);
-		filter: blur(12px);
-		clip-path: inset(-50% -50% 45% -50%);
+		transform: translate(-4px, 10px) skewX(-1deg);
+		clip-path: inset(0 0 85% 0);
 	}
 	.links-inner:global(.is-developed) [data-reveal-item] {
 		opacity: 1;
 		transform: none;
-		filter: none;
-		clip-path: inset(-50% -50% -50% -50%);
+		clip-path: inset(0 0 0% 0);
 		transition:
-			opacity var(--duration-bleed) var(--ease-organic),
-			transform var(--duration-bleed) var(--ease-organic),
-			filter calc(var(--duration-bleed) * 1.1) var(--ease-organic),
-			clip-path var(--duration-unmount) var(--ease-ink);
+			opacity 360ms steps(4, end),
+			transform 360ms steps(4, end),
+			clip-path 360ms steps(4, end);
 		transition-delay: calc(var(--i, 0) * 110ms);
 	}
 
@@ -135,18 +134,21 @@
 
 	.links-title {
 		font-family: var(--font-heading);
-		font-size: var(--text-3xl);
+		font-size: clamp(2.8rem, 4.8vw, 4.8rem);
+		line-height: 0.95;
 		letter-spacing: var(--tracking-crush);
 		color: var(--color-text);
+		filter: url(#wabi-rough);
+		text-shadow: 3px -2px 0 rgba(169, 124, 90, 0.22);
 	}
 
 	.links-en {
-		font-family: var(--font-latin);
-		font-size: var(--text-base);
-		font-style: italic;
-		letter-spacing: var(--tracking-base);
+		font-family: var(--font-display-latin);
+		font-size: var(--text-xl);
+		letter-spacing: 0.08em;
 		color: var(--color-text-muted);
 		align-self: center;
+		filter: url(#wabi-rough);
 	}
 
 	.link-list {
@@ -154,15 +156,15 @@
 	}
 
 	.link-row {
-		border-top: 1px solid var(--color-divider);
+		border-top: 1.5px solid var(--color-border);
 		position: relative;
-		transition: transform var(--duration-base) var(--ease-organic);
+		transition: transform 160ms steps(2, end);
 	}
 	.link-row:last-child {
-		border-bottom: 1px solid var(--color-divider);
+		border-bottom: 1.5px solid var(--color-border);
 	}
 	.link-row:hover {
-		transform: translateX(6px);
+		transform: translate(5px, -1px);
 	}
 
 	.big-link {
@@ -174,20 +176,24 @@
 		position: relative;
 	}
 
-	/* 朱印 seal emerges on hover */
+	/* 朱印 seal stamps in 2 steps on hover */
 	.link-seal {
 		position: absolute;
 		left: calc(-1 * var(--space-4));
 		top: calc(50% - 3.5px);
 		opacity: 0;
-		transform: scale(0.4);
-		transition: opacity var(--duration-base) var(--ease-organic), transform var(--duration-base) var(--ease-organic);
+		transform: scale(0.4) rotate(-8deg);
+		filter: url(#wabi-rough);
+		transition:
+			opacity 140ms steps(2, end),
+			transform 140ms steps(2, end);
 	}
 
 	.link-num {
-		font-size: var(--text-micro);
-		color: var(--color-text-faint);
-		letter-spacing: var(--tracking-machine);
+		font-family: var(--font-display-latin);
+		font-size: var(--text-base);
+		color: var(--color-link);
+		letter-spacing: 0.1em;
 	}
 
 	.bl-cn {
@@ -197,7 +203,8 @@
 		letter-spacing: var(--tracking-heading);
 		color: var(--color-text);
 		position: relative;
-		transition: color var(--duration-slow) var(--ease-organic);
+		filter: url(#wabi-rough);
+		transition: color 180ms steps(2, end);
 	}
 
 	.bl-en {
@@ -205,7 +212,7 @@
 		letter-spacing: var(--tracking-machine);
 		color: var(--color-text-muted);
 		text-transform: uppercase;
-		transition: color var(--duration-slow) var(--ease-organic);
+		transition: color 180ms steps(2, end);
 	}
 
 	.bl-mark {
@@ -214,23 +221,26 @@
 		font-size: var(--text-base);
 		color: var(--color-text-muted);
 		opacity: .55;
-		transition: opacity var(--duration-slow) var(--ease-organic), color var(--duration-slow) var(--ease-organic), transform var(--duration-base) var(--ease-organic);
+		transition:
+			opacity 180ms steps(2, end),
+			color 180ms steps(2, end),
+			transform 160ms steps(2, end);
 	}
 
 	@media (hover: hover) {
 		.big-link:hover .link-seal {
 			opacity: 1;
-			transform: scale(1);
+			transform: scale(1) rotate(-4deg);
 		}
 		.big-link:hover .bl-cn {
-			color: var(--color-link);
+			color: var(--color-link-hover);
 		}
 		.big-link:hover .bl-en {
 			color: var(--color-text);
 		}
 		.big-link:hover .bl-mark {
 			opacity: 1;
-			color: var(--color-link);
+			color: var(--color-link-hover);
 			transform: translate(3px, -3px);
 		}
 	}
