@@ -39,4 +39,14 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Current design
+
+The site uses a minimal warm-paper design, preserving the existing typefaces and dry-ink borders. Header and footer are shared across routes. Background scenes, decorative photos, custom cursors, scroll effects and full-screen page transitions are no longer mounted. Images are used for actual portfolio and article content.
+
+Run `npm run check`, `npm test`, and `npm run build`. Start a production preview and run `npm run test:browser` to verify the home, five categories, reading routes and narrow layouts. `npm run test:navigation` checks immediate browser Back without adding history entries; `npm run test:performance` checks idle rendering and scroll style writes.
+
+Install the browser with `npx playwright install chromium`, or point `WABI_BROWSER_EXECUTABLE` to an existing Chromium executable. `WABI_TEST_URL` selects the preview URL (default port 4173). `WABI_SCREENSHOT_DIR` saves screenshots.
+
+For isolated checks, start a separate preview with `PUBLIC_SANITY_PROJECT_ID=''` on another port and set `WABI_OFFLINE=1` in the checks. This uses local sample content without changing the live CMS configuration. Do not rebuild while a production preview is running.
+
+Historical landscape sources and prompts remain in `artwork/landscape/` as records; current pages do not request those assets. Their standalone generation scripts are retained for reference.

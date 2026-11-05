@@ -1,8 +1,5 @@
 <script>
 	import Artwork from '$lib/components/Artwork.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import Footer from '$lib/components/Footer.svelte';
-	import { reveal } from '$lib/actions/reveal.js';
 	import RichText from '$lib/components/RichText.svelte';
 
 	let { data } = $props();
@@ -29,25 +26,22 @@
 </svelte:head>
 
 <div class="reading-page">
-<Header />
+
 
 <div class="spacer" style="--size: 0.55"></div>
 
 <!-- 题头 Article head -->
-<header class="grid work-head" use:reveal>
+<header class="grid work-head">
 	<p class="work-breadcrumb">
 		<a class="link-underline" href="/projects">作品</a>
 		<span class="crumb-sep" aria-hidden="true">/</span>
 		<a class="link-underline" href="/projects/{cat.slug}">{article.category}</a>
-		<span class="seal" aria-hidden="true"></span>
-		<span class="work-code machine">ENTRY // {article.slug.toUpperCase()}</span>
 	</p>
 	<h1 class="work-title deboss-text">{article.title}</h1>
 	{#if article.titleEn}<p class="work-title-en">{article.titleEn}</p>{/if}
 	<dl class="work-spec">
 		{#if article.year}<div class="spec-cell"><dt class="machine">YEAR</dt><dd>{article.year}</dd></div>{/if}
 		{#if article.role}<div class="spec-cell"><dt class="machine">ROLE</dt><dd>{article.role}</dd></div>{/if}
-		<div class="spec-cell"><dt class="machine">VOLUME</dt><dd>第{cat.numeral}卷 · {cat.subtag}</dd></div>
 		{#if article.externalUrl}
 			<div class="spec-cell">
 				<dt class="machine">LINK</dt>
@@ -65,9 +59,9 @@
 <div class="spacer" style="--size: 0.35"></div>
 
 <!-- 卷首图 Cover plate: text-only posts need no placeholder image. -->
-<div class="grid work-cover" use:reveal>
+<div class="grid work-cover">
 	<figure class="cover-figure">
-		<div class="mounted-frame">
+		<div class="mounted-frame ink-frame">
 			<Artwork src={article.cover} alt={article.title} aspect={article.aspect} eager />
 		</div>
 		<figcaption class="plate-label">卷首</figcaption>
@@ -83,21 +77,21 @@
 	<div class="body-flow">
 		{#each article.body as block}
 			{#if block.type === 'paragraph'}
-				<p class="body-paragraph" use:reveal><RichText content={block.content} text={block.text} /></p>
+				<p class="body-paragraph"><RichText content={block.content} text={block.text} /></p>
 			{:else if block.type === 'heading'}
-				<svelte:element this={block.level === 3 ? 'h3' : 'h2'} class="body-heading" use:reveal>{block.text}</svelte:element>
+				<svelte:element this={block.level === 3 ? 'h3' : 'h2'} class="body-heading">{block.text}</svelte:element>
 			{:else if block.type === 'list'}
-				<svelte:element this={block.ordered ? 'ol' : 'ul'} class="body-list" use:reveal>
+				<svelte:element this={block.ordered ? 'ol' : 'ul'} class="body-list">
 					{#each block.items as item}<li><RichText content={item.content} text={item.text} /></li>{/each}
 				</svelte:element>
 			{:else if block.type === 'quote'}
-				<blockquote class="body-quote" use:reveal>
+				<blockquote class="body-quote">
 					<p class="quote-text"><RichText content={block.content} text={block.text} /></p>
 					{#if block.cite}<cite class="quote-cite">{block.cite}</cite>{/if}
 				</blockquote>
 			{:else if block.type === 'image'}
-				<figure class="body-figure" use:reveal>
-					<div class="mounted-frame">
+				<figure class="body-figure">
+					<div class="mounted-frame ink-frame">
 						<Artwork src={block.src} alt={block.alt ?? block.caption ?? article.title} aspectRatio={block.aspectRatio} fit="contain" />
 					</div>
 					<figcaption class="plate-label">
@@ -110,7 +104,7 @@
 		{/each}
 
 		<!-- 尾跋 Closing colophon -->
-		<p class="body-colophon" use:reveal>
+		<p class="body-colophon">
 			{#if article.year}{article.year} 年 · {/if}{data.profile.name}记
 		</p>
 	</div>
@@ -119,20 +113,20 @@
 <div class="spacer" style="--size: 0.5"></div>
 
 <!-- 前后作品导航 -->
-<nav class="grid work-nav" aria-label="作品导航" use:reveal>
+<nav class="grid work-nav" aria-label="作品导航">
 	<div class="work-nav-inner">
 		{#if data.prevWork}
 			<a class="work-nav-link" href="/projects/{data.prevWork.categorySlug}/{data.prevWork.slug}">
-				<span class="work-nav-dir machine">PREV // 上一件</span>
+				<span class="work-nav-dir machine">上一篇</span>
 				<span class="work-nav-title">{data.prevWork.title}</span>
 			</a>
 		{:else}
 			<span class="work-nav-link" aria-hidden="true"></span>
 		{/if}
-		<a class="work-nav-index link-underline" href="/projects/{cat.slug}">返回分卷 · 第{cat.numeral}卷</a>
+		<a class="work-nav-index link-underline" href="/projects/{cat.slug}">返回{article.category}</a>
 		{#if data.nextWork}
 			<a class="work-nav-link work-nav-next" href="/projects/{data.nextWork.categorySlug}/{data.nextWork.slug}">
-				<span class="work-nav-dir machine">NEXT // 下一件</span>
+				<span class="work-nav-dir machine">下一篇</span>
 				<span class="work-nav-title">{data.nextWork.title}</span>
 			</a>
 		{:else}
@@ -141,7 +135,7 @@
 	</div>
 </nav>
 
-<Footer />
+
 </div>
 
 <style>
@@ -168,16 +162,11 @@
 		color: var(--color-text-muted);
 	}
 
-	.work-code {
-		color: var(--color-text-muted);
-		opacity: 0.65;
-		margin-left: 0.4rem;
-	}
 
 	.work-title {
 		grid-column: 1 / -1;
 		font-family: var(--font-heading);
-		font-size: clamp(2.2rem, 6vw, 4.2rem);
+		font-size: clamp(1.9rem, 4.5vw, 3.4rem);
 		font-weight: 500;
 		letter-spacing: 0.05em;
 		line-height: 1.2;
@@ -228,10 +217,7 @@
 
 	.mounted-frame {
 		position: relative;
-		padding: 3px;
-		background: var(--color-bg-alt);
-		border: 1px solid var(--color-border);
-		box-shadow: 0 4px 20px var(--shadow);
+		padding: var(--space-3);
 	}
 
 
@@ -422,5 +408,19 @@
 		.work-nav-title {
 			transition: none;
 		}
+	}
+	@media (max-width: 768px) {
+		.work-breadcrumb { flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-sm); }
+		.work-title { overflow-wrap: anywhere; line-height: var(--leading-tight); }
+		.work-spec { gap: 0 var(--space-4); margin-top: var(--space-5); }
+		.spec-cell { min-width: 0; max-width: 100%; font-size: var(--text-sm); }
+		.spec-cell dd { min-width: 0; overflow-wrap: anywhere; }
+		.body-paragraph, .body-list { font-size: 1.0625rem; line-height: var(--leading-base); }
+		.body-quote { padding-left: var(--space-4); margin-block: var(--space-5); }
+		.body-figure { margin-block: var(--space-5); }
+		.work-nav-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); }
+		.work-nav-index { grid-column: 1 / -1; grid-row: 1; justify-self: start; padding-block: var(--space-3); }
+		.work-nav-link { min-width: 0; overflow-wrap: anywhere; }
+		.work-nav-title { line-height: var(--leading-base); }
 	}
 </style>

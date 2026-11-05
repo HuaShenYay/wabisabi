@@ -12,23 +12,27 @@
 	// Viscous horizontal parallax anchored to the element's viewport position:
 	// monumental letters drift across the paper horizon as the user scrolls.
 	onMount(() => {
-		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		if (reduce || !seamWord || !seam) return;
-
-		let ticking = false;
+		if (!seamWord || !seam) return;
+		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+		let frame = 0;
 		let listening = false;
+		let visible = false;
+		let dirty = true;
+		let centre = 0, vh = 1, range = 0;
 		let lastX = '';
 
 		function update() {
+			frame = 0;
 			if (!seamWord || !seam) return;
-			const rect = seam.getBoundingClientRect();
-			const vh = window.innerHeight;
-			const centre = rect.top + rect.height / 2 - vh / 2;
-			const progress = Math.max(-1, Math.min(1, centre / vh));
-			// Quantized stepped horizontal drift (卡顿感)
-			const quantized = Math.round(progress * 12) / 12;
-			const range = Math.min(64, window.innerWidth * 0.06);
-			const nextX = (-quantized * range).toFixed(1);
+			if (dirty) {
+				dirty = false;
+				const rect = seam.getBoundingClientRect();
+				vh = window.innerHeight;
+				centre = rect.top + window.scrollY + rect.height / 2 - vh / 2;
+				range = Math.min(64, window.innerWidth * .06);
+			}
+			const progress = Math.max(-1, Math.min(1, (centre - window.scrollY) / vh));
+			const nextX = (reduce.matches ? 0 : -progress * range).toFixed(2);
 			if (nextX !== lastX) {
 				lastX = nextX;
 				seamWord.style.transform = `translate3d(${nextX}px, 0, 0)`;
@@ -36,34 +40,42 @@
 		}
 
 		function onScroll() {
-			if (!ticking) {
-				requestAnimationFrame(() => {
-					update();
-					ticking = false;
-				});
-				ticking = true;
+			if (!frame && !document.hidden) frame = requestAnimationFrame(update);
+		}
+		function refresh() { dirty = true; if (visible) onScroll(); }
+		function sync() {
+			const needed = visible && !reduce.matches && !document.hidden;
+			if (needed !== listening) {
+				listening = needed;
+				if (needed) window.addEventListener('scroll', onScroll, { passive: true });
+				else { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame); frame = 0; }
 			}
+			if (visible && !document.hidden) { dirty = true; onScroll(); }
+			if (seamWord) seamWord.style.willChange = needed ? 'transform' : 'auto';
 		}
 
 		const visibility = new IntersectionObserver(
 			([entry]) => {
-				if (entry.isIntersecting && !listening) {
-					listening = true;
-					window.addEventListener('scroll', onScroll, { passive: true });
-					update();
-				} else if (!entry.isIntersecting && listening) {
-					listening = false;
-					window.removeEventListener('scroll', onScroll);
-				}
+				visible = entry.isIntersecting;
+				sync();
 			},
 			{ rootMargin: '120px 0px' }
 		);
 		visibility.observe(seam);
-		update();
+		const resize = new ResizeObserver(refresh);
+		resize.observe(seam);
+		window.addEventListener('resize', refresh, { passive: true });
+		reduce.addEventListener('change', sync);
+		document.addEventListener('visibilitychange', sync);
 
 		return () => {
 			visibility.disconnect();
+			resize.disconnect();
+			cancelAnimationFrame(frame);
 			if (listening) window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('resize', refresh);
+			reduce.removeEventListener('change', sync);
+			document.removeEventListener('visibilitychange', sync);
 		};
 	});
 </script>
@@ -142,7 +154,6 @@
 		filter: url(#wabi-erosion);
 		white-space: nowrap;
 		margin-left: calc(-1 * var(--grid-margin) * 0.5);
-		will-change: transform;
 		pointer-events: none;
 	}
 

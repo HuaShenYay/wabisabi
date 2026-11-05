@@ -1,62 +1,16 @@
 <script>
-	import { develop } from '$lib/actions/develop.js';
 	import { profile as defaultProfile } from '$lib/domain/profile.js';
 	import { page } from '$app/state';
 	const profile = $derived(page.data.profile ?? defaultProfile);
-
 	const year = new Date().getFullYear();
 </script>
 
-<footer class="site-footer grid" use:develop>
-	<div class="footer-content">
-		<p class="footer-copy">© {year} {profile.name} · {profile.location}</p>
-		<a href="/copyright" class="link-underline footer-link">版权声明</a>
-	</div>
+<footer class="site-footer site-shell">
+	<div><span class="ink-rule" aria-hidden="true"></span><p>© {year} {profile.name}</p><a href="/copyright">版权声明</a></div>
 </footer>
 
 <style>
-	.site-footer {
-		padding-top: calc(0.8 * var(--spacer-height));
-		padding-bottom: calc(1.2 * var(--spacer-height));
-		row-gap: 0;
-		align-items: end;
-		border-top: 1px solid var(--color-divider);
-	}
-
-	.footer-content {
-		grid-column: 1 / -1;
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.footer-copy {
-		font-family: var(--font-ui);
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-		letter-spacing: 0.03em;
-	}
-
-	.footer-link {
-		font-family: var(--font-ui);
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		transition: color 0.4s var(--ease-organic);
-	}
-
-	@media (hover: hover) {
-		.footer-link:hover {
-			color: var(--color-link);
-		}
-	}
-
-	@media (min-width: 900px) {
-		.footer-content {
-			grid-column: 3 / 13;
-		}
-	}
+	.site-footer > div { display: flex; position: relative; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); padding-block: var(--space-4); color: var(--color-text-muted); font: var(--text-xs)/1.6 var(--font-ui); }
+	.ink-rule { position: absolute; top: 0; opacity: .23; }
+	a { display: flex; align-items: center; min-height: 44px; }
 </style>

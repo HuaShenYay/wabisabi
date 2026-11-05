@@ -1,6 +1,4 @@
 <script>
-	import Header from '$lib/components/Header.svelte';
-	import { reveal } from '$lib/actions/reveal.js';
 	let { data } = $props();
 	const profile = $derived(data.profile);
 
@@ -13,15 +11,15 @@
 	<meta name="robots" content="noindex, follow" />
 </svelte:head>
 
-<Header />
+
 
 <div class="spacer" style="--size: 1"></div>
 
-<section class="grid grid-section" use:reveal>
+<section class="grid grid-section">
 	<h2 class="section-label copyright-label">版权</h2>
 	<div class="copyright-body">
 		<p class="copyright-paragraph">
-			本网站所有内容，包括但不限于文字、图像、生成式艺术作品、视觉设计、代码及 Three.js 场景，
+			本网站所有内容，包括但不限于文字、图像、生成式艺术作品、视觉设计、代码及庭院场景，
 			版权归 <strong>{profile.name}</strong> 所有。
 		</p>
 		<p class="copyright-paragraph">
@@ -36,7 +34,7 @@
 
 <div class="ink-divider" aria-hidden="true"></div>
 
-<section class="grid grid-section" use:reveal>
+<section class="grid grid-section">
 	<h2 class="section-label copyright-label">使用条款</h2>
 	<div class="copyright-body">
 		<p class="copyright-paragraph">
@@ -44,8 +42,8 @@
 			不构成任何专业建议。
 		</p>
 		<p class="copyright-paragraph">
-			本网站使用 WebGL 技术呈现三维场景。如您的设备不支持 WebGL 或已禁用相关功能，
-			部分视觉效果可能无法正常显示。文字内容在所有设备上均可访问。
+			本网站以简洁的文字与图像呈现内容，可在不同尺寸的设备上阅读。
+			您也可以在系统设置中减少动态效果。
 		</p>
 		<p class="copyright-paragraph">
 			本网站尊重并保护用户隐私。本站不收集个人身份信息，不使用追踪 Cookie。
@@ -56,7 +54,7 @@
 
 <div class="ink-divider" aria-hidden="true"></div>
 
-<section class="grid grid-section" use:reveal>
+<section class="grid grid-section">
 	<h2 class="section-label copyright-label">致谢</h2>
 	<div class="copyright-body">
 		<p class="copyright-paragraph">
@@ -64,8 +62,7 @@
 		</p>
 		<ol class="credits-list">
 			<li><span class="credit-name">SvelteKit</span><span class="credit-role">框架</span></li>
-			<li><span class="credit-name">Three.js</span><span class="credit-role">三维场景</span></li>
-			<li><span class="credit-name">SVG Filters</span><span class="credit-role">文字浮雕与纹理</span></li>
+			<li><span class="credit-name">SVG</span><span class="credit-role">墨线与细微纸纹</span></li>
 			<li><span class="credit-name">Source Han Serif / Songti</span><span class="credit-role">正文字体</span></li>
 			<li><span class="credit-name">LXGW WenKai / Cormorant Garamond</span><span class="credit-role">标题字体</span></li>
 		</ol>
@@ -78,7 +75,7 @@
 
 <div class="ink-divider" aria-hidden="true"></div>
 
-<section class="grid grid-section" use:reveal>
+<section class="grid grid-section">
 	<h2 class="section-label copyright-label">联系</h2>
 	<div class="copyright-body">
 		<p class="copyright-paragraph">

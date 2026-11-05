@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1000" fill="none"><title>序 · 淡墨远山</title>
+<defs><linearGradient id="wash" x2="0" y2="1"><stop stop-color="#55524A" stop-opacity=".16"/><stop offset="1" stop-color="#EBE4D6" stop-opacity="0"/></linearGradient></defs>
+
+  <path d="M-30 742L37 714 76 720 136 683 191 700 235 669 283 675 341 627 378 641 427 621 488 663 535 655 601 699 667 680 744 711 807 676 859 689 906 646 968 635 1009 610 1055 626 1103 599 1147 621 1193 652 1231 645 1296 688 1354 670 1450 716V1000H-30Z" fill="url(#wash)" opacity=".55"/>
+  <path d="M-40 838L35 801 74 810 119 772 169 788 228 746 264 761 303 740 366 778 419 758 482 797 545 783 606 811 677 793 746 831 810 802 863 816 916 776 972 786 1038 750 1084 768 1126 744 1169 776 1227 794 1299 772 1363 808 1450 792V1000H-40Z" fill="url(#wash)" opacity=".76"/>
+  <path d="M45 882Q230 852 417 872T810 880T1190 854T1450 879" stroke="#55524A" stroke-width=".8" opacity=".11"/>
+  <g stroke="#55524A" stroke-width="1.2" opacity=".35" stroke-linecap="round"><path d="M1113 419q9-4 16 2 6-9 15-10M1160 394q6-3 10 2 4-6 10-7"/></g>
+</svg>

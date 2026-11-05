@@ -1,0 +1,5 @@
+# 摄影枝梢 · 内置 image_gen · 2026-10-16
+
+Use case: photorealistic-natural. Asset type: small transparent animated foreground branch for a photographic wabi-sabi website, landscape 3:2.
+A single sparse weathered Japanese black pine bough enters from the far RIGHT edge at 35% height, curves slightly downward toward the LEFT, and ends in delicate fine pine needles at 10% width and 65% height. Keep generous fully transparent space all around. Small crooked secondary twigs and 4 to 6 sparse irregular clusters of fine needles, mostly bare woody bough. No trunk, no roots, no ground.
+Extremely natural large-format monochrome photography cutout, warm charcoal gray #2A2924, soft overcast light, dark textured bark, needle detail, windswept asymmetry. All spaces between the needles and twigs must be truly transparent alpha. No opaque background, no blurry vegetation behind it, no haze, no white halo, no shadow, no checkerboard drawn into image. No text, no logos, no illustration, no vector look, no stylized symbol.

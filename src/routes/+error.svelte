@@ -1,7 +1,5 @@
 <script>
 	import { page } from '$app/state';
-	import Header from '$lib/components/Header.svelte';
-	import { reveal } from '$lib/actions/reveal.js';
 	import { profile } from '$lib/domain/profile.js';
 
 	const status = $derived(page.status);
@@ -24,9 +22,7 @@
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<Header />
-
-<section class="error-section grid grid-section" use:reveal>
+<section class="error-section grid grid-section">
 	<div class="error-content">
 		<p class="error-status-label">{status === 404 ? 'Not Found' : 'Error'}</p>
 		<h1 class="error-display">{status}</h1>
@@ -46,22 +42,21 @@
 
 <style>
 	.error-section {
-		min-height: var(--viewport-height, 100vh);
-		min-height: 100dvh;
+		min-height: 65svh;
 		display: flex;
 		align-items: center;
-		padding-top: var(--header-height);
+		padding-block: var(--space-6);
 	}
 
 	.error-content {
 		grid-column: 2 / -2;
-		padding: calc(2 * var(--spacer-height)) 0;
+		padding-block: var(--space-5);
 	}
 
 	@media (min-width: 900px) {
 		.error-content {
 			grid-column: 3 / 8;
-			padding: calc(3 * var(--spacer-height)) 0;
+			padding-block: var(--space-6);
 		}
 	}
 
