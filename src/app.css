@@ -258,6 +258,8 @@ img, video {
 	/* ===== 布局 ===== */
 	--grid-margin: var(--space-4);
 	--header-height: 5rem;
+	--touch-target: 44px;
+	--footer-height: calc(var(--touch-target) + var(--space-4) * 2);
 	--spacer-height: var(--space-6);
 	/* Home: one continuous shore-to-manuscript handoff. */
 	--hero-height: 142svh;
@@ -276,31 +278,108 @@ img, video {
 	--yugen-lift: 18px;
 
 	--viewport-height: 100vh;
+
+	/* ===== §18 纸与不均齐（DESIGN.md §18） =====
+	   四张纸的泛黄程度，明度差控制在 1~2.5%，只在区块交界处形成"裱纸接缝"，
+	   不作为色块使用；墨线变体由现有干墨线派生，全站静态、无动效。 */
+	--paper-leaf-1: #F3EFE6;   /* 宣纸 · 主 */
+	--paper-leaf-2: #F2EEE4;   /* 皮纸 · 极轻泛黄 */
+	--paper-leaf-3: #F0EBE0;   /* 陶胎纸 · 略深 */
+	--paper-leaf-4: #F2EDE3;   /* 陈纸 · 略暖 */
+	/* ===== §19 纸性 · 笔意（DESIGN.md §19） =====
+	   纸纹拆两层：512px 细粒平铺（paper-grain）+ 不重复的大尺度云斑（paper-cloud），
+	   避免旧 noise.svg 把云斑一起 320px 平铺产生的"壁纸感"。
+	   墨线由 mask 改为真实 SVG 图像，才能带凹版压痕并与纸纹 multiply 咬合。 */
+	--paper-grain: url('/paper-grain.svg');
+	--paper-cloud: url('/paper-cloud.svg');
+	--color-paper-edge: rgba(118, 100, 72, 0.018);
+	--rule-brush-1: url('/ink-brush-1.svg');   /* §19.6 旧笔触：保留文件，不再引用 */
+	--rule-brush-2: url('/ink-brush-2.svg');
+	--rule-brush-3: url('/ink-brush-3.svg');
+	/* ===== §19.7 断口交替（DESIGN.md §19.7） =====
+	   相邻墨线的断口数严格二值交替：dense > 3 个，sparse < 2 个。
+	   断口 = 相邻墨段之间 >= 7 单位（viewBox 1000）的空白；每族两支，位置互不重复。 */
+	--rule-dense-a: url('/ink-brush-dense-a.svg');     /* 5 断口 · 12/26/8/19/14 */
+	--rule-dense-b: url('/ink-brush-dense-b.svg');     /* 4 断口 · 22/9/17/28 */
+	--rule-sparse-a: url('/ink-brush-sparse-a.svg');   /* 1 断口 · 34，位于 ~63% */
+	--rule-sparse-b: url('/ink-brush-sparse-b.svg');   /* 1 断口 · 18，位于 ~30% */
 }
 
 
-/* Quiet paper shell: typography and dry-ink borders carry the design. */
-html, body { background: var(--color-bg); color: var(--color-text); }
-body { height: auto; min-height: 100svh; font: var(--text-base)/var(--leading-base) var(--font-body); letter-spacing: var(--tracking-base); overflow-x: clip; }
-body::before { content: ''; position: fixed; inset: 0; background: url('/noise.svg') repeat; background-size: 320px; opacity: .12; pointer-events: none; z-index: 20; }
+/* Quiet paper shell: typography, dry-ink borders and aged paper carry the design. */
+html { background: var(--color-bg); }
+html:lang(en) { --font-heading: var(--font-latin); }
+body {
+	color: var(--color-text);
+	height: auto; min-height: 100svh;
+	font: var(--text-base)/var(--leading-base) var(--font-body);
+	letter-spacing: var(--tracking-base); overflow-x: clip;
+	/* §19 字口微排印：字距与连字交给字体本身；标点悬挂为渐进增强，
+	   不支持的浏览器自动忽略。不启用 text-autospace，避免改变中西文混排行长。 */
+	font-kerning: normal;
+	font-feature-settings: "kern" 1, "liga" 1;
+	hanging-punctuation: first allow-end;
+	/* 暖色棉纸：无方向细粒 + 极淡纸浆起伏，正文后方保持干净。
+	   全部随页面滚动，避免固定云斑与文字错动产生贴膜感。 */
+	background-color: var(--color-bg);
+	background-image:
+		radial-gradient(ellipse 120% 105% at 50% 45%, transparent 68%, var(--color-paper-edge) 100%),
+		var(--paper-cloud),
+		var(--paper-grain);
+	background-size: 100% 100%, cover, 512px;
+	background-repeat: no-repeat, no-repeat, repeat;
+	background-attachment: scroll;
+}
 .site-shell, .grid { width: min(100%, 1260px); margin-inline: auto; padding-inline: clamp(21px, 5vw, 70px); }
 .grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: 1rem; align-items: start; }
 .grid-section { position: relative; }
 .grid-section + .grid-section { margin-top: var(--space-6); }
 .section-label { font: var(--text-xs)/1.6 var(--font-ui); color: var(--color-text-muted); letter-spacing: .08em; }
-.ink-rule { display: block; width: 100%; height: 6px; background: var(--rule-color, var(--color-text-muted)); mask: url('/ink-rule.svg') center / 100% 100% no-repeat; opacity: .42; pointer-events: none; }
+/* §19 墨线：真实笔触 SVG + multiply 咬进纸纹 + 1px 纸色压痕（凹版）。高度仍 6px，占位不变。 */
+.ink-rule {
+	display: block; width: 100%; height: 6px;
+	background: transparent var(--rule-dense-a) center / 100% 100% no-repeat;
+	mix-blend-mode: multiply;
+	filter: drop-shadow(0 1px 0 rgba(255, 253, 246, .55));
+	opacity: .54; pointer-events: none;
+}
+/* §19.7 阵营类：相邻两条墨线必须一 dense 一 sparse。
+   各页面按 DOM 顺序标注；列表内用 nth-child 自动交替（见目录页）。 */
+.ink-rule--dense, .ink-divider--dense { background-image: var(--rule-dense-a); }
+.ink-rule--dense-b { background-image: var(--rule-dense-b); opacity: .6; }
+.ink-rule--sparse, .ink-divider--sparse { background-image: var(--rule-sparse-a); }
+.ink-rule--sparse-b { background-image: var(--rule-sparse-b); opacity: .56; }
+.ink-divider--dense-b { background-image: var(--rule-dense-b); }
+/* 造物观一叶缺席时，关于区块只剩 3 条线（末条 dense），联络线自动切到 sparse，
+   保证条件渲染下交替规则仍成立。纯 CSS，无脚本、无页面逻辑耦合。 */
+.about:not(:has(.note-section--d)) ~ .contact .ink-rule { background-image: var(--rule-sparse-a); }
+/* 分卷目录最后一行是 dense 时，紧随其后的导航线切到 sparse；反之保持默认 dense。 */
+.volume-page:has(.catalog-list > li:last-child:nth-child(odd)) .vol-nav > .ink-rule { background-image: var(--rule-sparse-a); }
+/* §19 纸色改半透明叠加：纸纹连续穿过区块交界，不再是平涂贴纸，也不再叠第二层噪点。 */
+.leaf-1, .leaf-2, .leaf-3, .leaf-4 { background-image: none; }
+.leaf-1 { background-color: color-mix(in srgb, var(--paper-leaf-1) 45%, transparent); }
+.leaf-2 { background-color: color-mix(in srgb, var(--paper-leaf-2) 72%, transparent); }
+.leaf-3 { background-color: color-mix(in srgb, var(--paper-leaf-3) 78%, transparent); }
+.leaf-4 { background-color: color-mix(in srgb, var(--paper-leaf-4) 66%, transparent); }
 .ink-frame { position: relative; }
-.ink-frame::before { content: ''; position: absolute; inset: 0; background: var(--rule-color, var(--color-text-muted)); mask: url('/ink-frame.svg') center / 100% 100% no-repeat; opacity: .5; pointer-events: none; }
+.ink-frame::before { content: ''; position: absolute; inset: 0; background: var(--rule-color, var(--color-text-muted)); mask: url('/ink-frame.svg') center / 100% 100% no-repeat; opacity: .5; pointer-events: none; transition: opacity var(--duration-base) var(--ease-organic); }
+a.ink-frame:is(:hover, :focus-visible)::before { opacity: .85; }
 .woodblock-art { font-family: var(--font-heading); filter: url(#wabi-rough); text-shadow: 1px -.5px 0 color-mix(in srgb, var(--color-link) 18%, transparent); }
+/* §19 标题墨色同样咬进纸纹，正文不叠加任何效果，保证阅读对比度。 */
+h1, .woodblock-art { mix-blend-mode: multiply; }
 .deboss-text { text-shadow: 0 1px .5px rgba(243,239,230,.6), 0 -.5px .5px rgba(42,41,36,.15); }
 .link-underline { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .3em; text-decoration-color: var(--color-border); }
-a { cursor: pointer; transition: color 180ms ease; }
-a:hover { color: var(--color-link-hover); }
-a:hover.link-underline { text-decoration-color: currentColor; }
+a { cursor: pointer; transition: color var(--duration-base) var(--ease-organic), text-decoration-color var(--duration-base) var(--ease-organic); }
+a:is(:hover, :focus-visible) { color: var(--color-link-hover); }
+a:active { color: var(--color-text); }
+a:is(:hover, :focus-visible).link-underline { text-decoration-color: currentColor; }
 .machine { font: 400 var(--text-micro)/1.6 var(--font-machine); letter-spacing: var(--tracking-machine); text-transform: uppercase; font-variant-numeric: tabular-nums; }
 .seal { display: inline-block; width: 5px; height: 5px; background: var(--color-seal); }
 .spacer { height: calc(var(--size, 1) * var(--space-6)); }
-.ink-divider { position: relative; height: 6px; width: min(88%, 1120px); margin: var(--space-5) auto; background: var(--color-text-muted); mask: url('/ink-rule.svg') center / 100% 100% no-repeat; opacity: .25; }
+.ink-divider { position: relative; height: 6px; width: min(88%, 1120px); margin: var(--space-5) auto; background: transparent var(--rule-dense-a) center / 100% 100% no-repeat; mix-blend-mode: multiply; filter: drop-shadow(0 1px 0 rgba(255, 253, 246, .55)); opacity: .25; }
+/* background 简写会重置 background-image，故在其后以更高特异性重申阵营类。 */
+.ink-divider.ink-divider--sparse { background-image: var(--rule-sparse-a); }
+.ink-divider.ink-divider--dense-b { background-image: var(--rule-dense-b); }
 :focus-visible { outline: 2px solid var(--color-link-hover); outline-offset: 4px; }
 ::selection { background: var(--color-bg-deep); color: var(--color-text); }
 #svelte-announcer { position: absolute; inset: 0 auto auto 0; clip-path: inset(50%); overflow: hidden; white-space: nowrap; width: 1px; height: 1px; }

@@ -6,7 +6,7 @@ vi.mock('../src/lib/server/sanity.js', () => ({
 	getSanityClient: () => ({ fetch: state.fetch }),
 	sanityImageUrl: () => null
 }));
-import { getProjects, getProfile, getArticlePageData, getCategoryPageData, getSiteSettings, getSocialLinks } from '../src/lib/server/cms';
+import { getProjects, getLatestProject, getProfile, getArticlePageData, getCategoryPageData, getSiteSettings, getSocialLinks } from '../src/lib/server/cms';
 
 const project = { slug:'fresh-work',title:'新作',category:'文学艺术',year:'2026',index:'01',summary:'新作品简介',aspect:'portrait_4_3' };
 beforeEach(() => { state.configured = true; state.fetch.mockReset(); });
@@ -19,6 +19,32 @@ describe('CMS source of truth', () => {
 	it('does not resurrect seed projects in an empty published dataset', async () => {
 		state.fetch.mockResolvedValue([]);
 		expect(await getProjects()).toEqual([]);
+	});
+	it('selects the most recently published work independently of directory order and later edits', async () => {
+		state.fetch.mockResolvedValue([
+			{ ...project, slug: 'pinned-old', publishedAt: '2026-01-01T00:00:00Z', _createdAt: '2026-11-07T00:00:00Z' },
+			{ ...project, slug: 'newest', publishedAt: '2026-11-06T12:00:00Z' },
+			{ ...project, slug: 'earlier', publishedAt: '2026-11-06T08:00:00Z' }
+		]);
+		expect((await getLatestProject())?.slug).toBe('newest');
+	});
+	it('uses creation time when publication time is missing or invalid, and year for local works', async () => {
+		state.fetch.mockResolvedValue([
+			{ ...project, slug: 'year-only' },
+			{ ...project, slug: 'created-later', publishedAt: 'invalid', _createdAt: '2026-10-01T00:00:00Z' },
+			{ ...project, slug: 'no-date', year: '' }
+		]);
+		expect((await getLatestProject())?.slug).toBe('created-later');
+		state.configured = false;
+		expect((await getLatestProject())?.year).toBe('2026');
+	});
+	it('leaves an empty latest-work slot empty and resolves equal dates consistently', async () => {
+		state.fetch.mockResolvedValueOnce([]);
+		expect(await getLatestProject()).toBeNull();
+		state.fetch.mockResolvedValueOnce([{ ...project, slug: 'b-work' }, { ...project, slug: 'a-work' }]);
+		expect((await getLatestProject())?.slug).toBe('a-work');
+		state.fetch.mockResolvedValueOnce([{ ...project, slug: 'a-work' }, { ...project, slug: 'b-work' }]);
+		expect((await getLatestProject())?.slug).toBe('a-work');
 	});
 	it('ignores invalid routes/categories and safely normalizes optional fields', async () => {
 		state.fetch.mockResolvedValue([project,{...project,slug:'../invalid'},{...project,category:'invalid'},null]);

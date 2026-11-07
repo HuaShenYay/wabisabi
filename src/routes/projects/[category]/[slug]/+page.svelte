@@ -1,4 +1,9 @@
 <script>
+	import { page } from '$app/state';
+	import { getLocale, translator, categoryLabel, workTitle } from '$lib/i18n';
+	const locale = $derived(getLocale(page.data.locale));
+	const t = $derived(translator(locale));
+
 	import Artwork from '$lib/components/Artwork.svelte';
 	import RichText from '$lib/components/RichText.svelte';
 
@@ -21,7 +26,7 @@
 </script>
 
 <svelte:head>
-	<title>{article.title} - {data.profile.name}</title>
+	<title>{workTitle(locale, article)} - {t(data.profile.name, data.profile.nameEn)}</title>
 	<meta name="description" content={article.summary} />
 </svelte:head>
 
@@ -33,12 +38,12 @@
 <!-- 题头 Article head -->
 <header class="grid work-head">
 	<p class="work-breadcrumb">
-		<a class="link-underline" href="/projects">作品</a>
+		<a class="link-underline" href="/projects">{t('作品', 'Works')}</a>
 		<span class="crumb-sep" aria-hidden="true">/</span>
-		<a class="link-underline" href="/projects/{cat.slug}">{article.category}</a>
+		<a class="link-underline" href="/projects/{cat.slug}">{categoryLabel(locale, article.category)}</a>
 	</p>
-	<h1 class="work-title deboss-text">{article.title}</h1>
-	{#if article.titleEn}<p class="work-title-en">{article.titleEn}</p>{/if}
+	<h1 class="work-title deboss-text">{workTitle(locale, article)}</h1>
+	{#if article.titleEn && locale === 'zh'}<p class="work-title-en">{article.titleEn}</p>{/if}
 	<dl class="work-spec">
 		{#if article.year}<div class="spec-cell"><dt class="machine">YEAR</dt><dd>{article.year}</dd></div>{/if}
 		{#if article.role}<div class="spec-cell"><dt class="machine">ROLE</dt><dd>{article.role}</dd></div>{/if}
@@ -64,7 +69,7 @@
 		<div class="mounted-frame ink-frame">
 			<Artwork src={article.cover} alt={article.title} aspect={article.aspect} eager />
 		</div>
-		<figcaption class="plate-label">卷首</figcaption>
+		<figcaption class="plate-label">{t('卷首', 'Frontispiece')}</figcaption>
 	</figure>
 </div>
 {/if}
@@ -74,7 +79,8 @@
 <!-- 正文 Article body: renders the ArticleBlock contract.
      Sanity Portable Text is mapped to these blocks in the CMS service. -->
 <article class="grid work-body">
-	<div class="body-flow">
+	<div class="body-flow" lang="zh-CN">
+		{#if locale === 'en'}<p class="original-language-note" lang="en">This work is presented in its original language.</p>{/if}
 		{#each article.body as block}
 			{#if block.type === 'paragraph'}
 				<p class="body-paragraph"><RichText content={block.content} text={block.text} /></p>
@@ -95,17 +101,17 @@
 						<Artwork src={block.src} alt={block.alt ?? block.caption ?? article.title} aspectRatio={block.aspectRatio} fit="contain" />
 					</div>
 					<figcaption class="plate-label">
-						图{figNumerals[figIndexes.get(block)] ?? ''}{#if block.caption}<span class="fig-caption">{block.caption}</span>{/if}
+						{t(`图${figNumerals[figIndexes.get(block)] ?? ''}`, `Fig. ${figIndexes.get(block) + 1}`)}{#if block.caption}<span class="fig-caption">{block.caption}</span>{/if}
 					</figcaption>
 				</figure>
 			{/if}
 		{:else}
-			<p class="body-paragraph">{article.summary || '这件作品的创作手记正在整理中。'}</p>
+			<p class="body-paragraph">{article.summary || t('这件作品的创作手记正在整理中。', 'Notes on this work are being prepared.')}</p>
 		{/each}
 
 		<!-- 尾跋 Closing colophon -->
 		<p class="body-colophon">
-			{#if article.year}{article.year} 年 · {/if}{data.profile.name}记
+			{#if article.year}{article.year}{t(' 年', '')} · {/if}{t(`${data.profile.name}记`, data.profile.nameEn)}
 		</p>
 	</div>
 </article>
@@ -113,20 +119,20 @@
 <div class="spacer" style="--size: 0.5"></div>
 
 <!-- 前后作品导航 -->
-<nav class="grid work-nav" aria-label="作品导航">
+<nav class="grid work-nav" aria-label={t('作品导航', 'Work navigation')}>
 	<div class="work-nav-inner">
 		{#if data.prevWork}
 			<a class="work-nav-link" href="/projects/{data.prevWork.categorySlug}/{data.prevWork.slug}">
-				<span class="work-nav-dir machine">上一篇</span>
+				<span class="work-nav-dir machine">{t('上一篇', 'Previous')}</span>
 				<span class="work-nav-title">{data.prevWork.title}</span>
 			</a>
 		{:else}
 			<span class="work-nav-link" aria-hidden="true"></span>
 		{/if}
-		<a class="work-nav-index link-underline" href="/projects/{cat.slug}">返回{article.category}</a>
+		<a class="work-nav-index link-underline" href="/projects/{cat.slug}">{t('返回', 'Back to ')}{categoryLabel(locale, article.category)}</a>
 		{#if data.nextWork}
 			<a class="work-nav-link work-nav-next" href="/projects/{data.nextWork.categorySlug}/{data.nextWork.slug}">
-				<span class="work-nav-dir machine">下一篇</span>
+				<span class="work-nav-dir machine">{t('下一篇', 'Next')}</span>
 				<span class="work-nav-title">{data.nextWork.title}</span>
 			</a>
 		{:else}
@@ -139,6 +145,7 @@
 </div>
 
 <style>
+	.original-language-note { font: var(--text-sm)/var(--leading-base) var(--font-latin); color: var(--color-text-muted); margin-bottom: var(--space-5); }
 	/* 阅读页保留原有字形，站点 display token 的变化不侵入长文阅读。 */
 	.reading-page { --font-heading: var(--font-heading-reading); }
 
@@ -187,7 +194,7 @@
 		flex-wrap: wrap;
 		gap: 0 3rem;
 		margin-top: 2.4rem;
-		border-top: 1px solid rgba(38, 35, 32, 0.08);
+		border-top: 1px solid var(--color-divider);
 	}
 
 	.spec-cell {
@@ -325,7 +332,7 @@
 		color: var(--color-text-muted);
 		margin-top: 3rem;
 		padding-top: 2rem;
-		border-top: 1px solid rgba(38, 35, 32, 0.06);
+		border-top: 1px solid var(--color-divider);
 		align-self: flex-end;
 		text-align: right;
 	}
@@ -339,7 +346,7 @@
 		align-items: center;
 		gap: 1.5rem;
 		padding: 2rem 0;
-		border-top: 1px solid rgba(38, 35, 32, 0.08);
+		border-top: 1px solid var(--color-divider);
 	}
 
 	.work-nav-link {

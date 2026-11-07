@@ -12,6 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"test": "vitest run --config vitest.config.ts",
 		"test:browser": "node scripts/verify-minimal.mjs",
+		"test:language": "node scripts/verify-language.mjs",
 		"test:performance": "node scripts/verify-scroll-performance.mjs",
 		"assets:landscape": "node scripts/build-landscape.mjs",
 		"sanity:seed": "node scripts/sanity-seed.mjs",

@@ -14,7 +14,7 @@
       <feTurbulence type="turbulence" baseFrequency="0.018 0.12" numOctaves="2" seed="7" stitchTiles="stitch" result="fiberNoise"/>
       <feColorMatrix type="saturate" values="0" result="fiberDesat"/>
       <feComponentTransfer in="fiberDesat" result="fibers">
-        <feFuncA type="linear" slope="0.09"/>
+        <feFuncA type="linear" slope="0.06"/>
       </feComponentTransfer>
     </filter>
 

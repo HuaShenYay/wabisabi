@@ -1,10 +1,10 @@
 <script>
 	import HeroIntro from '$lib/components/HeroIntro.svelte';
-	import AboutSection from '$lib/components/AboutSection.svelte';
-	import LinksSection from '$lib/components/LinksSection.svelte';
+	import LatestWork from '$lib/components/LatestWork.svelte';
 	let { data } = $props();
 </script>
 
-<HeroIntro profile={data?.profile} />
-<AboutSection {data} />
-<LinksSection {data} />
+<HeroIntro />
+{#if data.latestProject}
+	<LatestWork project={data.latestProject} />
+{/if}

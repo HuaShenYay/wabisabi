@@ -1,9 +1,12 @@
 <script>
 	import { page } from '$app/state';
+	import { getLocale, translator } from '$lib/i18n';
+	const locale = $derived(getLocale(page.data.locale));
+	const t = $derived(translator(locale));
 	import { profile } from '$lib/domain/profile.js';
 
 	const status = $derived(page.status);
-	const message = $derived(page.error?.message ?? '未知错误');
+	const message = $derived(t(page.error?.message ?? '未知错误', status === 404 ? 'Page not found.' : 'This page could not be loaded. Please try again.'));
 
 	// Wabi-Sabi spirit: each error has its own poetic reflection
 	/** @type {Record<number, string>} */
@@ -13,12 +16,12 @@
 	};
 	const defaultReflection = '万物无常，错误亦是过程的一部分。';
 
-	const reflection = $derived(reflections[status] ?? defaultReflection);
+	const reflection = $derived(t(reflections[status] ?? defaultReflection, status === 404 ? 'An unwritten page.' : 'A crack in the stone lets the light in.'));
 </script>
 
 <svelte:head>
-	<title>{status} - {profile.name}</title>
-	<meta name="description" content="{status} - 页面未找到。返回首页继续探索。" />
+	<title>{status} - {t(profile.name, profile.nameEn)}</title>
+	<meta name="description" content={t(`${status} - 页面未找到。返回首页继续探索。`, `${status} - Return home to explore more work.`)} />
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
@@ -35,7 +38,7 @@
 		</p>
 
 		<a href="/" class="link-underline error-home-link">
-			返回首页
+			{t('返回首页', 'Return home')}
 		</a>
 	</div>
 </section>

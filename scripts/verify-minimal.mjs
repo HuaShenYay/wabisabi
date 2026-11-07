@@ -29,8 +29,16 @@ try {
 		check(`Home headline and actions remain separate at ${width}px`, await page.evaluate(() => document.querySelector('h1').getBoundingClientRect().bottom < document.querySelector('.hero-actions').getBoundingClientRect().top));
 		check(`No decorative scene or custom cursor at ${width}px`, await page.locator('canvas, .wabi-scene, .world-backdrop, .cursor-ring, .interval-section').count() === 0);
 		check(`Home never downloads scene assets at ${width}px`, await page.evaluate(() => !performance.getEntriesByType('resource').some(r => /\/(landscape|models)\//.test(r.name))));
-		check(`Existing display font and ink frame retained at ${width}px`, await page.locator('h1').evaluate(node => getComputedStyle(node).fontFamily.includes('KingHwa'))
-			&& await page.locator('.work-link').evaluate(node => getComputedStyle(node, '::before').maskImage.includes('ink-frame.svg')));
+		check(`Display font and simple works link remain readable at ${width}px`, await page.locator('h1').evaluate(node => getComputedStyle(node).fontFamily.includes('KingHwa'))
+			&& await page.locator('.work-link').evaluate(node => getComputedStyle(node, '::before').maskImage === 'none' && node.getBoundingClientRect().height >= 44));
+		check(`Navigation follows Project then About at ${width}px`, (await page.locator('.site-header nav a').allTextContents()).join(',') === 'Project,About');
+		const recent = page.locator('.latest-work');
+		check(`Only one recent work follows the introduction at ${width}px`, await recent.count() === 1 && await recent.locator('article').count() === 1
+			&& await recent.evaluate(node => node.getBoundingClientRect().top >= document.querySelector('.hero-intro').getBoundingClientRect().bottom));
+		await page.locator('.latest-link').click();
+		await page.waitForURL(/\/projects\/[^/]+\/[^/]+$/);
+		check(`Recent work opens its full article at ${width}px`, await page.locator('.body-flow').count() === 1 && await fits());
+		await page.goto(base, { waitUntil: 'networkidle' });
 		if (screenshots && width !== 320) await page.screenshot({ path: `${screenshots}/home-${width}.png` });
 		await page.getByRole('link', { name: 'Project', exact: true }).click();
 		await page.waitForURL(`${base}/projects`);
@@ -62,6 +70,8 @@ try {
 	check('Keyboard skip link is available', await page.evaluate(() => document.activeElement?.getAttribute('href') === '#main-content'));
 	await page.goto(`${base}/copyright`, { waitUntil: 'networkidle' });
 	check('Copyright fits and uses one shared shell', await fits() && await shell());
+	await page.goto(`${base}/about`, { waitUntil: 'networkidle' });
+	check('About uses continuous paper without section overlays', await fits() && await page.locator('.note-section, .contact-inner').evaluateAll(nodes => nodes.length >= 4 && nodes.every(node => getComputedStyle(node).backgroundColor === 'rgba(0, 0, 0, 0)')));
 	const response = await page.goto(`${base}/missing-page`, { waitUntil: 'networkidle' });
 	check('404 remains usable with one shared shell', response.status() === 404 && await shell() && await page.getByRole('link', { name: '返回首页', exact: true }).isVisible());
 	const noJs = await browser.newContext({ javaScriptEnabled: false });

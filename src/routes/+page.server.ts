@@ -1,8 +1,8 @@
-import { getHomeData } from '$lib/server/cms.js';
+import { getLatestProject } from '$lib/server/cms.js';
 
 export const prerender = false;
 
+/** Profile and social links are inherited from the shared layout. */
 export async function load() {
-	const data = await getHomeData();
-	return data;
+	return { latestProject: await getLatestProject() };
 }

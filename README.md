@@ -50,3 +50,9 @@ Install the browser with `npx playwright install chromium`, or point `WABI_BROWS
 For isolated checks, start a separate preview with `PUBLIC_SANITY_PROJECT_ID=''` on another port and set `WABI_OFFLINE=1` in the checks. This uses local sample content without changing the live CMS configuration. Do not rebuild while a production preview is running.
 
 Historical landscape sources and prompts remain in `artwork/landscape/` as records; current pages do not request those assets. Their standalone generation scripts are retained for reference.
+
+## Languages
+
+The top-right flags switch between Chinese and English. A server-read language cookie preserves the selection across refreshes and navigation; switching also works without JavaScript. Interface strings live beside their components via the helpers in `src/lib/i18n.ts`. Published works use `titleEn` when available; CMS bodies, summaries and personal information remain in their original language.
+
+Run `npm run test:language` against a running preview using the same `WABI_TEST_URL` and `WABI_BROWSER_EXECUTABLE` settings as the browser regression checks.

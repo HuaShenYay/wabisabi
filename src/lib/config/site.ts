@@ -37,6 +37,7 @@ export const siteConfig = {
 	themeColor: '#F3EFE6',
 	pages: [
 		{ path: '/', label: 'Home', changefreq: 'monthly', priority: '1.0' },
+		{ path: '/about', label: 'About', changefreq: 'monthly', priority: '0.9' },
 		{ path: '/projects', label: 'Project', changefreq: 'monthly', priority: '0.9' },
 		{ path: '/projects/literature', label: 'Literature & Art', changefreq: 'monthly', priority: '0.8' },
 		{ path: '/projects/photograph', label: 'Photography & Visuals', changefreq: 'monthly', priority: '0.8' },

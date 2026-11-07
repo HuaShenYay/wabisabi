@@ -1,4 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { getLocale, translator } from '$lib/i18n';
+	const locale = $derived(getLocale(page.data.locale));
+	const t = $derived(translator(locale));
+
 	let { src, alt, aspect = 'landscape_16_9', aspectRatio, fit = 'cover', eager = false }: { src?: string; alt: string; aspect?: string; aspectRatio?: number; fit?: 'cover' | 'contain'; eager?: boolean } = $props();
 	let failedSrc = $state('');
 	const ratio = $derived(aspectRatio && Number.isFinite(aspectRatio) && aspectRatio > 0 ? String(aspectRatio) : aspect === 'portrait_4_3' ? '3 / 4' : aspect === 'landscape_4_3' ? '4 / 3' : '16 / 9');
@@ -28,7 +33,7 @@
 	{#if src && failedSrc !== src}
 		<img {src} {srcset} sizes={srcset ? '(min-width: 900px) 55vw, 92vw' : undefined} {alt} style:object-fit={fit} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" onerror={() => failedSrc = src ?? ''} />
 	{:else}
-		<div class="artwork-placeholder" role="img" aria-label={`${alt}，暂无图版`}><span>{alt}</span><small>图版待补</small></div>
+		<div class="artwork-placeholder" role="img" aria-label={t(`${alt}，暂无图版`, `${alt}, image unavailable`)}><span>{alt}</span><small>{t('图版待补', 'Image to follow')}</small></div>
 	{/if}
 </div>
 

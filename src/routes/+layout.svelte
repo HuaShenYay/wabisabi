@@ -1,5 +1,8 @@
 <script>
 	import { page } from '$app/state';
+	import { getLocale, translator, categoryLabel, workTitle } from '$lib/i18n';
+	const locale = $derived(getLocale(page.data.locale));
+	const t = $derived(translator(locale));
 	import '../app.css';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -11,8 +14,9 @@
 	const siteConfig = $derived(page.data.settings ?? defaultSettings);
 	const profile = $derived(page.data.profile ?? defaultProfile);
 	const article = $derived(page.data.article);
-	const pageTitle = $derived(article ? `${article.title} - ${profile.name}` : page.data.category ? `${page.data.category} · ${profile.name}` : page.url.pathname === '/projects' ? `作品 · ${profile.name}` : siteConfig.title);
-	const pageDescription = $derived(article?.summary || page.data.meta?.intro || siteConfig.description);
+	const displayName = $derived(t(profile.name, profile.nameEn));
+	const pageTitle = $derived(article ? `${workTitle(locale, article)} - ${displayName}` : page.data.category ? `${categoryLabel(locale, page.data.category)} · ${displayName}` : page.url.pathname === '/projects' ? `${t('作品', 'Works')} · ${displayName}` : page.url.pathname === '/about' ? `${t('关于', 'About')} · ${displayName}` : t(siteConfig.title, `${displayName} — Words, images & digital craft`));
+	const pageDescription = $derived(article?.summary || page.data.meta?.intro || (page.url.pathname === '/about' ? profile.bio : siteConfig.description));
 	const canonical = $derived(new URL(page.url.pathname, siteConfig.url).href);
 	const ogImage = $derived(new URL(article?.cover || siteConfig.ogImage, siteConfig.url).href);
 	const personJsonLd = $derived(serializeJsonLd(generatePersonJsonLd(profile, page.data.socialLinks, siteConfig)));
@@ -34,7 +38,7 @@
 	<meta property="og:description" content={pageDescription} />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:image" content={ogImage} />
-	<meta property="og:locale" content={siteConfig.locale} />
+	<meta property="og:locale" content={t('zh_CN', 'en_GB')} />
 
 	<!-- Twitter Card -->
 	<meta name="twitter:card" content="summary_large_image" />
@@ -55,7 +59,7 @@
 		<!-- Subtle rough ink edge for headings, rules, and seals -->
 		<filter id="wabi-rough" x="-5%" y="-5%" width="110%" height="110%">
 			<feTurbulence type="fractalNoise" baseFrequency="0.04 0.12" numOctaves="2" seed="11" result="warp" />
-			<feDisplacementMap in="SourceGraphic" in2="warp" scale="1.6" xChannelSelector="R" yChannelSelector="G" />
+			<feDisplacementMap in="SourceGraphic" in2="warp" scale="2.4" xChannelSelector="R" yChannelSelector="G" />
 		</filter>
 		<!-- Heavy woodblock / stone-rubbing erosion strictly masked to glyph alpha (zero halo) -->
 		<filter id="wabi-erosion" x="-10%" y="-10%" width="120%" height="120%">
@@ -65,7 +69,7 @@
 	</defs>
 </svg>
 
-<a class="skip-link" href="#main-content">跳至内容</a>
+<a class="skip-link" href="#main-content">{t('跳至内容', 'Skip to content')}</a>
 <div class="page-root">
 	<Header />
 	<main id="main-content" tabindex="-1">{@render children()}</main>

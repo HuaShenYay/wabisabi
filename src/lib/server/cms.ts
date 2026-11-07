@@ -66,10 +66,11 @@ const PROJECT_FIELDS = `
 	aspect,
 	externalUrl,
 	publishedAt,
+	_createdAt,
 	"categoryTitles": categories[]->title,
 	"categorySlugs": categories[]->slug.current,
 	"legacyCategories": categories[]->title,
-	"excerpt": body[_type == "block" && style == "normal"][0].children[].text,
+	"excerpt": body[_type == "block" && coalesce(style, "normal") == "normal" && count(children[defined(text) && text != ""]) > 0][0].children[].text,
 	"order": coalesce(order, 0)
 `;
 
@@ -88,6 +89,7 @@ interface SanityProject {
 	externalUrl?: string;
 	order: number;
 	publishedAt?: string;
+	_createdAt?: string;
 	categoryTitles?: string[];
 	categorySlugs?: string[];
 	legacyCategories?: string[];
@@ -150,6 +152,8 @@ function mapProject(p: SanityProject, position: number): Project {
 		title: p.title.trim(),
 		titleEn: p.titleEn ?? '',
 		year: p.year || p.publishedAt?.slice(0, 4) || '',
+		publishedAt: p.publishedAt,
+		createdAt: p._createdAt,
 		category: p._type === 'post' ? postCategory(p) : normalizeProjectCategory(p.category, p),
 		role: p.role ?? '',
 		summary: p.summary || (excerpt.length > 120 ? `${Array.from(excerpt).slice(0, 120).join('')}…` : excerpt),
@@ -174,6 +178,24 @@ export async function getProjects(): Promise<Project[]> {
 		'projects',
 		'works'
 	);
+}
+
+/** Recent work follows publication time, independently of the directory's manual order. */
+export async function getLatestProject(): Promise<Project | null> {
+	const items = await getProjects();
+	const timestamp = (item: Project) => {
+		for (const value of [item.publishedAt, item.createdAt, /^\d{4}$/.test(item.year) ? `${item.year}-01-01T00:00:00Z` : undefined]) {
+			const time = value ? Date.parse(value) : NaN;
+			if (Number.isFinite(time)) return time;
+		}
+		return -Infinity;
+	};
+	return items.reduce<Project | null>((latest, item) => {
+		if (!latest) return item;
+		const currentTime = timestamp(item);
+		const latestTime = timestamp(latest);
+		return currentTime > latestTime || (currentTime === latestTime && item.slug < latest.slug) ? item : latest;
+	}, null);
 }
 
 /* ============================================================
@@ -308,7 +330,10 @@ export async function getPhilosophy(): Promise<PhilosophyItem[]> {
 }
 
 /* ============================================================
-   Aggregate Loader (for home page)
+   Legacy aggregate loader
+   Retained as a compatibility entry point (DESIGN.md §21). After the About
+   split, `/` loads the latest work and `/about` uses getAboutData();
+   neither page pulls the full aggregate any more.
    ============================================================ */
 
 export interface HomeData {
@@ -329,6 +354,31 @@ export async function getHomeData(): Promise<HomeData> {
 	]);
 
 	return { profile, socialLinks, focusAreas, education, philosophy };
+}
+
+/* ============================================================
+   About Page Loader (DESIGN.md §21)
+   ============================================================ */
+
+export interface AboutData {
+	focusAreas: FocusItem[];
+	education: EducationEntry[];
+	philosophy: PhilosophyItem[];
+}
+
+/**
+ * Only the four-leaf content. `profile` and `socialLinks` are already provided
+ * by +layout.server.ts and are merged into the page's `data` by SvelteKit.
+ * Kept separate from getHomeData() so the landing page stops loading the whole
+ * biography/education payload after the About split.
+ */
+export async function getAboutData(): Promise<AboutData> {
+	const [focusAreas, education, philosophy] = await Promise.all([
+		getFocusAreas(),
+		getEducation(),
+		getPhilosophy()
+	]);
+	return { focusAreas, education, philosophy };
 }
 
 /* ============================================================

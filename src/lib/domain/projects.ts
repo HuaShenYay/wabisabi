@@ -13,6 +13,8 @@ export interface Project {
 	readonly title: string;
 	readonly titleEn: string;
 	readonly year: string;
+	readonly publishedAt?: string;
+	readonly createdAt?: string;
 	readonly category: ProjectCategory;
 	readonly role: string;
 	readonly summary: string;
