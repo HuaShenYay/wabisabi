@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/state';
-	import { getLocale, translator, categoryLabel, workTitle } from '$lib/i18n';
+	import { getLocale, translator, categoryLabel } from '$lib/i18n';
 	const locale = $derived(getLocale(page.data.locale));
 	const t = $derived(translator(locale));
 
@@ -26,7 +26,7 @@
 </script>
 
 <svelte:head>
-	<title>{workTitle(locale, article)} - {t(data.profile.name, data.profile.nameEn)}</title>
+	<title>{article.title} - {t(data.profile.name, data.profile.nameEn)}</title>
 	<meta name="description" content={article.summary} />
 </svelte:head>
 
@@ -42,17 +42,16 @@
 		<span class="crumb-sep" aria-hidden="true">/</span>
 		<a class="link-underline" href="/projects/{cat.slug}">{categoryLabel(locale, article.category)}</a>
 	</p>
-	<h1 class="work-title deboss-text">{workTitle(locale, article)}</h1>
-	{#if article.titleEn && locale === 'zh'}<p class="work-title-en">{article.titleEn}</p>{/if}
+	<h1 class="work-title deboss-text">{article.title}</h1>
 	<dl class="work-spec">
-		{#if article.year}<div class="spec-cell"><dt class="machine">YEAR</dt><dd>{article.year}</dd></div>{/if}
-		{#if article.role}<div class="spec-cell"><dt class="machine">ROLE</dt><dd>{article.role}</dd></div>{/if}
+		{#if article.year}<div class="spec-cell"><dt class="machine">{t('年份', 'Year')}</dt><dd>{article.year}</dd></div>{/if}
+		{#if article.role}<div class="spec-cell"><dt class="machine">{t('职责', 'Role')}</dt><dd>{article.role}</dd></div>{/if}
 		{#if article.externalUrl}
 			<div class="spec-cell">
-				<dt class="machine">LINK</dt>
+				<dt class="machine">{t('链接', 'Link')}</dt>
 				<dd>
 					<a class="link-underline spec-url machine" href={article.externalUrl} target="_blank" rel="noopener noreferrer">
-						VISIT ↗
+						{t('访问网站', 'Visit site')} ↗
 					</a>
 				</dd>
 			</div>
@@ -79,8 +78,7 @@
 <!-- 正文 Article body: renders the ArticleBlock contract.
      Sanity Portable Text is mapped to these blocks in the CMS service. -->
 <article class="grid work-body">
-	<div class="body-flow" lang="zh-CN">
-		{#if locale === 'en'}<p class="original-language-note" lang="en">This work is presented in its original language.</p>{/if}
+	<div class="body-flow">
 		{#each article.body as block}
 			{#if block.type === 'paragraph'}
 				<p class="body-paragraph"><RichText content={block.content} text={block.text} /></p>
@@ -98,7 +96,7 @@
 			{:else if block.type === 'image'}
 				<figure class="body-figure">
 					<div class="mounted-frame ink-frame">
-						<Artwork src={block.src} alt={block.alt ?? block.caption ?? article.title} aspectRatio={block.aspectRatio} fit="contain" />
+						<Artwork src={block.src} alt={block.alt || block.caption || article.title} aspectRatio={block.aspectRatio} fit="contain" />
 					</div>
 					<figcaption class="plate-label">
 						{t(`图${figNumerals[figIndexes.get(block)] ?? ''}`, `Fig. ${figIndexes.get(block) + 1}`)}{#if block.caption}<span class="fig-caption">{block.caption}</span>{/if}
@@ -145,12 +143,6 @@
 </div>
 
 <style>
-	.original-language-note { font: var(--text-sm)/var(--leading-base) var(--font-latin); color: var(--color-text-muted); margin-bottom: var(--space-5); }
-	/* 阅读页保留原有字形，站点 display token 的变化不侵入长文阅读。 */
-	.reading-page { --font-heading: var(--font-heading-reading); }
-
-	/* 字体声部走全局 token（app.css :root，DESIGN.md §5.1） */
-
 	/* ============ 题头 ============ */
 
 	.work-breadcrumb {
@@ -178,14 +170,6 @@
 		letter-spacing: 0.05em;
 		line-height: 1.2;
 		color: var(--color-text);
-	}
-
-	.work-title-en {
-		grid-column: 1 / -1;
-		font: italic var(--text-lg)/var(--leading-base) var(--font-display-latin);
-		letter-spacing: var(--tracking-heading);
-		color: var(--color-text-muted);
-		margin-top: var(--space-3);
 	}
 
 	.work-spec {
@@ -393,7 +377,6 @@
 	@media (min-width: 900px) {
 		.work-breadcrumb,
 		.work-title,
-		.work-title-en,
 		.work-spec {
 			grid-column: 2 / -2;
 		}

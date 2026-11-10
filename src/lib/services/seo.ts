@@ -59,7 +59,7 @@ export function generateSeoMeta(path: string = '/'): SeoMeta {
 	};
 }
 
-export function generatePersonJsonLd(person: Profile = profile, links: readonly SocialLink[] = socialLinks, settings: SiteConfig = siteConfig) {
+export function generatePersonJsonLd(person: Profile = profile, links: readonly SocialLink[] = socialLinks, settings: SiteConfig = siteConfig, name = person.name) {
 	const sameAs = links
 		.filter((link) => link.platform !== 'email')
 		.map((link) => link.url);
@@ -67,7 +67,7 @@ export function generatePersonJsonLd(person: Profile = profile, links: readonly 
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'Person',
-		name: `${person.name} (${person.nameEn})`,
+		name,
 		jobTitle: person.title,
 		description: person.bio,
 		email: `mailto:${person.email}`,
@@ -76,17 +76,7 @@ export function generatePersonJsonLd(person: Profile = profile, links: readonly 
 			addressLocality: person.location,
 			addressCountry: 'CN'
 		},
-		knowsAbout: [
-			'Digital Humanities',
-			'AIGC',
-			'Literary Research',
-			'Poetry Analysis',
-			'Film & Visual Studies',
-			'Generative AI',
-			'Psychoanalysis',
-			'Three.js',
-			'Creative Coding'
-		],
+		knowsAbout: settings.keywords,
 		sameAs,
 		url: settings.url
 	};

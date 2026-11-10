@@ -14,6 +14,3 @@ export function languageHref(url: URL, locale: Locale) {
 export function categoryLabel(locale: Locale, category: ProjectCategory) {
 	return locale === 'en' ? categoryMeta[category].en : category;
 }
-export function workTitle(locale: Locale, work: { title: string; titleEn?: string }) {
-	return locale === 'en' && work.titleEn?.trim() ? work.titleEn : work.title;
-}

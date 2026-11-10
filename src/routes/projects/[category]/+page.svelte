@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/state';
-	import { getLocale, translator, categoryLabel, workTitle } from '$lib/i18n';
+	import { getLocale, translator, categoryLabel } from '$lib/i18n';
 	const locale = $derived(getLocale(page.data.locale));
 	const t = $derived(translator(locale));
 
@@ -15,8 +15,8 @@
 	<header class="volume-heading">
 		<a class="back-link" href="/projects">← {t('全部作品', 'All works')}</a>
 		<h1 id="volume-heading" class="woodblock-art">{categoryLabel(locale, data.category)}</h1>
-		<p class="volume-en">{#if locale === 'zh'}{meta.en}{/if}<span>{t(`${items.length} 件`, `${items.length} ${items.length === 1 ? 'work' : 'works'}`)}</span></p>
-		{#if locale === 'zh'}<p class="volume-intro">{meta.intro}</p>{/if}
+		<p class="volume-en"><span>{t(`${items.length} 件`, `${items.length} ${items.length === 1 ? 'work' : 'works'}`)}</span></p>
+		<p class="volume-intro">{t(meta.intro, meta.introEn)}</p>
 	</header>
 	<nav class="volume-switcher" aria-label={t('切换作品分类', 'Work categories')}>
 		{#each categoryOrder as category}
@@ -32,7 +32,7 @@
 					<li class="catalog-row">
 						<span class="ink-rule" aria-hidden="true"></span>
 						<a class="catalog-link" href="/projects/{meta.slug}/{p.slug}">
-							<div class="catalog-main"><h2>{workTitle(locale, p)}</h2>{#if p.titleEn && locale === 'zh'}<p class="title-en">{p.titleEn}</p>{/if}<p class="work-summary" lang="zh-CN">{p.summary}</p></div>
+							<div class="catalog-main"><h2>{p.title}</h2><p class="work-summary">{p.summary}</p></div>
 							<span class="catalog-year">{p.year}</span><span class="work-arrow" aria-hidden="true">↗</span>
 						</a>
 					</li>
@@ -44,8 +44,8 @@
 					<article class="work-card">
 						<a href="/projects/{meta.slug}/{p.slug}">
 							{#if p.cover}<div class="work-image ink-frame"><Artwork src={p.cover} alt={p.title} aspect={p.aspect} eager={i < 2} /></div>{/if}
-							<div class="work-caption"><h2>{workTitle(locale, p)}</h2><span class="catalog-year">{p.year}</span></div>
-							{#if p.titleEn && locale === 'zh'}<p class="title-en">{p.titleEn}</p>{/if}<p class="work-summary" lang="zh-CN">{p.summary}</p>
+							<div class="work-caption"><h2>{p.title}</h2><span class="catalog-year">{p.year}</span></div>
+							<p class="work-summary">{p.summary}</p>
 						</a>
 						{#if p.externalUrl}<a class="external-link link-underline" href={p.externalUrl} target="_blank" rel="noopener noreferrer">{t('访问网站', 'Visit website')} ↗</a>{/if}
 					</article>
@@ -92,7 +92,6 @@
 	.catalog-row:nth-child(4n+4) > .ink-rule { background-image: var(--rule-sparse-b); }
 	.catalog-row:nth-child(even) .catalog-main { padding-left: clamp(0px, 1.6vw, 22px); }
 	h2 { font: var(--text-xl)/1.6 var(--font-heading); overflow-wrap: anywhere; }
-	.title-en { margin-top: var(--space-1); font: italic var(--text-base)/1.6 var(--font-display-latin); color: var(--color-text-muted); }
 	.work-summary { max-width: 40em; margin-top: var(--space-3); font-size: var(--text-sm); line-height: 1.9; color: var(--color-text-muted); overflow-wrap: anywhere; }
 	.catalog-year { font-size: var(--text-xs); color: var(--color-text-muted); white-space: nowrap; padding-top: var(--space-2); font-variant-numeric: tabular-nums; }
 	.work-arrow { padding-top: var(--space-2); color: var(--color-text-muted); transition: color var(--duration-base) var(--ease-organic); }

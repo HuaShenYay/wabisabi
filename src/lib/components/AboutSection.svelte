@@ -4,40 +4,38 @@
 	const locale = $derived(getLocale(page.data.locale));
 	const t = $derived(translator(locale));
 
-	import { profile as seedProfile } from '$lib/domain/profile.js';
-	import { focusAreas as seedFocus, education as seedEducation, designPhilosophy as seedPhilosophy } from '$lib/domain/portfolio.js';
 	let { data } = $props();
-	const profile = $derived(data?.profile ?? seedProfile);
-	const focusAreas = $derived(data?.focusAreas ?? seedFocus);
-	const education = $derived(data?.education ?? seedEducation);
-	const philosophy = $derived(data?.philosophy ?? seedPhilosophy);
-	const biography = $derived(String(profile.bio).split(/(?<=[。！？])/).filter(part => part.trim()));
+	const profile = $derived(data.profile);
+	const focusAreas = $derived(data.focusAreas);
+	const education = $derived(data.education);
+	const philosophy = $derived(data.philosophy);
+	const biography = $derived(String(profile.bio).split(/(?<=[。！？])|\n+/).filter(part => part.trim()));
 </script>
 
 <div class="about site-shell" id="about">
 	<section class="note-section note-section--a" aria-labelledby="about-heading">
-		<header><h1 id="about-heading">{t('关于', 'About')}</h1>{#if locale === 'zh'}<p>About</p>{/if}</header>
-		<div class="note-content biography" lang="zh-CN">{#each biography as paragraph}<p>{paragraph}</p>{/each}</div>
+		<header><h1 id="about-heading">{t('关于', 'About')}</h1></header>
+		<div class="note-content biography">{#each biography as paragraph}<p>{paragraph}</p>{/each}</div>
 	</section>
 	<section class="note-section note-section--b" aria-labelledby="focus-heading">
 		<span class="ink-rule ink-rule--sparse" aria-hidden="true"></span>
-		<header><h2 id="focus-heading">{t('关注', 'Interests')}</h2>{#if locale === 'zh'}<p>Interests</p>{/if}</header>
-		<ul class="note-content note-list" lang="zh-CN">
+		<header><h2 id="focus-heading">{t('关注', 'Interests')}</h2></header>
+		<ul class="note-content note-list">
 			{#each focusAreas as area}<li><h3>{area.label}</h3><p>{area.desc}</p></li>{/each}
 		</ul>
 	</section>
 	<section class="note-section note-section--c" aria-labelledby="education-heading">
 		<span class="ink-rule ink-rule--dense-b" aria-hidden="true"></span>
-		<header><h2 id="education-heading">{t('学行', 'Education')}</h2>{#if locale === 'zh'}<p>Education</p>{/if}</header>
-		<ul class="note-content note-list" lang="zh-CN">
+		<header><h2 id="education-heading">{t('学行', 'Education')}</h2></header>
+		<ul class="note-content note-list">
 			{#each education as entry}<li><h3>{entry.school}</h3><p>{entry.major}</p>{#if entry.note}<p>{entry.note}</p>{/if}</li>{/each}
 		</ul>
 	</section>
 	{#if philosophy.length}
 		<section class="note-section note-section--d" aria-labelledby="philosophy-heading">
 			<span class="ink-rule ink-rule--sparse-b" aria-hidden="true"></span>
-			<header><h2 id="philosophy-heading">{t('造物观', 'Approach')}</h2>{#if locale === 'zh'}<p>Approach</p>{/if}</header>
-			<div class="note-content note-list" lang="zh-CN">{#each philosophy as entry}<div><h3>{entry.label}</h3><p>{entry.desc}</p></div>{/each}</div>
+			<header><h2 id="philosophy-heading">{t('造物观', 'Approach')}</h2></header>
+			<div class="note-content note-list">{#each philosophy as entry}<div><h3>{entry.label}</h3><p>{entry.desc}</p></div>{/each}</div>
 		</section>
 	{/if}
 </div>
@@ -59,7 +57,6 @@
 	.note-section--d > .ink-rule { width: 80%; left: 20%; }
 	/* §21 独立成页后，「关于」升为 h1；可见文字与字号不变，其余三叶仍是 h2。 */
 	h1, h2 { font: var(--text-xl)/1.5 var(--font-heading); letter-spacing: .12em; font-weight: 400; }
-	header p { margin-top: var(--space-2); font: italic var(--text-base)/1.5 var(--font-display-latin); color: var(--color-text-muted); }
 	.note-content { max-width: 36em; font: var(--text-base)/2 var(--font-body); overflow-wrap: anywhere; }
 	.biography p + p { margin-top: var(--space-4); }
 	.note-list { display: grid; gap: var(--space-5); }

@@ -34,23 +34,23 @@ try {
 		};
 	});
 	await page.goto(base, { waitUntil: 'networkidle' });
-	await page.getByRole('link', { name: 'Project', exact: true }).click();
+	await page.getByRole('link', { name: '作品', exact: true }).click();
 	await page.waitForURL(`${base}/projects`);
 	await page.waitForFunction(() => window.__turns.length > 0 && window.__turns.every(turn => turn.settled));
 	check('Project enters with a horizontal dissolve', await page.evaluate(() => window.__turns[0].direction === 'forward' && ['folio-in', 'folio-out'].every(name => window.__turns[0].animations.includes(name))));
 	check('Only one main and five volume entries', await page.locator('main').count() === 1 && await page.locator('.category-entry').count() === 5);
-	await page.getByRole('link', { name: 'About', exact: true }).click();
+	await page.getByRole('link', { name: '关于', exact: true }).click();
 	await page.waitForURL(`${base}/`);
 	await page.waitForFunction(() => window.__turns.length === 2 && window.__turns.every(turn => turn.settled));
 	check('Return to About reverses the horizontal turn', await page.evaluate(() => window.__turns[1].direction === 'backward'));
 	check('Transition state is released', await page.evaluate(() => !document.documentElement.dataset.worldNavigation));
-	await page.getByRole('link', { name: 'Project', exact: true }).click();
+	await page.getByRole('link', { name: '作品', exact: true }).click();
 	await page.waitForURL(`${base}/projects`);
 	await page.goBack();
 	await page.waitForURL(`${base}/`);
 	await page.waitForFunction(() => !document.documentElement.dataset.worldNavigation && document.querySelector('.wabi-scene')?.dataset.view === 'home');
 	check('Rapid browser back leaves one composed home scene', await page.locator('main').count() === 1 && await page.locator('.wabi-scene').count() === 1);
-	await page.getByRole('link', { name: 'Project', exact: true }).click();
+	await page.getByRole('link', { name: '作品', exact: true }).click();
 	await page.waitForURL(`${base}/projects`);
 	await page.waitForFunction(() => window.__turns.every(turn => turn.settled));
 
@@ -90,7 +90,7 @@ try {
 		if (mode === 'unsupported') await fallback.addInitScript(() => document.startViewTransition = undefined);
 		fallback.on('pageerror', e => errors.push(e.message));
 		await fallback.goto(base, { waitUntil: 'networkidle' });
-		await fallback.getByRole('link', { name: 'Project', exact: true }).click();
+		await fallback.getByRole('link', { name: '作品', exact: true }).click();
 		await fallback.waitForURL(`${base}/projects`);
 		check(`${mode} motion navigates immediately without an overlay`, await fallback.locator('.category-entry').count() === 5 && await fallback.evaluate(() => !document.documentElement.dataset.worldNavigation));
 		await fallback.close();

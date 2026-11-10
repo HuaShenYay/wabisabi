@@ -68,6 +68,33 @@ describe('CMS source of truth', () => {
 		expect(await getCategoryPageData('unknown')).toBeNull();
 		expect(state.fetch).not.toHaveBeenCalled();
 	});
+	it('retains the published copy on Chinese pages and uses English fields on English pages', async () => {
+		const post = {
+			...project,
+			title: '用 WordPress 写作',
+			summary: '记录在 WordPress 上写作的体验。',
+			titleEn: 'Writing on WordPress',
+			summaryEn: 'Notes on writing with WordPress.'
+		};
+		const body = [{
+			_type: 'block', children: [{ text: '我用 ' }, { text: 'WordPress', marks: ['link'] }, { text: ' 写作。' }],
+			markDefs: [{ _key: 'link', _type: 'link', href: 'https://wordpress.org/' }]
+		}];
+		const bodyEn = [{ _type: 'block', children: [{ text: 'I write on WordPress.' }] }];
+		state.fetch.mockImplementation(async (query: string) => {
+			if (query.includes('{ body,')) return { body, bodyEn };
+			if (query.includes('_type == "profile"')) return {};
+			return [post];
+		});
+		const [zh, en] = await Promise.all([getArticlePageData(post.slug), getArticlePageData(post.slug, 'en')]);
+		expect(zh?.article).toMatchObject({
+			title: post.title, summary: post.summary, body: [{
+				text: '我用 WordPress 写作。',
+				content: [{ text: '我用 ' }, { text: 'WordPress', href: 'https://wordpress.org/' }, { text: ' 写作。' }]
+			}]
+		});
+		expect(en?.article).toMatchObject({ title: post.titleEn, summary: post.summaryEn, body: [{ text: 'I write on WordPress.' }] });
+	});
 	it('loads partial singletons and their SEO settings', async () => {
 		state.fetch.mockResolvedValueOnce({name:'作者'}).mockResolvedValueOnce({title:'创作档案',url:'https://example.com/',keywords:['研究']});
 		expect((await getProfile()).name).toBe('作者');

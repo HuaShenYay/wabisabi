@@ -12,8 +12,8 @@
 
 <section class="project-index site-shell" class:english={locale === 'en'} aria-labelledby="works-heading">
 	<header class="index-heading">
-		<div><h1 id="works-heading" class="woodblock-art">{t('作品', 'Works')}</h1>{#if locale === 'zh'}<p>Selected works</p>{/if}</div>
-		<span class="index-count">{t(`共 ${data.projects.length} 件`, `${data.projects.length} works`)}</span>
+		<h1 id="works-heading" class="woodblock-art">{t('作品', 'Works')}</h1>
+		<span class="index-count">{t(`共 ${data.projects.length} 件`, `${data.projects.length} ${data.projects.length === 1 ? 'work' : 'works'}`)}</span>
 	</header>
 	<nav class="category-entries" aria-label={t('选择作品分类', 'Choose a category')}>
 		{#each categoryOrder as category}
@@ -21,7 +21,7 @@
 			{@const count = grouped[category].length}
 			<a class="category-entry" href="/projects/{meta.slug}" data-sveltekit-preload-data="hover">
 				{#if category !== categoryOrder[0]}<span class="ink-rule" aria-hidden="true"></span>{/if}
-				<div class="entry-content"><h2>{categoryLabel(locale, category)}</h2>{#if locale === 'zh'}<span class="entry-en">{meta.en}</span>{/if}</div>
+				<div class="entry-content"><h2>{categoryLabel(locale, category)}</h2></div>
 				<span class="entry-count">{count ? t(`${count} 件`, `${count} ${count === 1 ? 'work' : 'works'}`) : t('待续', 'Coming soon')}</span><span class="entry-arrow" aria-hidden="true">↗</span>
 			</a>
 		{/each}
@@ -29,31 +29,23 @@
 </section>
 
 <style>
-	/* §20 作品目录 · 三段折页信息流。
-	   五个分类不再是等权竖向清单，而是按 2 / 1 / 2 折页排布的短册；
-	   中文与英文始终上下叠，不并排。DOM、内容、字体字号、断口笔触资源一律未动。 */
+	/* §20 作品目录按 2 / 1 / 2 折页排布。 */
 
 	.project-index { padding-block: var(--space-6) var(--space-8); }
-	.english .index-count { grid-column: 1; margin-left: 0; margin-top: var(--space-2); }
 	.english .index-heading h1 { letter-spacing: .02em; }
 	.english .category-entries { row-gap: var(--space-5); }
 	.english h2 { letter-spacing: .015em; line-height: 1.35; text-wrap: balance; }
 
-	/* 题头：display: contents 让 h1 / 英文 / 件数直接成为 grid item，纯 CSS、零 JS 测量 */
 	.index-heading {
-		display: grid;
-		grid-template-columns: max-content auto 1fr;
-		grid-template-rows: auto auto;
+		display: flex;
 		align-items: baseline;
-		justify-content: start;
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-5);
 		padding-left: clamp(0px, 1.6vw, 22px);
 		margin-bottom: var(--space-6);
 	}
-	.index-heading > div { display: contents; }
-	.index-heading h1 { grid-column: 1; grid-row: 1; font: clamp(2.8rem, 5vw, 4rem)/1.4 var(--font-heading); letter-spacing: .12em; }
-	.index-heading p { grid-column: 1; grid-row: 2; margin-top: var(--space-2); font: italic var(--text-xl)/1.5 var(--font-display-latin); color: var(--color-text-muted); }
+	.index-heading h1 { font: clamp(2.8rem, 5vw, 4rem)/1.4 var(--font-heading); letter-spacing: .12em; }
 	.index-count, .entry-count { font: var(--text-xs)/1.5 var(--font-body); color: var(--color-text-muted); white-space: nowrap; }
-	.index-count { grid-column: 2; grid-row: 2; margin-left: 2.6rem; align-self: baseline; }
 
 	/* 不等分列 / 起跑线各异 / 块宽各异 / 块内呼吸各异 /
 	   不共用顶边 / 墨线不守行顶。全程不加边框、底色、序号与卡片。 */
@@ -73,7 +65,6 @@
 	}
 	.category-entry > .ink-rule { position: static; flex: 0 0 auto; height: 6px; margin-bottom: var(--space-4); }
 	.entry-content { flex: 0 0 100%; min-width: 0; overflow-wrap: anywhere; }
-	.entry-en { display: block; margin-top: var(--space-1); font: italic var(--text-base)/1.5 var(--font-display-latin); color: var(--color-text-muted); text-wrap: balance; }
 	.entry-count { margin-top: var(--mt); }
 	.entry-arrow { margin-left: var(--space-2); margin-top: var(--mt); font-size: var(--text-lg); }
 	.entry-count, .entry-arrow { color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
@@ -83,17 +74,12 @@
 	.category-entry:is(:hover, :focus-visible) .entry-arrow { color: var(--color-link-hover); }
 	h2 { font: var(--text-2xl)/1.5 var(--font-heading); letter-spacing: .08em; }
 
-	/* 块内呼吸逐行不同：中英间距、件数上距、墨线长度与起笔全部错开 */
+	/* 件数上距、墨线长度与起笔逐行错开。 */
 	.category-entry:nth-of-type(1) { --mt: 8px; }
 	.category-entry:nth-of-type(2) { --mt: 16px; }
 	.category-entry:nth-of-type(3) { --mt: 5px; }
 	.category-entry:nth-of-type(4) { --mt: 20px; }
 	.category-entry:nth-of-type(5) { --mt: 10px; }
-	.category-entry:nth-of-type(1) .entry-en { margin-top: 3px; }
-	.category-entry:nth-of-type(2) .entry-en { margin-top: 9px; }
-	.category-entry:nth-of-type(3) .entry-en { margin-top: 4px; }
-	.category-entry:nth-of-type(4) .entry-en { margin-top: 11px; }
-	.category-entry:nth-of-type(5) .entry-en { margin-top: 6px; }
 	.category-entry:nth-of-type(2) > .ink-rule { width: 58%; margin-left: 18%; margin-bottom: 24px; }
 	.category-entry:nth-of-type(3) > .ink-rule { width: 92%; margin-left: 4%; margin-bottom: 18px; }
 	.category-entry:nth-of-type(4) > .ink-rule { width: 66%; margin-left: 10%; margin-bottom: 28px; }
@@ -117,9 +103,7 @@
 		/* 窄屏退回单栏，但保留分组、起跑线错落与疏密节奏；件数回行右端 */
 		.project-index { padding-block: var(--space-5) var(--space-7); }
 		.index-heading { display: block; margin-bottom: var(--space-5); }
-		.index-heading > div { display: block; }
-		.index-heading h1, .index-heading p { grid-column: auto; grid-row: auto; }
-		.index-count { display: block; margin: var(--space-2) 0 0 0; padding-top: 0; grid-column: auto; grid-row: auto; }
+		.index-count { display: block; margin-top: var(--space-2); }
 		.category-entries { display: block; }
 		.category-entry:nth-of-type(n) {
 			grid-column: auto; grid-row: auto;
@@ -140,7 +124,6 @@
 			width: 78%; margin: 0 0 14px 0;
 		}
 		.entry-content { grid-area: content; flex: none; padding-left: 0; }
-		.entry-en { white-space: normal; font-size: var(--text-sm); }
 		.entry-count { grid-area: count; margin: 0; }
 		.entry-arrow { grid-area: arrow; margin: 0; }
 		/* 窄屏墨线同样不等长、起笔错落，不退回一条等宽横线 */

@@ -46,7 +46,7 @@ try {
 	await page.waitForTimeout(200);
 	requireCheck('Reduced motion still tracks scroll', await page.evaluate(() => Number(document.querySelector('.wabi-scene').dataset.progress) > 0.6));
 	await page.emulateMedia({ reducedMotion: 'no-preference' });
-	await page.getByRole('link', { name: 'Project', exact: true }).first().click();
+	await page.getByRole('link', { name: '作品', exact: true }).first().click();
 	await page.waitForURL(`${base}/projects`);
 	await page.locator('.wabi-scene[data-view="projects"]').waitFor({ state: 'attached' });
 	requireCheck('One main during navigation', await page.locator('#main-content').count() === 1);
@@ -65,7 +65,7 @@ try {
 	requireCheck('Article uses native cursor', await page.evaluate(() => !document.documentElement.classList.contains('has-custom-cursor')));
 	await page.goBack();
 	await page.goBack();
-	await page.getByRole('link', { name: 'About', exact: true }).click();
+	await page.getByRole('link', { name: '关于', exact: true }).click();
 	await page.waitForURL(`${base}/`);
 	requireCheck('Scene returns after back navigation', await page.locator('.wabi-scene .scene-plane').count() === 1);
 	await page.setViewportSize({ width: 390, height: 844 });

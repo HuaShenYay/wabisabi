@@ -64,6 +64,7 @@ export const projectSchema = {
 			title: 'Role',
 			type: 'string'
 		},
+		{ name: 'roleEn', title: '英文职责', type: 'string' },
 		{
 			name: 'summary',
 			title: 'Summary',
@@ -71,6 +72,7 @@ export const projectSchema = {
 			rows: 4,
 			description: 'A short, literary description of the work.'
 		},
+		{ name: 'summaryEn', title: '英文简介', type: 'text' },
 		{
 			name: 'cover',
 			title: 'Cover Image',
@@ -101,6 +103,7 @@ export const projectSchema = {
 			name: 'body', title: '正文 · Article', type: 'blockContent',
 			description: '发布后即在作品详情中显示。未填写时只展示作品简介。'
 		},
+		{ name: 'bodyEn', title: '英文正文', type: 'blockContent' },
 		{
 			name: 'order',
 			title: 'Order',

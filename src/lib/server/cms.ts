@@ -3,6 +3,8 @@ import { getSanityClient, isSanityConfigured, sanityImageUrl, sanityContentScope
 import { error } from '@sveltejs/kit';
 import { siteConfig, type SiteConfig } from '$lib/config/site.js';
 import { imageAspectRatio, mapArticleBody, safeLink, type PortableBlock, type ContentImage } from '$lib/domain/content.js';
+import type { Locale } from '$lib/i18n';
+import { englishArticleBody, publishedTranslation, siteText, textInLanguage, translatePublishedBlocks } from './localized-content.js';
 import {
 	projects as seedProjects,
 	categoryOrder,
@@ -61,7 +63,9 @@ const PROJECT_FIELDS = `
 	year,
 	category,
 	role,
+	roleEn,
 	summary,
+	summaryEn,
 	"cover": coalesce(cover, mainImage, body[_type == "image"][0]),
 	aspect,
 	externalUrl,
@@ -71,6 +75,7 @@ const PROJECT_FIELDS = `
 	"categorySlugs": categories[]->slug.current,
 	"legacyCategories": categories[]->title,
 	"excerpt": body[_type == "block" && coalesce(style, "normal") == "normal" && count(children[defined(text) && text != ""]) > 0][0].children[].text,
+	"excerptEn": bodyEn[_type == "block" && coalesce(style, "normal") == "normal" && count(children[defined(text) && text != ""]) > 0][0].children[].text,
 	"order": coalesce(order, 0)
 `;
 
@@ -83,7 +88,9 @@ interface SanityProject {
 	year: string;
 	category: string;
 	role: string;
+	roleEn?: string;
 	summary: string;
+	summaryEn?: string;
 	cover: ContentImage | null;
 	aspect: Project['aspect'];
 	externalUrl?: string;
@@ -94,6 +101,7 @@ interface SanityProject {
 	categorySlugs?: string[];
 	legacyCategories?: string[];
 	excerpt?: string[];
+	excerptEn?: string[];
 }
 
 function postCategory(p: SanityProject): ProjectCategory {
@@ -141,29 +149,40 @@ const isAllowedCategory = (c: unknown): boolean => {
 		['photograph', 'photography', 'photo', 'essay', 'essays', 'literature', 'websites', 'website', 'digital-humanities', 'aigc影片'].includes(norm);
 };
 
-function mapProject(p: SanityProject, position: number): Project {
+function mapProject(p: SanityProject, position: number, locale: Locale): Project {
 	const ratio = p.cover ? imageAspectRatio(p.cover) : undefined;
 	const aspect = ['portrait_4_3', 'landscape_4_3', 'landscape_16_9'].includes(p.aspect) ? p.aspect
 		: ratio && ratio < 1 ? 'portrait_4_3' : ratio && ratio < 1.5 ? 'landscape_4_3' : 'landscape_16_9';
 	const excerpt = Array.isArray(p.excerpt) ? p.excerpt.filter(text => typeof text === 'string').join('').trim() : '';
+	const excerptEn = Array.isArray(p.excerptEn) ? p.excerptEn.filter(text => typeof text === 'string').join('').trim() : '';
+	const english = locale === 'en';
+	const translation = english ? publishedTranslation(p.slug) : undefined;
+	const sourceTitle = p.title.trim();
+	const sourceSummary = p.summary || excerpt;
+	const curatedTitle = translation?.sourceTitle === sourceTitle ? translation.en.title : undefined;
+	const curatedSummary = translation?.sourceSummary === sourceSummary ? translation.en.summary : undefined;
+	const title = english ? textInLanguage(p.titleEn, 'en') || curatedTitle || textInLanguage(sourceTitle, 'en') || 'Work' : sourceTitle;
+	const authoredSummary = english ? textInLanguage(p.summaryEn, 'en') : p.summary;
+	const localizedExcerpt = english ? textInLanguage(excerptEn || sourceSummary, 'en') : excerpt;
+	const summary = authoredSummary || curatedSummary || (localizedExcerpt.length > 120 ? `${Array.from(localizedExcerpt).slice(0, 120).join('')}…` : localizedExcerpt);
 	return {
 		slug: p.slug,
 		index: p.index || String(position + 1).padStart(2, '0'),
-		title: p.title.trim(),
+		title,
 		titleEn: p.titleEn ?? '',
 		year: p.year || p.publishedAt?.slice(0, 4) || '',
 		publishedAt: p.publishedAt,
 		createdAt: p._createdAt,
 		category: p._type === 'post' ? postCategory(p) : normalizeProjectCategory(p.category, p),
-		role: p.role ?? '',
-		summary: p.summary || (excerpt.length > 120 ? `${Array.from(excerpt).slice(0, 120).join('')}…` : excerpt),
+		role: english ? siteText(p.role, 'en', p.roleEn) : p.role ?? '',
+		summary,
 		cover: sanityImageUrl(p.cover, { w: 1600, h: aspect === 'portrait_4_3' ? 2133 : aspect === 'landscape_4_3' ? 1200 : 900, fit: 'crop' }) ?? '',
 		aspect,
 		externalUrl: safeLink(p.externalUrl)
 	};
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(locale: Locale = 'zh'): Promise<Project[]> {
 	return withFallback(
 		async () => {
 			const raw = await getSanityClient().fetch<SanityProject[]>(
@@ -172,17 +191,22 @@ export async function getProjects(): Promise<Project[]> {
 			const valid = raw.filter(p => p && typeof p.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug) && (p._type === 'post' || isAllowedCategory(p.category)) && typeof p.title === 'string' && p.title.trim());
 			// New Project documents take precedence if an old Post has the same URL.
 			const projectSlugs = new Set(valid.filter(p => p._type !== 'post').map(p => p.slug));
-			return valid.filter(p => p._type !== 'post' || !projectSlugs.has(p.slug)).map(mapProject);
+			return valid.filter(p => p._type !== 'post' || !projectSlugs.has(p.slug)).map((p, i) => mapProject(p, i, locale));
 		},
-		[...seedProjects],
-		'projects',
+		seedProjects.map(p => ({
+			...p,
+			title: locale === 'en' ? p.titleEn : p.title,
+			summary: locale === 'en' ? p.summaryEn ?? '' : p.summary,
+			role: siteText(p.role, locale)
+		})),
+		`projects:${locale}`,
 		'works'
 	);
 }
 
 /** Recent work follows publication time, independently of the directory's manual order. */
-export async function getLatestProject(): Promise<Project | null> {
-	const items = await getProjects();
+export async function getLatestProject(locale: Locale = 'zh'): Promise<Project | null> {
+	const items = await getProjects(locale);
 	const timestamp = (item: Project) => {
 		for (const value of [item.publishedAt, item.createdAt, /^\d{4}$/.test(item.year) ? `${item.year}-01-01T00:00:00Z` : undefined]) {
 			const time = value ? Date.parse(value) : NaN;
@@ -202,37 +226,62 @@ export async function getLatestProject(): Promise<Project | null> {
    Profile
    ============================================================ */
 
-export async function getProfile(): Promise<Profile> {
-	return withFallback(
+export async function getProfile(locale: Locale = 'zh'): Promise<Profile> {
+	const profile = await withFallback<Profile & { bioEn?: string }>(
 		async () => {
-			const raw = await getSanityClient().fetch<Profile>(
+			const raw = await getSanityClient().fetch<Profile & { bioEn?: string }>(
 				`*[_type == "profile" && _id == "profile"][0] {
-					name, nameEn, title, role, bio, email, location
+					name, nameEn, title, role, bio, bioEn, email, location
 				}`
 			);
 			const field = (key: keyof Profile) => typeof raw?.[key] === 'string' ? raw[key] : seedProfile[key];
-			return { name: field('name'), nameEn: field('nameEn'), title: field('title'), role: field('role'), bio: field('bio'), email: field('email'), location: field('location') };
+			return { name: field('name'), nameEn: field('nameEn'), title: field('title'), role: field('role'), bio: field('bio'), bioEn: raw?.bioEn, email: field('email'), location: field('location') };
 		},
 		seedProfile,
 		'profile'
 	);
+	return {
+		...profile,
+		name: textInLanguage(profile.name, 'zh') || seedProfile.name,
+		nameEn: textInLanguage(profile.nameEn, 'en') || seedProfile.nameEn,
+		title: siteText(profile.title, locale, profile.role),
+		bio: siteText(profile.bio, locale, profile.bioEn),
+		location: siteText(profile.location, locale)
+	};
 }
 
-export async function getSiteSettings(): Promise<SiteConfig> {
-	return withFallback(async () => {
-		const raw = await getSanityClient().fetch<(Partial<Omit<SiteConfig, 'ogImage'>> & { ogImage?: ContentImage }) | null>(
-			`*[_type == "siteSettings" && _id == "siteSettings"][0] { name, nameEn, title, description, url, locale, language, author, keywords, ogImage, themeColor }`
+type SiteSettingsCopy = SiteConfig & { titleEn?: string; descriptionEn?: string };
+
+export async function getSiteSettings(locale?: Locale): Promise<SiteConfig> {
+	const settings = await withFallback<SiteSettingsCopy>(async () => {
+		const raw = await getSanityClient().fetch<(Partial<Omit<SiteSettingsCopy, 'ogImage'>> & { ogImage?: ContentImage }) | null>(
+			`*[_type == "siteSettings" && _id == "siteSettings"][0] { name, nameEn, title, titleEn, description, descriptionEn, url, locale, language, author, keywords, ogImage, themeColor }`
 		);
 		if (!raw) return siteConfig;
 		const text = (key: 'name'|'nameEn'|'title'|'description'|'locale'|'language'|'author'|'themeColor') => typeof raw[key] === 'string' && raw[key].trim() ? raw[key] : siteConfig[key];
 		return {
 			...siteConfig, name: text('name'), nameEn: text('nameEn'), title: text('title'), description: text('description'),
+			titleEn: raw.titleEn, descriptionEn: raw.descriptionEn,
 			locale: text('locale'), language: text('language'), author: text('author'), themeColor: text('themeColor'),
 			url: (safeLink(raw.url) ?? siteConfig.url).replace(/\/$/, ''),
 			keywords: Array.isArray(raw.keywords) ? raw.keywords.filter(k => typeof k === 'string') : siteConfig.keywords,
 			ogImage: sanityImageUrl(raw.ogImage, { w: 1200, h: 630 }) ?? siteConfig.ogImage
 		};
 	}, siteConfig, 'siteSettings');
+	if (!locale) return settings;
+	const en = locale === 'en';
+	const name = textInLanguage(en ? settings.nameEn : settings.name, locale) || (en ? siteConfig.nameEn : siteConfig.name);
+	const title = siteText(settings.title, locale, settings.titleEn)
+		|| (en ? `${name} — Digital Humanities & Creative Work` : `${name} · 数字人文与创作`);
+	const description = siteText(settings.description, locale, settings.descriptionEn)
+		|| (en ? 'A portfolio and journal on digital humanities, literature, images and creative coding.' : '记录数字人文、文学、影像与创意编程的个人博客和作品集。');
+	return {
+		...settings, name, title, description,
+		author: en ? name : textInLanguage(settings.author, locale) || name,
+		locale: en ? 'en_GB' : 'zh_CN',
+		language: en ? 'en' : 'zh-CN',
+		keywords: [...new Set(settings.keywords.map(keyword => textInLanguage(keyword, locale)).filter(Boolean))]
+	};
 }
 
 /* ============================================================
@@ -270,63 +319,79 @@ export async function getSocialLinks(): Promise<SocialLink[]> {
 interface SanityFocusItem {
 	label: string;
 	desc: string;
+	labelEn?: string;
+	descEn?: string;
 	order: number;
 }
 
-export async function getFocusAreas(): Promise<FocusItem[]> {
-	return withFallback(
+export async function getFocusAreas(locale: Locale = 'zh'): Promise<FocusItem[]> {
+	const items = await withFallback<(FocusItem & Partial<SanityFocusItem>)[]>(
 		async () => {
 			const raw = await getSanityClient().fetch<SanityFocusItem[]>(
-				`*[_type == "focusArea"] | order(order asc) { label, desc, "order": coalesce(order, 0) }`
+				`*[_type == "focusArea"] | order(order asc) { label, desc, labelEn, descEn, "order": coalesce(order, 0) }`
 			);
-			return raw.map((f) => ({ label: f.label, desc: f.desc }));
+			return raw;
 		},
 		[...seedFocus],
 		'focusAreas'
 	);
+	return items.map(item => ({
+		label: siteText(item.label, locale, item.labelEn),
+		desc: siteText(item.desc, locale, item.descEn)
+	})).filter(item => item.label);
 }
 
 interface SanityEducationEntry {
 	school: string;
 	major: string;
 	note: string;
+	schoolEn?: string;
+	majorEn?: string;
+	noteEn?: string;
 	order: number;
 }
 
-export async function getEducation(): Promise<EducationEntry[]> {
-	return withFallback(
+export async function getEducation(locale: Locale = 'zh'): Promise<EducationEntry[]> {
+	const items = await withFallback<(EducationEntry & Partial<SanityEducationEntry>)[]>(
 		async () => {
 			const raw = await getSanityClient().fetch<SanityEducationEntry[]>(
-				`*[_type == "education"] | order(order asc) { school, major, note, "order": coalesce(order, 0) }`
+				`*[_type == "education"] | order(order asc) { school, major, note, schoolEn, majorEn, noteEn, "order": coalesce(order, 0) }`
 			);
-			return raw.map((e) => ({
-				school: e.school,
-				major: e.major,
-				note: e.note ?? ''
-			}));
+			return raw;
 		},
 		[...seedEducation],
 		'education'
 	);
+	return items.map(item => ({
+		school: siteText(item.school, locale, item.schoolEn),
+		major: siteText(item.major, locale, item.majorEn),
+		note: siteText(item.note, locale, item.noteEn)
+	})).filter(item => item.school);
 }
 
 interface SanityPhilosophyItem {
 	label: string;
 	desc: string;
+	labelEn?: string;
+	descEn?: string;
 	order: number;
 }
 
-export async function getPhilosophy(): Promise<PhilosophyItem[]> {
-	return withFallback(
+export async function getPhilosophy(locale: Locale = 'zh'): Promise<PhilosophyItem[]> {
+	const items = await withFallback<(PhilosophyItem & Partial<SanityPhilosophyItem>)[]>(
 		async () => {
 			const raw = await getSanityClient().fetch<SanityPhilosophyItem[]>(
-				`*[_type == "philosophy"] | order(order asc) { label, desc, "order": coalesce(order, 0) }`
+				`*[_type == "philosophy"] | order(order asc) { label, desc, labelEn, descEn, "order": coalesce(order, 0) }`
 			);
-			return raw.map((p) => ({ label: p.label, desc: p.desc }));
+			return raw;
 		},
 		[...seedPhilosophy],
 		'philosophy'
 	);
+	return items.map(item => ({
+		label: siteText(item.label, locale, item.labelEn),
+		desc: siteText(item.desc, locale, item.descEn)
+	})).filter(item => item.label);
 }
 
 /* ============================================================
@@ -372,11 +437,11 @@ export interface AboutData {
  * Kept separate from getHomeData() so the landing page stops loading the whole
  * biography/education payload after the About split.
  */
-export async function getAboutData(): Promise<AboutData> {
+export async function getAboutData(locale: Locale = 'zh'): Promise<AboutData> {
 	const [focusAreas, education, philosophy] = await Promise.all([
-		getFocusAreas(),
-		getEducation(),
-		getPhilosophy()
+		getFocusAreas(locale),
+		getEducation(locale),
+		getPhilosophy(locale)
 	]);
 	return { focusAreas, education, philosophy };
 }
@@ -390,8 +455,8 @@ export interface ProjectsPageData {
 	projects: Project[];
 }
 
-export async function getProjectsPageData(): Promise<ProjectsPageData> {
-	const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
+export async function getProjectsPageData(locale: Locale = 'zh'): Promise<ProjectsPageData> {
+	const [profile, projects] = await Promise.all([getProfile(locale), getProjects(locale)]);
 	return { profile, projects };
 }
 
@@ -426,11 +491,11 @@ function categoryLinkAt(idx: number): CategoryLink | null {
  * Load everything the /projects/[category] page needs.
  * Returns null when the slug does not name a category (page 404s).
  */
-export async function getCategoryPageData(slug: string): Promise<CategoryPageData | null> {
+export async function getCategoryPageData(slug: string, locale: Locale = 'zh'): Promise<CategoryPageData | null> {
 	const category = categoryFromSlug(slug);
 	if (!category) return null;
 
-	const [profile, all] = await Promise.all([getProfile(), getProjects()]);
+	const [profile, all] = await Promise.all([getProfile(locale), getProjects(locale)]);
 	const idx = categoryOrder.indexOf(category);
 
 	return {
@@ -472,28 +537,32 @@ function workLink(p: Project | undefined): WorkLink | null {
  * local demo mode uses seed text. Published empty bodies stay empty.
  * Returns null when the slug does not match a project.
  */
-export async function getArticlePageData(slug: string): Promise<ArticlePageData | null> {
+export async function getArticlePageData(slug: string, locale: Locale = 'zh'): Promise<ArticlePageData | null> {
 	if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
 	const [all, profile, remoteContent] = await Promise.all([
-		getProjects(),
-		getProfile(),
+		getProjects(locale),
+		getProfile(locale),
 		withFallback<{ body: ArticleBlock[]; showCover: boolean } | null>(
 			async () => {
-				const raw = await getSanityClient().fetch<{ body?: PortableBlock[]; showCover?: boolean } | null>(
-					`*[_type in ["project", "post"] && slug.current == $slug] | order((_type == "project") desc, _createdAt desc)[0] { body, "showCover": defined(cover) || defined(mainImage) }`,
+				const raw = await getSanityClient().fetch<{ body?: PortableBlock[]; bodyEn?: PortableBlock[]; showCover?: boolean } | null>(
+					`*[_type in ["project", "post"] && slug.current == $slug] | order((_type == "project") desc, _createdAt desc)[0] { body, bodyEn, "showCover": defined(cover) || defined(mainImage) }`,
 					{ slug }
 				);
-				return { body: mapArticleBody(raw?.body, image => sanityImageUrl(image, { w: 1600 })), showCover: raw?.showCover === true };
+				const source = locale === 'en'
+					? (raw?.bodyEn?.length ? raw.bodyEn : translatePublishedBlocks(raw?.body, slug))
+					: raw?.body;
+				const body = mapArticleBody(source, image => sanityImageUrl(image, { w: 1600 }));
+				return { body: locale === 'en' ? englishArticleBody(body) : body, showCover: raw?.showCover === true };
 			},
 			null,
-			`article:${slug}`,
+			`article:${locale}:${slug}`,
 			'works'
 		)
 	]);
 	const idx = all.findIndex((p) => p.slug === slug);
 	if (idx === -1) return null;
 	const project = all[idx];
-	const content = remoteContent ?? { body: seedArticleBody(project), showCover: Boolean(project.cover) };
+	const content = remoteContent ?? { body: seedArticleBody(project, locale), showCover: Boolean(project.cover) };
 
 	return {
 		profile,

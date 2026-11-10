@@ -1,0 +1,530 @@
+{
+  "hello-world": {
+    "en": {
+      "title": "Hello, World",
+      "summary": "Hello, world.",
+      "blocks": {
+        "6ee76569e3b3": {
+          "source": "Hi World",
+          "translation": "Hello, world."
+        }
+      }
+    },
+    "sourceTitle": "Hello World",
+    "sourceSummary": "Hi World"
+  },
+  "1": {
+    "en": {
+      "title": "Another Kind of Loneliness",
+      "summary": "A damp chill.",
+      "blocks": {
+        "308503495165": {
+          "source": "阴冷",
+          "translation": "A damp chill."
+        },
+        "fb0376393ca3": {
+          "source": "寒风",
+          "translation": "A cold wind."
+        },
+        "b1c0ab46e87b": {
+          "source": "夜晚，\n图书馆外墙银辉的本钟，",
+          "translation": "Night.\nThe clock on the library wall gleams silver,"
+        },
+        "f014e9bffa19": {
+          "source": "\n还有褐黑色，",
+          "translation": "and there is the brown-black"
+        },
+        "2163d0f2aa19": {
+          "source": "\n无限空广的天空，",
+          "translation": "immensity of the sky,"
+        },
+        "d0856f85fea0": {
+          "source": "\n裹着一对幸福的小情人，",
+          "translation": "folding around two happy young lovers,"
+        },
+        "7d623e1921c7": {
+          "source": "\n却是明知死期的犯人，",
+          "translation": "prisoners who already know the day they will die,"
+        },
+        "5cff86b5bcb9": {
+          "source": "\n在谈选着最后一日前延后一日的但是必会到来的最后一日的游玩，",
+          "translation": "trying to choose an outing for the last day, a day they keep putting off by one more day, though it will come."
+        },
+        "046eac5973f3": {
+          "source": "\n他抬着头",
+          "translation": "He lifts his head."
+        },
+        "d86f43c432fe": {
+          "source": "\n看到的是，",
+          "translation": "What he sees"
+        },
+        "efbd370dd549": {
+          "source": "\n一个明亮完整的月亮，",
+          "translation": "is a bright, unbroken moon,"
+        },
+        "9fe12920818e": {
+          "source": "\n时不时出现在树枝中镂空的区域中，",
+          "translation": "appearing now and then in the gaps between the branches."
+        },
+        "813904e4d47c": {
+          "source": "\n可他却眼神晃慢，",
+          "translation": "His gaze drifts slowly."
+        },
+        "42e2236ec3f0": {
+          "source": "\n说出很多，",
+          "translation": "He says so much,"
+        },
+        "31ec9f4212ab": {
+          "source": "\n可",
+          "translation": "but"
+        },
+        "9afc5e31b257": {
+          "source": "时间依旧依旧不停止的",
+          "translation": "time goes on and on, never stopping,"
+        },
+        "42237e50fdb2": {
+          "source": "通往\n诗总是会烂尾的，\n现实。",
+          "translation": "toward\npoems always fall apart at the end,\nreality."
+        }
+      }
+    },
+    "sourceTitle": "别的落寞",
+    "sourceSummary": "阴冷"
+  },
+  "poem1": {
+    "en": {
+      "title": "Prose Poem No. 1",
+      "summary": "Just before the end.",
+      "blocks": {
+        "96443fb14ca8": {
+          "source": "这是在快要结束的之前",
+          "translation": "Just before the end,"
+        },
+        "5fe7bc39fc72": {
+          "source": "我们似乎无事可做",
+          "translation": "there seems to be nothing for us to do."
+        },
+        "95442482af03": {
+          "source": "面对离别的终点",
+          "translation": "At the point where we have to say goodbye,"
+        },
+        "ed6cf4e3771d": {
+          "source": "空虚的到达的话",
+          "translation": "if emptiness is what arrives,"
+        },
+        "bae97f1a657d": {
+          "source": "似乎无能为力",
+          "translation": "there seems to be nothing we can do."
+        },
+        "c0748e4e2d28": {
+          "source": "需要某种事情的结束",
+          "translation": "Something has to end."
+        }
+      }
+    },
+    "sourceTitle": "散文诗1",
+    "sourceSummary": "这是在快要结束的之前"
+  },
+  "this-web": {
+    "en": {
+      "title": "Designing This Site’s Front End",
+      "summary": "This site took shape with an experimental set of tools instead of a conventional all-in-one stack.",
+      "blocks": {
+        "5fa7e6878a3c": {
+          "source": "🛠️ 技术内核 (The Stack)",
+          "translation": "🛠️ The technology"
+        },
+        "093509ce7dc9": {
+          "source": "本站放弃了传统的全家桶方案，选择了更具前瞻性的技术栈：",
+          "translation": "For this site, I chose an experimental set of tools instead of a conventional all-in-one stack:"
+        },
+        "31f9ebf2b1a5": {
+          "source": "开发模式：Vibe Coding —— 抛弃冗余的配置，以灵感和直觉驱动，通过 AI 协同实现极速构建。",
+          "translation": [
+            "Development: vibe coding",
+            " — less time spent on configuration, more room to follow an idea and build it quickly with AI."
+          ]
+        },
+        "29eea7549334": {
+          "source": "核心语言：TypeScript",
+          "translation": [
+            "Core language: TypeScript"
+          ]
+        },
+        "78449cd244c0": {
+          "source": "运行时：Deno —— 强力对标并超越 Node.js！",
+          "translation": [
+            "Runtime: Deno",
+            " — a modern alternative to Node.js that aims to go further."
+          ]
+        },
+        "097fe3ee3425": {
+          "source": "前端框架：Deno Fresh —— 零 JS 运行时开销（Islands Architecture），让页面加载如丝般顺滑，瞬间响应。",
+          "translation": [
+            "Front-end framework: Fresh for Deno",
+            " — its islands architecture keeps most of the page free of client-side JavaScript, so pages load quickly and feel responsive."
+          ]
+        },
+        "1a14c1215a9f": {
+          "source": "内容管理：Sanity (Headless CMS)",
+          "translation": [
+            "Content management: Sanity, a headless CMS"
+          ]
+        },
+        "687ba92a5f02": {
+          "source": "部署于Deno Deploy，全部内容均零成本运行，开发者无需花费一分钱。",
+          "translation": "I hosted it on Deno Deploy and was able to run the whole site without paying for hosting."
+        },
+        "b26882405384": {
+          "source": "🎨Design Philosophy",
+          "translation": "🎨 Design philosophy"
+        },
+        "3732c2ae15cf": {
+          "source": "视觉上，我试图在“科技感”与“人文感”之间找到平衡：",
+          "translation": "Visually, I wanted the site to feel technological and human at the same time:"
+        },
+        "883316271532": {
+          "source": "Apple Liquid Glass：引入了 WebGL 驱动的液态玻璃效果，让导航与交互充满流动的生命力，如同 iOS 26。",
+          "translation": [
+            "Apple’s Liquid Glass",
+            " — I used WebGL to give the navigation and interactions a fluid, glass-like feel reminiscent of iOS 26."
+          ]
+        },
+        "4bf1af78c317": {
+          "source": "Minimalism（极简主义）：克制的排版，大面积的留白。在 Figma 上经过反复推敲，只为让内容本身成为焦点。",
+          "translation": [
+            "Minimalism",
+            " — restrained typography and generous white space, refined through repeated iterations in Figma so the content could take centre stage."
+          ]
+        }
+      }
+    },
+    "sourceTitle": "Frontend本站设计思路",
+    "sourceSummary": "本站放弃了传统的全家桶方案，选择了更具前瞻性的技术栈："
+  },
+  "photo-2025-12": {
+    "en": {
+      "title": "Mausoleums: Nanjing, December 2025",
+      "summary": "A series of photographs from a trip to Nanjing on 29 and 30 December 2025.",
+      "blocks": {
+        "6dc9f5311c2e": {
+          "source": "这是2025年12月29日至30日期间前往南京游玩的一些拍摄照片",
+          "translation": "I took these photographs on a trip to Nanjing on 29 and 30 December 2025."
+        },
+        "185690ab3c07": {
+          "source": "理光GXR S10",
+          "translation": "Shot with a Ricoh GXR and S10 camera unit."
+        }
+      }
+    },
+    "sourceTitle": "摄影作品集 2025-12 「陵」",
+    "sourceSummary": "这是2025年12月29日至30日期间前往南京游玩的一些拍摄照片"
+  },
+  "2026-2": {
+    "en": {
+      "title": "Typefaces for Long Reading Sessions: What I’ve Learned",
+      "summary": "I finally got the Boox e-reader I’d been looking forward to, and I’ve spent the last two days tinkering with it.",
+      "blocks": {
+        "e7f30c465f4b": {
+          "source": "这是一篇之前在wordpress上写的文章，现在经过了大半年的阅读后，有了一些新的字体想推荐给大家，故针对之前的内容进行了一些修订。祝大家新年快乐！",
+          "translation": "I first wrote this piece on WordPress. After another six months or so of reading, I have a few more typefaces to recommend, so I’ve revised the original. Happy New Year!"
+        },
+        "9c3e86b5130b": {
+          "source": "终于拿到心心念念的文石了，这两天一直在捣鼓这个家伙。",
+          "translation": [
+            "I finally got the ",
+            "Boox e-reader",
+            " I’d been looking forward to, and I’ve spent the last two days tinkering with it."
+          ]
+        },
+        "8798e52d8832": {
+          "source": "文石是开放系统，于是就用了很多第三方文字阅读APP（除了微信读书），还有漫画阅读软件效果都不如自带的neo reader效果好。究其原因不过是反应速度和显示效果。但是neo reader的UI也确实丑的脱离现代审美。",
+          "translation": "Boox devices let you install your own apps. I tried several third-party reading apps (setting WeRead aside) and some comics readers, but none worked as well as the built-in NeoReader. It mostly came down to responsiveness and how the text looked on the screen. The interface itself, though, looks like it belongs to another decade."
+        },
+        "52dee7c5db56": {
+          "source": "此外就是neo reader的文字排版感觉很难受，不像微信读书，会很清楚的感觉，本来想琢磨两者之间排版的关系，但是发现了一个好像更重要的东西，就是字体对于阅读的影响，一般情况，大多数人阅读小说或者看信息流的时候，用的都是系统自带的字体，这足以应对一般的阅读情况，但是阅读久了似乎经常会跑神，或者越看越看“虚”。",
+          "translation": [
+            "I also found the typesetting in NeoReader uncomfortable. WeRead felt clearer. I meant to compare their layouts, but something more interesting caught my attention: ",
+            "how the choice of typeface affects reading",
+            ". Most people stick with the system font when reading a novel or scrolling through a feed. It works well enough most of the time. After a while, though, I find myself zoning out, as if the words have lost their edges."
+          ]
+        },
+        "e9b871a6667a": {
+          "source": "所以我去学习了一下，结合之前看到的一些文章，聊一聊这方面的理解。",
+          "translation": "I did some digging and went back to a few articles I’d read. Here’s how I’ve come to think about it."
+        },
+        "697a3eabb92a": {
+          "source": "首先，现在数字化字体的“大三元”是宋体，黑体，楷体。",
+          "translation": [
+            "First, the three familiar families of digital Chinese type are ",
+            "Song (serif), Hei (sans serif), and Kai (regular script)",
+            "."
+          ]
+        },
+        "8e544befa4b3": {
+          "source": "而大多数手机，电脑厂商自带的字体，大多数都是黑体，我记得我对黑体印象最深的是初中还是小学时期，一篇课文，好像是关于用黑体写求救信的，具体是哪篇忘记了。导致我对黑体的第一印象就是严肃的，重要的。没想到现在用的最多的就是黑体。",
+          "translation": [
+            "Most phones and computers ship with a ",
+            "Hei-style font",
+            ". My strongest early association with Hei comes from a school text about a plea for help written in that style, though I can’t remember which text it was. To me, the type looked ",
+            "serious and urgent",
+            ". I wouldn’t have guessed it would become the type I saw most often."
+          ]
+        },
+        "0bb81d03aa3a": {
+          "source": "至于为什么各种厂商选择用黑体做默认字体呢？其原因最重要就是液晶显示技术了，显示器显示文字，特别是一个很小的字，是极其困难的。",
+          "translation": "Why did so many manufacturers choose Hei as the default? Much of it comes down to LCDs. Drawing a character clearly on a display, especially at a very small size, is harder than it sounds."
+        },
+        "c2c51b1d097d": {
+          "source": "因为早期分辨率和尺寸的原因，导致显示器的PPI(Pixels Per Inch，每英寸像素量)通常都很低，就算是FHD即 1920*1080 的23寸显示器其ppi不过也才96。而PPI值越低。就会导致锯齿越明显，画面越模糊，颗粒感极强。",
+          "translation": [
+            "Early displays tended to have low pixel density, measured in ",
+            "pixels per inch",
+            ". Even a 23-inch Full HD monitor with a resolution of ",
+            "1920 × 1080",
+            " is only around 96 pixels per inch. At lower densities, edges look more jagged and text can seem blurry or grainy."
+          ]
+        },
+        "f5c6dd9cad69": {
+          "source": "而且我们发现大家在用Windows时看字的显示感觉就是一般，能看。而使用Mac时字体显示则清晰锐利很多。",
+          "translation": "Text on a Windows machine can look merely adequate, while on a Mac it often looks distinctly sharper."
+        },
+        "2dc593f0a962": {
+          "source": "其很大原因就来自于此，Windows由于普及率极高，所以大多数与其搭配的都是普通的显示器，包括学校，政府单位，公司基本如此。而假如你能在4K，23寸的显示器上看Windows的字体，或者你使用最近的一些新笔记本，他们字体的显示效果其实是不差的。",
+          "translation": [
+            "Pixel density accounts for a lot of that difference. Windows is so widespread that it often runs on ",
+            "ordinary monitors",
+            ", the kind you find in schools, offices and public institutions. Try a 23-inch 4K display or a recent laptop, though, and text on Windows can look ",
+            "quite good",
+            "."
+          ]
+        },
+        "51d6d5de9597": {
+          "source": "早期因为硬件原因做不出更细致的分辨率造成的显示效果差劲，就只能通过软件层弥补，例如微软在Windows上做了ClearType这一项技术来增强文字对比度，使其看起来更加清晰，此外最重要的决定就是将宋体换成黑体即“微软雅黑”。",
+          "translation": [
+            "When the hardware couldn’t offer finer resolution, software had to make up the difference. Microsoft introduced ClearType in Windows to make text appear clearer. ",
+            "Another consequential decision was to replace the default Song-style interface font with the sans serif Microsoft YaHei."
+          ]
+        },
+        "aa2191f5865c": {
+          "source": "为什么这么做呢？原因在于，黑体的所有线条的粗细是一样的，也就是所谓的“无衬线”。这样的好处是字体每个笔画所占的像素点更大了，如果宋体它刚刚好有一个弯钩就特别特别细，那在这么差ppi的屏幕上就可能完全看不清。",
+          "translation": [
+            "Why? The strokes in a Hei face are relatively even, and it is ",
+            "sans serif",
+            ". That makes the strokes easier to represent with the pixels available. A fine ",
+            "hook",
+            " in a Song face, on the other hand, can all but disappear on a coarse screen."
+          ]
+        },
+        "85fff6d8ec0b": {
+          "source": "而在黑体上就不会有这问题。至少一眼看的清楚。而如今包括手机厂商依旧在延续这个套路，例如小米的“兰亭黑”，苹果的PingFang SC，都是在其基础上优化显示效果的。",
+          "translation": "Hei type avoids much of that problem. At a glance, at least, the characters are clear. Phone manufacturers still work on the same principle, refining screen type with faces like Xiaomi’s Lanting Hei and Apple’s PingFang SC."
+        },
+        "8e974140c9fd": {
+          "source": "但是黑体因为风格单一，没有起伏，看起来太轻松，所以就很容易犯困，走神，就像英语阅读时，一开始还能理解这段在说什么，但读着读者，好像单词也都念出来了，但是脑子完全没在进行理解一样，回过神发现自己甚至跳了一段。同理。无衬线的西文字体也没啥起伏，例如标准的Noto Sans，而采用Serif的西文看起来虽然吃力了一点，但是就是读的进去。",
+          "translation": [
+            "The trade-off, for me, is that Hei can feel ",
+            "so even and effortless that the eye slips over it",
+            ". It’s like reading English and following every word at first, only to realise later that I’ve been sounding out the sentences without taking them in. I can even skip a paragraph without noticing. An English sans serif such as Noto Sans can have the same effect. A serif face asks a little more of me, and that extra effort sometimes helps me stay with the text."
+          ]
+        },
+        "e8b6a8efca5f": {
+          "source": "我估计如果你能坚持读到这里，也已经是头晕晕的了，是吧？",
+          "translation": "If you’ve made it this far, your head might be swimming a little already. Am I right?"
+        },
+        "b994a9bc73a8": {
+          "source": "这是因为，手机上显示黑体的都是几个字就完事了，例如“设置”，“微信”。而且就算聊天一般也不可能写个几千字，除非你在给别人发“小作文”。所以基本阅读时间不会超过1-2分钟吧。达不到长时间阅读的门槛，方便不吃力的黑体就非常好用。",
+          "translation": [
+            "On a phone, we mostly encounter Hei in a few words at a time: “Settings”, “WeChat”, and so on. Even in a chat, you rarely get thousands of words unless someone is sending you a whole essay. That’s usually ",
+            "a minute or two",
+            " of reading, nowhere near a long session. For a quick glance, ",
+            "Hei",
+            " is wonderfully easy to read."
+          ]
+        },
+        "7d36c34c3efd": {
+          "source": "但是在读书，看报的时候，我们通常最少也要阅读超过5分钟的阅读量，这样的话，黑体越到后面越不占优。这也就是为什么所有书籍印刷都不采用黑体的原因。",
+          "translation": "Reading a book or a newspaper is different: you’re likely to spend five minutes or more with the text. In my experience, Hei’s advantages fade the longer I read. That helps explain why Song faces are so common in printed Chinese books."
+        },
+        "b35c6f1f7692": {
+          "source": "所以如果你想长时间阅读，目前的手机其实大多数的ppi都是很高的了，apple乔布斯在iPhone4上定义了Retina Display，也就是说当你的屏幕ppi大于300，视网膜就无法分辨出像素点了。(所以目前Kindle，或者文石这类阅读器最高也在300ppi）",
+          "translation": [
+            "Most phones now have a much higher pixel density. When Steve Jobs introduced the Retina display on the iPhone 4, the idea was that at roughly 300 pixels per inch, ",
+            "individual pixels are hard to distinguish at a typical viewing distance",
+            ". That’s also a common resolution for e-readers such as Kindle and Boox."
+          ]
+        },
+        "a93869b8d4fa": {
+          "source": "所以你当你想要进行长时间阅读时，可以大胆的在微信读书，或者你的阅读器中换上宋体，楷体或其他衬线字体。他们优美的线条会增加你的注意力，降低你阅读的速度，减缓你整体的阅读节奏，独特的字体美学也会体现出字体所带的情绪。",
+          "translation": [
+            "For long reading sessions, try switching ",
+            "WeRead",
+            " or your ",
+            "e-reader",
+            " to ",
+            "a Song face, a Kai face, or another serif typeface",
+            ". ",
+            "The shapes of the strokes draw my eye in, slow me down, and change the pace of reading. A typeface can bring a mood of its own."
+          ]
+        },
+        "51f906b21d16": {
+          "source": "当然也别选太秀技术的书法字体或者抽象的后现代字体，这样效果就过头了。",
+          "translation": "I wouldn’t go too far with an elaborate calligraphic face or an abstract, postmodern one. The type can end up competing with the book."
+        },
+        "5ec071771365": {
+          "source": "我个人喜欢宋体，因为宋体比楷体或其他的没有那么飘逸。它是一种稳定产物，不自带情绪，现代，专注。而楷体花样百出，有的灵动活泼，有的古典玄奥，有的现代扁平。适合特定书记的阅读，我会在下面也推荐一些楷体字体。",
+          "translation": "My preference is Song. It feels less buoyant than Kai, more settled, modern and focused. Kai faces have a wider range of personalities: some are lively, others feel classical and enigmatic, and some are spare and modern. They suit particular books. I’ll recommend a couple below."
+        },
+        "9d72b994955b": {
+          "source": "第一个字体：汉仪报宋",
+          "translation": "First pick: Hanyi Bao Song"
+        },
+        "6e6642b3897b": {
+          "source": "下载地址：汉仪报宋简-汉仪字库",
+          "translation": [
+            "Download: ",
+            "Hanyi Bao Song Simplified from Hanyi"
+          ]
+        },
+        "5509a4e59abd": {
+          "source": "这款字体复刻来自老报纸上的宋体，纤细流畅经典，在墨水屏上的效果很好，很像中文老报纸。",
+          "translation": [
+            "This face revives the Song type used in ",
+            "old newspapers",
+            ". Fine, flowing and familiar, it looks especially good on e-ink. It really does feel like reading an old Chinese newspaper."
+          ]
+        },
+        "99ad1820fcff": {
+          "source": "第二款：方正博雅宋",
+          "translation": "Second pick: Founder Boya Song"
+        },
+        "51dc5c04218a": {
+          "source": "下载地址：方正博雅宋字体包，方正博雅宋字体打包下载_方正字库官网",
+          "translation": [
+            "Download: ",
+            "Founder Boya Song from FounderType"
+          ]
+        },
+        "152c067f8755": {
+          "source": "这款字体也是报纸上的字体，目的就是为了优化上面的字体，年代靠后，也是非常经典的字体，相比之下更加扁平，字体没有那么纤细，也就是某种意义上的黑体化。",
+          "translation": "Another classic newspaper face, from a later era. It refines the same tradition with a squarer feel and less delicate strokes, borrowing some of the solidity of Hei."
+        },
+        "638fec715dbc": {
+          "source": "第三款：京华老宋体",
+          "translation": "Third pick: KingHwa Old Song"
+        },
+        "46e6f95ad5b8": {
+          "source": "下载地址：https://pan.baidu.com/share/init?surl=GfYB8X6Av7x0pa6BFKoFAg&pwd=KHLS",
+          "translation": [
+            "Download: ",
+            "KingHwa Old Song on Baidu Netdisk"
+          ]
+        },
+        "72a9f9d362d8": {
+          "source": "嘿您怎么找，这味道，哎，就是这味儿，地道。狗啃一般的印刷体带你回到刚建国改用简体字时期的味道。并且并不因此丧失阅读效率，阅读现代作家，古代作家时非常推荐！！（目前修改时已经推出3.0了更加推荐！甚至微信读书自带这款字体了。）",
+          "translation": [
+            "Now this is the real thing. ",
+            "Utterly authentic",
+            ". The ",
+            "chewed-up edges",
+            " take you back to the early years of the People’s Republic, when simplified characters were coming into use. The roughness doesn’t cost you legibility. I especially recommend it for modern and classical Chinese writers. Version 3.0 was out when I revised this piece, and I recommend it even more. It’s now built into WeRead."
+          ]
+        },
+        "71b36ecf666c": {
+          "source": "具体的介绍：【發佈】京華老宋体(已更新2.0) – 知乎",
+          "translation": [
+            "Read more: ",
+            "The KingHwa Old Song release announcement on Zhihu"
+          ]
+        },
+        "574493e66a8d": {
+          "source": "第四款：方正宋体",
+          "translation": "Fourth pick: Founder Song"
+        },
+        "79f18a0c910c": {
+          "source": "这是Kindle上的默认宋体，不得不说kindle确实是墨水屏的独一档，自带字体的显示效果，调教到了非常好的效果，甚至放在其他阅读器上感觉显示都变得更加锐利了，真的极力推荐！目前最爱用这款！",
+          "translation": "This is the default Song face on Kindle. Kindle does an exceptional job of tuning its built-in fonts for e-ink. This one even looks sharper to me on other readers. It’s the face I use most right now, and I highly recommend it."
+        },
+        "74f444fb9347": {
+          "source": "下载地址：大家可以在bing上搜一下，这个没有官方下载地址，故不放出了。",
+          "translation": "You can search for it on Bing. I haven’t found an official download, so I’m leaving out the link."
+        },
+        "081778f5cb41": {
+          "source": "第五款：Noto Serif CJK JP & Noto Serif CJK SC & Noto Serif CJK TC\n",
+          "translation": "Fifth pick: Noto Serif CJK for Japanese, Simplified Chinese and Traditional Chinese"
+        },
+        "b235db5d1c5e": {
+          "source": "下载地址：https://github.com/notofonts/noto-cjk",
+          "translation": {
+            "text": "Download the Noto CJK fonts",
+            "href": "https://github.com/notofonts/noto-cjk"
+          }
+        },
+        "a96b722fce8e": {
+          "source": "这款来自国际大厂谷歌的Noto fonts Serif系列这个缝合了日式，中式，台式的CJK因为和普通简体不一样，就算稍微木讷，但是还是有不错的阅读体验的。",
+          "translation": "Google’s Noto Serif collection brings Japanese, mainland Chinese and Taiwanese forms into one family. It can feel a little stiff beside a face drawn specifically for Simplified Chinese, but it’s still comfortable to read."
+        },
+        "7b831cf3862b": {
+          "source": "除此之外 还有思源宋体，汉仪玄宋35s,方正新书宋，思源屏显臻宋，方正细雅宋。四款推荐。（具有主观喜好排序）",
+          "translation": "A few more Song faces I like, in roughly my personal order of preference: Source Han Serif, Hanyi Xuan Song 35s, Founder New Book Song, Source Han Screen Zhen Song, and Founder Xiya Song."
+        },
+        "99364d0037a5": {
+          "source": "________________________________________________________________",
+          "translation": "________________________________________________________________"
+        },
+        "6fa873c42243": {
+          "source": "楷体部分：",
+          "translation": "Kai faces"
+        },
+        "c0df2f667acd": {
+          "source": "楷体就推荐两个最好的：",
+          "translation": "Two Kai faces stand out for me:"
+        },
+        "50c22c0b4d0e": {
+          "source": "LXGW/霞鹜文楷",
+          "translation": "LXGW WenKai"
+        },
+        "f1da7635fc58": {
+          "source": "Github下载地址：lxgw/LxgwWenKai: An open-source Chinese font derived from Fontworks’ Klee One. 一款开源中文字体，基于 FONTWORKS 出品字体 Klee One 衍生。",
+          "translation": [
+            "Download: ",
+            "LXGW WenKai on GitHub, an open-source Chinese typeface derived from Fontworks’ Klee One."
+          ]
+        },
+        "155d6173b7ea": {
+          "source": "这个更是开源作品中名声最造的，免费商用和独具特色的字体样式，一眼就能看出这是霞鹜文楷，但是个人在阅读中感觉略微有些活泼，所以未使用，但只是个人爱好的影响。",
+          "translation": "It’s one of the best-known open-source Chinese typefaces, free for commercial use and instantly recognisable. I find it a little lively for long reading sessions, so I don’t use it much myself. That’s purely a matter of taste."
+        },
+        "4e3090b56ed9": {
+          "source": "仓耳今楷",
+          "translation": "Tsanger Jin Kai"
+        },
+        "badf85b96319": {
+          "source": "下载地址：仓耳今楷01-W03 – 仓耳屏显字库 – 仓耳字体|屏幕显示字体|艺术字体|免费字体|仓耳字库官网",
+          "translation": [
+            "Download: ",
+            "Tsanger Jin Kai, design 01 in weight 03, from Tsanger"
+          ]
+        },
+        "dd96d8329ddf": {
+          "source": "该字体也是有字重的，这款在微信读书上使用过一段时间，效果很好，配合微信读书的间距，阅读感受很清新。",
+          "translation": "This one comes in multiple weights. I used it for a while in WeRead, where the app’s spacing and the font worked beautifully together. It made the page feel fresh."
+        },
+        "bbbbe568ba53": {
+          "source": "此外大量的楷体字体都是很不错的，Ai楷体等等，不一一列举了。有空再来玩玩。",
+          "translation": "There are plenty of other Kai faces worth trying, including Ai Kai. I’ll save the rest for another time."
+        },
+        "1db2b79e90d6": {
+          "source": "文章启发视频：",
+          "translation": "The video that prompted this piece:"
+        },
+        "d8f19b568237": {
+          "source": "朱志伟: 做字50年，这款字体最适合阅读_哔哩哔哩_bilibili",
+          "translation": "Zhu Zhiwei on fifty years of designing type and his favourite face for reading (Bilibili)"
+        }
+      }
+    },
+    "sourceTitle": "分享适合长时间阅读的字体以及研究心得",
+    "sourceSummary": "终于拿到心心念念的文石了，这两天一直在捣鼓这个家伙。"
+  }
+}

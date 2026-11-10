@@ -27,6 +27,7 @@ export function imageAspectRatio(image: ContentImage): number | undefined {
 }
 
 export interface PortableBlock extends ContentImage {
+	_key?: string;
 	_type: string;
 	style?: string;
 	listItem?: 'bullet' | 'number';

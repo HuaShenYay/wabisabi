@@ -31,7 +31,7 @@ try {
 		check(`Home never downloads scene assets at ${width}px`, await page.evaluate(() => !performance.getEntriesByType('resource').some(r => /\/(landscape|models)\//.test(r.name))));
 		check(`Display font and simple works link remain readable at ${width}px`, await page.locator('h1').evaluate(node => getComputedStyle(node).fontFamily.includes('KingHwa'))
 			&& await page.locator('.work-link').evaluate(node => getComputedStyle(node, '::before').maskImage === 'none' && node.getBoundingClientRect().height >= 44));
-		check(`Navigation follows Project then About at ${width}px`, (await page.locator('.site-header nav a').allTextContents()).join(',') === 'Project,About');
+		check(`Navigation follows Project then About at ${width}px`, (await page.locator('.site-header nav a').allTextContents()).join(',') === '作品,关于');
 		const recent = page.locator('.latest-work');
 		check(`Only one recent work follows the introduction at ${width}px`, await recent.count() === 1 && await recent.locator('article').count() === 1
 			&& await recent.evaluate(node => node.getBoundingClientRect().top >= document.querySelector('.hero-intro').getBoundingClientRect().bottom));
@@ -40,7 +40,7 @@ try {
 		check(`Recent work opens its full article at ${width}px`, await page.locator('.body-flow').count() === 1 && await fits());
 		await page.goto(base, { waitUntil: 'networkidle' });
 		if (screenshots && width !== 320) await page.screenshot({ path: `${screenshots}/home-${width}.png` });
-		await page.getByRole('link', { name: 'Project', exact: true }).click();
+		await page.getByRole('link', { name: '作品', exact: true }).click();
 		await page.waitForURL(`${base}/projects`);
 		check(`Works index and all five categories fit ${width}px`, await fits() && await page.locator('.category-entry').count() === 5);
 		check(`Works rows have 44px touch targets at ${width}px`, await page.locator('.category-entry').evaluateAll(nodes => nodes.every(node => node.getBoundingClientRect().height >= 44)));

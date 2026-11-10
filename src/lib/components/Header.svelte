@@ -26,18 +26,18 @@
 
 <header class="site-header site-shell">
 	<a class="site-name" href="/" aria-label={t(`${profile.name}，首页`, `${profile.nameEn}, home`)}>
-		<span>{profile.name}</span><span class="name-en">{profile.nameEn}</span>
+		<span>{t(profile.name, profile.nameEn)}</span>
 	</a>
 	<div class="header-tools">
 	<nav aria-label={t('主导航', 'Main navigation')}>
-		<a class="nav-link" href="/projects" aria-current={isProjects ? 'page' : undefined} data-sveltekit-preload-data="hover">Project</a>
-		<a class="nav-link" href="/about" aria-current={isAbout ? 'page' : undefined} data-sveltekit-preload-data="hover">About</a>
+		<a class="nav-link" href="/projects" aria-current={isProjects ? 'page' : undefined} data-sveltekit-preload-data="hover">{t('作品', 'Works')}</a>
+		<a class="nav-link" href="/about" aria-current={isAbout ? 'page' : undefined} data-sveltekit-preload-data="hover">{t('关于', 'About')}</a>
 	</nav>
 	<details class="language-switch" bind:this={languageMenu}>
 		<summary aria-label={t('选择语言，当前中文', 'Choose language, currently English')}><span aria-hidden="true">{locale === 'zh' ? '🇨🇳' : '🇬🇧'}</span><span class="language-chevron" aria-hidden="true"></span></summary>
-		<div class="language-menu" role="group" aria-label="语言 / Language">
-			<a class="language-link" href={languageHref(page.url, 'zh')} lang="zh-CN" aria-label="切换为中文" aria-current={locale === 'zh' ? 'true' : undefined} data-sveltekit-reload><span aria-hidden="true">🇨🇳</span><span>中文</span></a>
-			<a class="language-link" href={languageHref(page.url, 'en')} lang="en" aria-label="Switch to English" aria-current={locale === 'en' ? 'true' : undefined} data-sveltekit-reload><span aria-hidden="true">🇬🇧</span><span>English</span></a>
+		<div class="language-menu" role="group" aria-label={t('语言', 'Language')}>
+			<a class="language-link" href={languageHref(page.url, 'zh')} hreflang="zh-CN" aria-label={t('切换为中文', 'Switch to Chinese')} aria-current={locale === 'zh' ? 'true' : undefined} data-sveltekit-reload><span aria-hidden="true">🇨🇳</span><span>{t('中文', 'Chinese')}</span></a>
+			<a class="language-link" href={languageHref(page.url, 'en')} hreflang="en" aria-label={t('切换为英文', 'Switch to English')} aria-current={locale === 'en' ? 'true' : undefined} data-sveltekit-reload><span aria-hidden="true">🇬🇧</span><span>{t('英文', 'English')}</span></a>
 		</div>
 	</details>
 	</div>
@@ -46,8 +46,6 @@
 <style>
 	.site-header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); min-height: var(--header-height); }
 	.site-name { display: flex; align-items: baseline; gap: var(--space-3); min-height: 44px; padding-block: var(--space-3); font: var(--text-lg)/1.3 var(--font-heading); }
-	.name-en { font: italic var(--text-sm)/1.3 var(--font-display-latin); color: var(--color-text-muted); }
-	:global(html:lang(en)) .site-name > span:first-child { font-family: var(--font-heading-reading); }
 	.header-tools { display: flex; align-items: center; gap: var(--space-5); }
 	.language-switch { position: relative; }
 	summary { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: var(--touch-target); min-height: var(--touch-target); cursor: pointer; list-style: none; font: var(--text-lg)/1 var(--font-ui); }
@@ -62,5 +60,5 @@
 	.nav-link { display: flex; align-items: center; position: relative; min-height: 44px; }
 	.nav-link::after { content: ''; position: absolute; inset: auto 0 var(--space-1); height: 1px; background: currentColor; opacity: 0; transition: opacity var(--duration-base) var(--ease-organic); }
 	.nav-link[aria-current='page']::after, .nav-link:is(:hover, :focus-visible)::after { opacity: .65; }
-	@media (max-width: 600px) { .name-en { display: none; } .site-header, .header-tools, nav { gap: var(--space-2); } }
+	@media (max-width: 600px) { .site-header, .header-tools, nav { gap: var(--space-2); } }
 </style>

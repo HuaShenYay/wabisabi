@@ -32,6 +32,7 @@
 	}
 	.hero-copy { flex: 1; display: flex; align-items: center; padding-left: clamp(0px, 1.5vw, var(--space-4)); }
 	h1 {
+		font-family: var(--font-hero);
 		font-size: clamp(3.5rem, 8.8vw, 7.75rem);
 		line-height: 1.24;
 		letter-spacing: -.035em;
@@ -53,7 +54,7 @@
 	.work-link:is(:hover, :focus-visible) .work-arrow { transform: translate(3px, -3px); }
 	.about-link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); font: var(--text-sm)/1.5 var(--font-body); color: var(--color-text-muted); }
 	.about-link:is(:hover, :focus-visible) { color: var(--color-link-hover); }
-	.hero-en h1 { font-family: var(--font-latin); font-size: clamp(3.5rem, 8.6vw, 7.5rem); letter-spacing: -.045em; line-height: 1.06; }
+	.hero-en h1 { font-family: var(--font-body); font-size: clamp(3.5rem, 8.6vw, 7.5rem); letter-spacing: -.045em; line-height: 1.06; }
 	.hero-en .hero-line--offset { padding-left: 1.2em; margin-top: .12em; }
 	.hero-en .hero-punctuation { font-size: 1em; margin-left: 0; }
 	@media (min-width: 601px) and (max-height: 760px) {
@@ -71,7 +72,10 @@
 		.hero-bottom { flex-direction: column; align-items: stretch; gap: var(--space-5); }
 		.hero-actions { justify-content: space-between; gap: var(--space-4); padding-bottom: 0; }
 		.work-link { font-size: var(--text-lg); }
-		.hero-en h1 { font-size: clamp(2.75rem, 14vw, 5rem); line-height: 1.12; }
+		.hero-en .hero-actions { gap: var(--space-3); white-space: nowrap; }
+		.hero-en .work-link { gap: var(--space-2); font-size: var(--text-base); }
+		.hero-en .work-arrow { font-size: 1.5rem; }
+		.hero-en h1 { font-size: clamp(2rem, 12vw, 4.375rem); line-height: 1.12; }
 		.hero-en .hero-line--offset { padding-left: .6em; margin-top: .18em; }
 	}
 	@media (max-width: 600px) and (max-height: 700px) {

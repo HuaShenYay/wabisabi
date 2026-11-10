@@ -1,12 +1,12 @@
 {
 	"name": "宋子杰 | 研究与作品",
 	"short_name": "宋子杰",
-	"description": "宋子杰的个人博客与作品集，记录数字人文、AIGC、文学与影像研究，以及创意编程实践。",
+	"description": "宋子杰的个人博客与作品集，记录数字人文、生成式艺术、文学与影像研究，以及创意编程实践。",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#F3EFE6",
 	"theme_color": "#F3EFE6",
-	"lang": "zh",
+	"lang": "zh-CN",
 	"icons": [
 		{
 			"src": "/favicon.svg",

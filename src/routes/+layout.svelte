@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/state';
-	import { getLocale, translator, categoryLabel, workTitle } from '$lib/i18n';
+	import { getLocale, translator, categoryLabel } from '$lib/i18n';
 	const locale = $derived(getLocale(page.data.locale));
 	const t = $derived(translator(locale));
 	import '../app.css';
@@ -15,11 +15,11 @@
 	const profile = $derived(page.data.profile ?? defaultProfile);
 	const article = $derived(page.data.article);
 	const displayName = $derived(t(profile.name, profile.nameEn));
-	const pageTitle = $derived(article ? `${workTitle(locale, article)} - ${displayName}` : page.data.category ? `${categoryLabel(locale, page.data.category)} · ${displayName}` : page.url.pathname === '/projects' ? `${t('作品', 'Works')} · ${displayName}` : page.url.pathname === '/about' ? `${t('关于', 'About')} · ${displayName}` : t(siteConfig.title, `${displayName} — Words, images & digital craft`));
-	const pageDescription = $derived(article?.summary || page.data.meta?.intro || (page.url.pathname === '/about' ? profile.bio : siteConfig.description));
+	const pageTitle = $derived(article ? `${article.title} - ${displayName}` : page.data.category ? `${categoryLabel(locale, page.data.category)} · ${displayName}` : page.url.pathname === '/projects' ? `${t('作品', 'Works')} · ${displayName}` : page.url.pathname === '/about' ? `${t('关于', 'About')} · ${displayName}` : siteConfig.title);
+	const pageDescription = $derived(article?.summary || t(page.data.meta?.intro ?? '', page.data.meta?.introEn ?? '') || (page.url.pathname === '/about' ? profile.bio : '') || siteConfig.description);
 	const canonical = $derived(new URL(page.url.pathname, siteConfig.url).href);
 	const ogImage = $derived(new URL(article?.cover || siteConfig.ogImage, siteConfig.url).href);
-	const personJsonLd = $derived(serializeJsonLd(generatePersonJsonLd(profile, page.data.socialLinks, siteConfig)));
+	const personJsonLd = $derived(serializeJsonLd(generatePersonJsonLd(profile, page.data.socialLinks, siteConfig, displayName)));
 	const websiteJsonLd = $derived(serializeJsonLd(generateWebsiteJsonLd(siteConfig)));
 </script>
 
@@ -29,6 +29,7 @@
 	<meta name="keywords" content={siteConfig.keywords.join(', ')} />
 	<meta name="author" content={siteConfig.author} />
 	<meta name="robots" content="index, follow" />
+	<link rel="manifest" href={t('/manifest.json', '/manifest.en.json')} />
 	<link rel="canonical" href={canonical} />
 
 	<!-- Open Graph -->

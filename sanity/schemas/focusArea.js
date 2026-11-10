@@ -10,7 +10,9 @@ export const focusAreaSchema = {
 	type: 'document',
 	fields: [
 		{ name: 'label', title: 'Label', type: 'string', validation: (Rule) => Rule.required() },
+		{ name: 'labelEn', title: '英文名称', type: 'string' },
 		{ name: 'desc', title: 'Description', type: 'string' },
+		{ name: 'descEn', title: '英文说明', type: 'string' },
 		{ name: 'order', title: 'Order', type: 'number', initialValue: 0 }
 	],
 	orderings: [

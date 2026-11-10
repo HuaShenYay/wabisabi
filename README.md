@@ -53,6 +53,6 @@ Historical landscape sources and prompts remain in `artwork/landscape/` as recor
 
 ## Languages
 
-The top-right language menu switches between Chinese and English. A server-read language cookie preserves the selection across refreshes and navigation; switching also works without JavaScript. Interface strings live beside their components via the helpers in `src/lib/i18n.ts`. Published works use `titleEn` when available; CMS bodies, summaries and personal information remain in their original language.
+The top-right language menu switches between Chinese and English. A server-read language cookie preserves the selection across refreshes and navigation. Switching also works without JavaScript. Interface strings live beside their components via the helpers in `src/lib/i18n.ts`. Chinese pages display the published work copy as written, including any English in the source. The six existing Sanity posts have English translations in `src/lib/server/published-translations.json`. For new or revised posts, use the English title, summary and body fields in Studio.
 
 Run `npm run test:language` against a running preview using the same `WABI_TEST_URL` and `WABI_BROWSER_EXECUTABLE` settings as the browser regression checks.

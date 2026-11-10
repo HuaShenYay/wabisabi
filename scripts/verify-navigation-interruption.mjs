@@ -9,7 +9,7 @@ try {
 	await useLocalResources(page.context(), base);
 	for (let attempt = 0; attempt < 5; attempt++) {
 		await page.goto(base, { waitUntil: 'networkidle' });
-		await page.getByRole('link', { name: 'Project', exact: true }).click();
+		await page.getByRole('link', { name: '作品', exact: true }).click();
 		await page.waitForURL(`${base}/projects`);
 		const historyLength = await page.evaluate(() => history.length);
 		await page.goBack();

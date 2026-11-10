@@ -15,6 +15,7 @@ export const profileSchema = {
 		{ name: 'title', title: 'Title', type: 'string', description: 'e.g. 数字人文研究者 · AIGC 创作者' },
 		{ name: 'role', title: 'Role (EN)', type: 'string', description: 'e.g. Digital Humanist & Creative Technologist' },
 		{ name: 'bio', title: 'Bio', type: 'text', rows: 6 },
+		{ name: 'bioEn', title: '英文个人简介', type: 'text' },
 		{ name: 'email', title: 'Email', type: 'string' },
 		{ name: 'location', title: 'Location', type: 'string' }
 	],

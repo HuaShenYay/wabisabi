@@ -29,7 +29,7 @@
 			{t("未经书面许可，不得以任何形式复制、转载、传播或用于商业目的。个人学习与欣赏用途欢迎引用，请注明出处。", "Reproduction, redistribution or commercial use requires written permission. Quotation for personal study and appreciation is welcome with attribution.")}
 		</p>
 		<p class="copyright-meta">
-			© {year} {profile.name} ({profile.nameEn}). All rights reserved.
+			© {year} {t(profile.name, profile.nameEn)}{t('，保留所有权利。', '. All rights reserved.')}
 		</p>
 	</div>
 </section>
@@ -46,7 +46,7 @@
 			{t("本网站以简洁的文字与图像呈现内容，可在不同尺寸的设备上阅读。您也可以在系统设置中减少动态效果。", "This website presents text and images for reading on different screen sizes. You can reduce motion in your system settings.")}
 		</p>
 		<p class="copyright-paragraph">
-			{t("本网站尊重并保护用户隐私。本站不收集个人身份信息，不使用追踪 Cookie。如通过邮件联系，您的邮箱地址仅用于回复您的咨询。", "This website respects your privacy. It does not collect personally identifying information or use tracking cookies. If you contact us by email, your address is used only to reply to your inquiry.")}
+			{t("本网站尊重并保护用户隐私。本站不收集个人身份信息，不使用追踪记录。如通过邮件联系，您的邮箱地址仅用于回复您的咨询。", "This website respects your privacy. It does not collect personally identifying information or use tracking cookies. If you contact us by email, your address is used only to reply to your inquiry.")}
 		</p>
 	</div>
 </section>
@@ -61,10 +61,10 @@
 			{t('本网站基于以下技术与资源构建：', 'This website is built with the following tools and resources:')}
 		</p>
 		<ol class="credits-list">
-			<li><span class="credit-name">SvelteKit</span><span class="credit-role">{t('框架', 'Framework')}</span></li>
-			<li><span class="credit-name">SVG</span><span class="credit-role">{t('墨线与细微纸纹', 'Ink & paper textures')}</span></li>
-			<li><span class="credit-name">Source Han Serif / Songti</span><span class="credit-role">{t('正文字体', 'Body type')}</span></li>
-			<li><span class="credit-name">LXGW WenKai / Cormorant Garamond</span><span class="credit-role">{t('标题字体', 'Heading type')}</span></li>
+			<li><span class="credit-name">{t('轻量网页框架', 'SvelteKit')}</span><span class="credit-role">{t('框架', 'Framework')}</span></li>
+			<li><span class="credit-name">{t('矢量图形', 'SVG')}</span><span class="credit-role">{t('墨线与细微纸纹', 'Ink & paper textures')}</span></li>
+			<li><span class="credit-name">{t('诺托宋体', 'Noto Serif SC')}</span><span class="credit-role">{t('全站字体', 'Site type')}</span></li>
+			<li><span class="credit-name">{t('京华老宋体', 'KingHwa Old Song')}</span><span class="credit-role">{t('中文首页题辞', 'Chinese homepage display type')}</span></li>
 		</ol>
 		<p class="copyright-paragraph">
 			{t("设计灵感来源于侘寂美学与当代极简主义设计的交叉地带。感谢所有开源社区贡献者。", "The design draws on wabi-sabi aesthetics and contemporary minimalism. Thanks to everyone who contributes to the open-source community.")}
@@ -81,7 +81,7 @@
 			{t('如对版权事宜有疑问，或希望进行项目合作，请通过邮件联系：', 'For copyright questions or project collaborations, please get in touch by email:')}
 		</p>
 		<p class="copyright-contact">
-			<a class="link-underline" href="mailto:{profile.email}">{profile.email}</a>
+			<a class="link-underline" href="mailto:{profile.email}">{t('发送电子邮件', 'Send an email')}</a>
 		</p>
 	</div>
 </section>

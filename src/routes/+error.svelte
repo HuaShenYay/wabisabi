@@ -27,7 +27,7 @@
 
 <section class="error-section grid grid-section">
 	<div class="error-content">
-		<p class="error-status-label">{status === 404 ? 'Not Found' : 'Error'}</p>
+		<p class="error-status-label">{status === 404 ? t('页面未找到', 'Not found') : t('页面加载失败', 'Error')}</p>
 		<h1 class="error-display">{status}</h1>
 		<p class="error-reflection">{reflection}</p>
 

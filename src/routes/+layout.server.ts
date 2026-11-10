@@ -3,6 +3,7 @@ import { getLocale, localeCookie } from '$lib/i18n';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
-	const [profile, settings, socialLinks] = await Promise.all([getProfile(), getSiteSettings(), getSocialLinks()]);
-	return { profile, settings, socialLinks, locale: getLocale(cookies.get(localeCookie)) };
+	const locale = getLocale(cookies.get(localeCookie));
+	const [profile, settings, socialLinks] = await Promise.all([getProfile(locale), getSiteSettings(locale), getSocialLinks()]);
+	return { profile, settings, socialLinks, locale };
 };

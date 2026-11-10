@@ -3,37 +3,6 @@
 /* 全部颜色/间距/圆角/动效均引用 Design Token，禁止硬编码（DESIGN.md §16） */
 /* Seven Principles: Kanso / Fukinsei / Shibui / Shizen / Yugen / Datsuzoku / Seijaku */
 
-/* ===== Fonts =====
-   按 DESIGN.md §5.1：拒绝几何无衬线体，正文与标题走衬线/人文字体栈。
-   Noto Serif SC 对应规范中的 Source Han Serif（思源宋体开源同源），
-   Cormorant Garamond / EB Garamond 为拉丁声部；display=swap 保护 LCP。
-   LXGW WenKai 依赖系统本地安装，缺失时降级至 Noto Serif SC。
-   外部字体样式表已在 app.html 中通过 preconnect + 非阻塞方式加载，避免 CSS @import 串行阻塞首屏渲染。 */
-
-/* v2「对位 · 机」声部：仅用于 ≤ 11px 的机器注释层（编号 / 坐标 / 时间码），
-   与东方书写体形成"手 ↔ 机器"的张力。字体文件本地托管，swap 不阻塞首屏。 */
-@font-face {
-	font-family: "Neue Haas Grotesk Display";
-	src: url("/fonts/NHaasGroteskDSStd-45Lt.woff") format("woff");
-	font-weight: 300;
-	font-style: normal;
-	font-display: swap;
-}
-@font-face {
-	font-family: "Neue Haas Grotesk Display";
-	src: url("/fonts/NHaasGroteskDSStd-55Rg.woff") format("woff");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-@font-face {
-	font-family: "Orelo";
-	src: url("/fonts/Orelo-SemiWide.woff2") format("woff2");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
 /* Stepped stop-motion & tactile ratchet timing tokens (卡顿感与粗糙刻印) */
 :root {
 	--ease-stutter: steps(4, end);
@@ -138,15 +107,15 @@ img, video {
 	--color-border: rgba(42, 41, 36, 0.14);
 	--color-divider: rgba(42, 41, 36, 0.08);
 
-	/* ===== 字体（DESIGN.md §5.1） ===== */
-	--font-heading-reading: "LXGW WenKai", "霞鹜文楷", "Source Han Serif SC", "Noto Serif SC", serif;
-	/* 1.007 保留更明显的旧扫描痕迹；3.0 是在线回退，阅读正文另用原字体。 */
-	--font-heading: "KingHwa_OldSong", "KingHwaOldSong", var(--font-heading-reading);
-	--font-body: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
-	--font-latin: "Cormorant Garamond", "EB Garamond", Georgia, serif;
-	--font-ui: "PingFang SC", "Noto Sans SC", sans-serif;
-	/* 站点扩展：笔意/题跋（楷体）——规范未列，作为 --font-heading 的手写补充声部 */
-	--font-brush: "Kaiti SC", "STKaiti", "KaiTi", "BiauKai", serif;
+	/* 全站用同一套宋体，通过字重、字号和间距区分层级。京华老宋只用于中文首页题辞。 */
+	--font-body: "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+	--font-hero: "KingHwa_OldSong", "KingHwaOldSong", var(--font-body);
+	--font-heading: var(--font-body);
+	--font-latin: var(--font-body);
+	--font-ui: var(--font-body);
+	--font-brush: var(--font-body);
+	--font-machine: var(--font-body);
+	--font-display-latin: var(--font-body);
 
 	/* ===== 字号（Fluid Type Scale） ===== */
 	--text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
@@ -208,11 +177,6 @@ img, video {
 	--color-on-night-muted: var(--raw-bone-muted);
 	--color-seal: var(--raw-cinnabar);
 	--color-halftone: rgba(27, 26, 23, 0.86);
-
-	/* 三声部字体：刻（--font-heading）/ 书（--font-body）/ 机（以下） */
-	--font-machine: "Neue Haas Grotesk Display", "Helvetica Neue", "PingFang SC", sans-serif;
-	--font-display-latin: "Orelo", var(--font-latin);
-	--font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
 	/* 巨物尺度 */
 	--text-4xl: clamp(3.5rem, 2rem + 6vw, 7rem);
@@ -308,7 +272,6 @@ img, video {
 
 /* Quiet paper shell: typography, dry-ink borders and aged paper carry the design. */
 html { background: var(--color-bg); }
-html:lang(en) { --font-heading: var(--font-latin); }
 body {
 	color: var(--color-text);
 	height: auto; min-height: 100svh;
