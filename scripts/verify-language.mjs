@@ -15,9 +15,11 @@ try {
 	await page.goto(`${base}/?ref=language-check`, { waitUntil: 'networkidle' });
 	check('Default language is Chinese', await page.locator('html').getAttribute('lang') === 'zh-CN');
 	check('Home no longer shows status or location', !/劳累啊|上海/.test(await page.locator('.hero-intro').innerText()));
+	check('Language choices are tucked away initially', !(await page.locator('.language-switch').evaluate(node => node.open)) && !(await page.getByRole('link', { name: 'Switch to English', exact: true }).isVisible()));
+	await page.locator('.language-switch summary').click();
 	await page.getByRole('link', { name: 'Switch to English', exact: true }).click();
 	await page.waitForLoadState('networkidle');
-	check('Flag changes the actual page language', await page.locator('html').getAttribute('lang') === 'en' && (await page.locator('h1').innerText()).includes('poetry'));
+	check('Flag changes the actual page language', await page.locator('html').getAttribute('lang') === 'en' && (await page.locator('h1').innerText()).includes('Make it real'));
 	check('Switch keeps the current query without leaving a language parameter', page.url() === `${base}/?ref=language-check`);
 	check('Selected language is marked accessibly', await page.locator('.language-link[aria-current]').getAttribute('lang') === 'en');
 	await page.reload({ waitUntil: 'networkidle' });
@@ -30,7 +32,11 @@ try {
 		for (const path of ['/', '/about', '/projects', '/projects/photograph', '/projects/digital-humanities', '/copyright', '/missing-page']) {
 			await page.goto(`${base}${path}`, { waitUntil: 'networkidle' });
 			check(`English ${path} fits ${width}px`, await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-			check(`Language controls remain usable on ${path} at ${width}px`, await page.locator('.language-link').evaluateAll(nodes => nodes.length === 2 && nodes.every(n => n.getBoundingClientRect().width >= 44 && n.getBoundingClientRect().height >= 44)));
+			check(`Language trigger remains usable on ${path} at ${width}px`, await page.locator('.language-switch summary').evaluate(node => node.getBoundingClientRect().width >= 44 && node.getBoundingClientRect().height >= 44));
+			await page.locator('.language-switch summary').click();
+			check(`Language choices remain usable on ${path} at ${width}px`, await page.locator('.language-link').evaluateAll(nodes => nodes.length === 2 && nodes.every(n => n.getBoundingClientRect().width >= 44 && n.getBoundingClientRect().height >= 44 && n.getBoundingClientRect().left >= 0 && n.getBoundingClientRect().right <= innerWidth)));
+			await page.keyboard.press('Escape');
+			check(`Escape closes language choices on ${path} at ${width}px`, !(await page.locator('.language-switch').evaluate(node => node.open)));
 		}
 	}
 	await page.goto(base, { waitUntil: 'networkidle' });
@@ -42,9 +48,11 @@ try {
 	const staticPage = await independent.newPage();
 	await staticPage.goto(`${base}/projects`, { waitUntil: 'networkidle' });
 	check('One visitor does not change another visitor’s language', await staticPage.locator('h1').innerText() === '作品');
+	await page.locator('.language-switch summary').click();
 	await page.getByRole('link', { name: '切换为中文', exact: true }).click();
 	await page.waitForLoadState('networkidle');
 	check('Chinese can be restored on the same article', await page.locator('html').getAttribute('lang') === 'zh-CN' && /\/projects\/[^/]+\/[^/]+$/.test(page.url()));
+	await staticPage.locator('.language-switch summary').click();
 	await staticPage.getByRole('link', { name: 'Switch to English', exact: true }).click();
 	await staticPage.waitForLoadState('networkidle');
 	check('Language switching also works without JavaScript', await staticPage.locator('html').getAttribute('lang') === 'en' && await staticPage.locator('h1').innerText() === 'Works');

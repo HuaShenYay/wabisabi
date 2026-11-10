@@ -53,6 +53,6 @@ Historical landscape sources and prompts remain in `artwork/landscape/` as recor
 
 ## Languages
 
-The top-right flags switch between Chinese and English. A server-read language cookie preserves the selection across refreshes and navigation; switching also works without JavaScript. Interface strings live beside their components via the helpers in `src/lib/i18n.ts`. Published works use `titleEn` when available; CMS bodies, summaries and personal information remain in their original language.
+The top-right language menu switches between Chinese and English. A server-read language cookie preserves the selection across refreshes and navigation; switching also works without JavaScript. Interface strings live beside their components via the helpers in `src/lib/i18n.ts`. Published works use `titleEn` when available; CMS bodies, summaries and personal information remain in their original language.
 
 Run `npm run test:language` against a running preview using the same `WABI_TEST_URL` and `WABI_BROWSER_EXECUTABLE` settings as the browser regression checks.

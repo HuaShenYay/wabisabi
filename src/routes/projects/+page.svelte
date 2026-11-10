@@ -20,12 +20,11 @@
 			{@const meta = categoryMeta[category]}
 			{@const count = grouped[category].length}
 			<a class="category-entry" href="/projects/{meta.slug}" data-sveltekit-preload-data="hover">
-				<span class="ink-rule" aria-hidden="true"></span>
+				{#if category !== categoryOrder[0]}<span class="ink-rule" aria-hidden="true"></span>{/if}
 				<div class="entry-content"><h2>{categoryLabel(locale, category)}</h2>{#if locale === 'zh'}<span class="entry-en">{meta.en}</span>{/if}</div>
 				<span class="entry-count">{count ? t(`${count} 件`, `${count} ${count === 1 ? 'work' : 'works'}`) : t('待续', 'Coming soon')}</span><span class="entry-arrow" aria-hidden="true">↗</span>
 			</a>
 		{/each}
-		<span class="ink-rule" aria-hidden="true"></span>
 	</nav>
 </section>
 
@@ -56,12 +55,12 @@
 	.index-count, .entry-count { font: var(--text-xs)/1.5 var(--font-body); color: var(--color-text-muted); white-space: nowrap; }
 	.index-count { grid-column: 2; grid-row: 2; margin-left: 2.6rem; align-self: baseline; }
 
-	/* 反规整六条：不等分列 / 起跑线各异 / 块宽各异 / 块内呼吸各异 /
+	/* 不等分列 / 起跑线各异 / 块宽各异 / 块内呼吸各异 /
 	   不共用顶边 / 墨线不守行顶。全程不加边框、底色、序号与卡片。 */
 	.category-entries {
 		display: grid;
 		grid-template-columns: 47% 53%;
-		grid-template-rows: auto auto auto auto;
+		grid-template-rows: auto auto auto;
 		align-items: start;
 		row-gap: 0; column-gap: 0;
 	}
@@ -95,7 +94,6 @@
 	.category-entry:nth-of-type(3) .entry-en { margin-top: 4px; }
 	.category-entry:nth-of-type(4) .entry-en { margin-top: 11px; }
 	.category-entry:nth-of-type(5) .entry-en { margin-top: 6px; }
-	.category-entry:nth-of-type(1) > .ink-rule { width: 74%; margin-bottom: 14px; }
 	.category-entry:nth-of-type(2) > .ink-rule { width: 58%; margin-left: 18%; margin-bottom: 24px; }
 	.category-entry:nth-of-type(3) > .ink-rule { width: 92%; margin-left: 4%; margin-bottom: 18px; }
 	.category-entry:nth-of-type(4) > .ink-rule { width: 66%; margin-left: 10%; margin-bottom: 28px; }
@@ -108,15 +106,12 @@
 	.category-entry:nth-of-type(3) { grid-column: 1 / span 2; grid-row: 2; width: 58%; margin: 0 0 34px 9%; }
 	.category-entry:nth-of-type(4) { grid-column: 1; grid-row: 3; width: 82%; margin: 13px 0 0 4%; }
 	.category-entry:nth-of-type(5) { grid-column: 2; grid-row: 3; width: 70%; margin: 0 0 0 20%; }
-	.category-entries > .ink-rule { grid-column: 1 / span 2; grid-row: 4; width: 42%; margin: 55px 0 0 6%; }
 
-	/* §19.7 断口交替：DOM 顺序 1 / 5 / 1 / 4 / 1 / 5 / 1 不变。
-	   三段折页的视觉顺序与 DOM 顺序一致，无需重定义「上一条」。 */
+	/* 分类之间沿用浓淡交替的笔触。 */
 	.category-entry:nth-of-type(odd) > .ink-rule { background-image: var(--rule-sparse-a); }
 	.category-entry:nth-of-type(even) > .ink-rule { background-image: var(--rule-dense-a); }
 	.category-entry:nth-of-type(3) > .ink-rule { background-image: var(--rule-sparse-b); }
 	.category-entry:nth-of-type(4) > .ink-rule { background-image: var(--rule-dense-b); }
-	.category-entries > .ink-rule { background-image: var(--rule-dense-a); }
 
 	@media (max-width: 600px) {
 		/* 窄屏退回单栏，但保留分组、起跑线错落与疏密节奏；件数回行右端 */
@@ -148,9 +143,7 @@
 		.entry-en { white-space: normal; font-size: var(--text-sm); }
 		.entry-count { grid-area: count; margin: 0; }
 		.entry-arrow { grid-area: arrow; margin: 0; }
-		.category-entries > .ink-rule { width: 64%; margin: var(--space-6) 0 0 0; }
 		/* 窄屏墨线同样不等长、起笔错落，不退回一条等宽横线 */
-		.category-entry:nth-of-type(1) > .ink-rule { width: 66%; margin-left: 0; }
 		.category-entry:nth-of-type(2) > .ink-rule { width: 84%; margin-left: 4%; }
 		.category-entry:nth-of-type(3) > .ink-rule { width: 58%; margin-left: 0; }
 		.category-entry:nth-of-type(4) > .ink-rule { width: 76%; margin-left: 8%; }

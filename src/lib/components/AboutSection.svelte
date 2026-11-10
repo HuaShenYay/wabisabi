@@ -15,9 +15,7 @@
 </script>
 
 <div class="about site-shell" id="about">
-	<!-- §19.7 四叶断口序列：dense(5) → sparse(1) → dense(4) → sparse(1) -->
 	<section class="note-section note-section--a" aria-labelledby="about-heading">
-		<span class="ink-rule ink-rule--dense" aria-hidden="true"></span>
 		<header><h1 id="about-heading">{t('关于', 'About')}</h1>{#if locale === 'zh'}<p>About</p>{/if}</header>
 		<div class="note-content biography" lang="zh-CN">{#each biography as paragraph}<p>{paragraph}</p>{/each}</div>
 	</section>
@@ -51,7 +49,6 @@
 	.note-section > .ink-rule { position: absolute; top: 0; left: 0; }
 	/* 各段保留错落比例、留白与墨线，统一露出页面底层纸纹。 */
 	.note-section--a { grid-template-columns: 34fr 66fr; padding-block: var(--space-6) var(--space-7); padding-inline: clamp(12px, 2.2vw, 32px); }
-	.note-section--a > .ink-rule { width: 72%; }
 	.note-section--b { grid-template-columns: 60fr 40fr; padding-block: var(--space-7) var(--space-6); padding-inline: clamp(20px, 3vw, 46px); }
 	.note-section--b header { grid-column: 2; grid-row: 1; text-align: right; }
 	.note-section--b .note-content { grid-column: 1; grid-row: 1; }
